@@ -1,0 +1,25 @@
+<!-- When a landmark has been selected -->
+<form ng-if="selectedLandmark">
+	<h2>You have selected: {{ selectedLandmark.address }}</h2>
+	<div class="form-group">
+		<label>Today's budget:</label>
+		<input type="number" ng-model="play.settings.finances.budget" min="100" step="100" max="{{ settings.game.finances.budget }}" />
+		<small class="help-block">Total trip budget: {{ settings.game.finances.budget }}</small>
+	</div>
+</form>
+
+<!-- When no landmark selected -->
+<span ng-if="!selectedLandmark">
+	<h2>Where do you want to go next?</h2>
+	<p>Click on a landmark below</p>
+</span>
+
+<!-- Game map showing the landmarks -->
+<div game-map class="well"
+	available-locations="landmarks"
+	selected-location="selectedLandmark"
+	initial-location="settings.game.locations[settings.game.selectedLocation]">
+</div>
+
+<!-- Navigation -->
+<a href="#/start" class="btn btn-default">Back</a>

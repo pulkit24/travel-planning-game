@@ -1,0 +1,37 @@
+<!-- Initial settings -->
+<form class="row">
+
+	<!-- Initial budget -->
+	<div class="form-group col-md-6">
+		<label>Initial budget:</label>
+		<input type="number" class="form-control" ng-model="settings.game.finances.budget" ng-disabled="settings.game.sandboxMode" required min="1000" step="1000" />
+	</div>
+	<!-- end initial budget -->
+
+	<!-- Sandbox mode -->
+	<br/>
+	<div class="checkbox col-md-6">
+		<label>
+			<input type="checkbox" ng-model="settings.game.sandboxMode" />Sandbox Mode
+		</label>
+	</div>
+
+	<!-- Location map -->
+	<div class="form-group col-md-12">
+		<label>Location:</label>
+		<p>{{ settings.game.locations[settings.game.selectedLocation].city }}, {{ settings.game.locations[settings.game.selectedLocation].country }}</p>
+
+		<!-- Location preview map -->
+		<div location-preview-map
+			selected-location="settings.game.selectedLocation"
+			available-locations="settings.game.locations">
+		</div>
+
+	</div>
+	<!-- end location map -->
+
+	<div class="col-md-12 text-right">
+		<a href="#/play" class="btn btn-primary">Start</a>
+	</div>
+
+</form>
