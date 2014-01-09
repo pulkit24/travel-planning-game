@@ -6,6 +6,7 @@ angular.module('travelPlanningGame.app', [
 	, 'ngSanitize'
 	, 'ngRoute'
 	, 'ui.bootstrap'
+	, 'angular-underscore'
 	, 'travelPlanningGame.settings'
 	, 'travelPlanningGame.maps'
 ])

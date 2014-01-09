@@ -4,11 +4,12 @@ describe('Controller: PlayCtrl', function() {
 
 	// load the controller's module
 	beforeEach(module('AngularGM'));
+	beforeEach(module('angular-underscore'));
 	beforeEach(module('travelPlanningGame.maps'));
 	beforeEach(module('travelPlanningGame.app'));
 
 	var StartCtrl,
-		scope;
+			scope;
 
 	// instantiate service
 	var gameSettings;

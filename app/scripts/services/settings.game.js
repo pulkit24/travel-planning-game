@@ -10,7 +10,7 @@ angular.module('travelPlanningGame.settings')
 
 		// Financial parameters
 		settings.finances = {};
-		settings.finances.budget = 40000;
+		settings.finances.budget = 5000;
 		settings.finances.upgradesAvailable = {};
 		settings.finances.upgradesAvailable.travelCard = false;
 
@@ -23,7 +23,7 @@ angular.module('travelPlanningGame.settings')
 		settings.selectedLocation = 0;
 
 		// Other game parameters
-		settings.daysOfTravel = 0;
+		settings.daysOfTravel = 3;
 		settings.sandboxMode = false;
 
 		////////////////////////////////////////////////

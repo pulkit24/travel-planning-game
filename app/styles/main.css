@@ -3,16 +3,42 @@ body {
 	padding-bottom: 20px;
 }
 .container {
-	border: 1px solid #eee;
+	position: relative;
+	margin: 0 auto;
 	padding: 20px;
-}
-@media (min-width: 768px) {
-	.container {
-		max-width: 730px;
-	}
+	border: 1px solid #eee;
+	width: 640px;
+	height: 440px;
 }
 .map-canvas {
+	margin: 0 auto;
 	width: 600px;
 	height: 400px;
-	margin: 0 auto;
+}
+.layer {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+}
+.landmark-card h1, .landmark-card h2, .landmark-card h3, .landmark-card h4, .landmark-card h5, .landmark-card h6 {
+	margin:0;
+	padding:0;
+}
+.landmark-card .panel-body {
+	background-position: top left;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+.landmark-card .thumbnail {
+	margin: 1px;
+	border: none;
+}
+.landmark-card .resource:first-child {
+	background-color: lightblue;
+}
+.landmark-card .resource:first-child+.resource {
+	background-color: lemonchiffon;
+}
+.landmark-card .resource:last-child {
+	background-color: lightsalmon;
 }

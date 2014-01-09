@@ -4,6 +4,7 @@ describe('Controller: StartCtrl', function() {
 
 	// load the controller's module
 	beforeEach(module('AngularGM'));
+	beforeEach(module('angular-underscore'));
 	beforeEach(module('travelPlanningGame.maps'));
 	beforeEach(module('travelPlanningGame.app'));
 
