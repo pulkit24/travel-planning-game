@@ -33,7 +33,7 @@ describe('Controller: PlayCtrl', function() {
 	}));
 
 	it('game settings should be available', function() {
-		expect(scope.settings.game.finances.budget).toBe(40000);
+		expect(scope.settings.game.finances.budget).toBe(5000);
 		expect(scope.settings.game.selectedLocation).toBe(0);
 		expect(scope.settings.game.locations.length).toBe(3);
 	});
@@ -42,7 +42,7 @@ describe('Controller: PlayCtrl', function() {
 	});
 
 	it('first day budget should be set by default', function() {
-		expect(scope.play.settings.finances.budget).toBe(40000);
+		expect(scope.play.settings.finances.budget).toBe(5000);
 	});
 
 });

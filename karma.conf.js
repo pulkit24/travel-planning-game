@@ -22,7 +22,8 @@ module.exports = function(config) {
 			'app/scripts/*.js',
 			'app/scripts/**/*.js',
 			'test/mock/**/*.js',
-			'test/spec/**/*.js'
+			'test/spec/**/*.js',
+			'app/templates/*.html'
 		]
 		, // list of files / patterns to exclude
 		exclude: []
@@ -47,6 +48,20 @@ module.exports = function(config) {
 		,
 		// Continuous Integration mode
 		// if true, it capture browsers, run tests and exit
-		singleRun: false
+		singleRun: true
+		, preprocessors: {
+			'app/templates/*.html': ['ng-html2js']
+		}
+		, ngHtml2JsPreprocessor: {
+			// strip this from the file path
+			stripPrefix: 'app/'
+			,
+			// prepend this to the
+			prependPrefix: '../../'
+			,
+			// setting this option will create only a single module that contains templates
+			// from all the files, so you can load them all with module('foo')
+			moduleName: 'templates'
+		}
 	});
 };

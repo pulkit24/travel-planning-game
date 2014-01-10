@@ -9,6 +9,7 @@ angular.module('travelPlanningGame.app', [
 	, 'angular-underscore'
 	, 'travelPlanningGame.settings'
 	, 'travelPlanningGame.maps'
+	, 'travelPlanningGame.widgets'
 ])
 	.config(function($routeProvider) {
 		$routeProvider.when('/start', {

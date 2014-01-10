@@ -10,16 +10,10 @@
 <!-- Game HUD layer -->
 <div class="layer">
 	<div class="row">
-		<div class="col-lg-3 well">
-			$ {{ play.settings.finances.budget }}
-		</div>
-		<div class="col-lg-3 well">
-			XP TBD
-		</div>
-		<div class="col-lg-3 well">
-			S TBD
-		</div>
-		<div class="col-md-3 well">
+		<div widget-resource-indicator class="col-xs-3" role="budget" ng-model="play.settings.finances.budget"></div>
+		<div widget-resource-indicator class="col-xs-3" role="xp" ng-model="tbd"></div>
+		<div widget-resource-indicator class="col-xs-3" role="souvenirs" ng-model="tbd"></div>
+		<div class="col-xs-3">
 			DAY {{ play.day }} / {{ settings.game.daysOfTravel }}
 		</div>
 	</div>
@@ -27,8 +21,3 @@
 	<!-- Landmark card -->
 	<div landmark-card landmark="selectedLandmark" ng-if="selectedLandmark"></div>
 </div>
-
-<div class="clearfixed"></div>
-
-<!-- Navigation -->
-<a href="#/start" class="btn btn-default">Back</a>

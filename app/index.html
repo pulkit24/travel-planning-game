@@ -21,6 +21,9 @@
 	<!-- endbuild -->
 	<!-- build:css({.tmp,app}) styles/main.css -->
 	<link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="styles/maps.css">
+	<link rel="stylesheet" href="styles/landmark-card.css">
+	<link rel="stylesheet" href="styles/widgets.css">
 	<!-- endbuild -->
 </head>
 
@@ -30,7 +33,7 @@
     <![endif]-->
 
 	<!-- Add your site or application content here -->
-	<div class="container" ng-view=""></div>
+	<div class="game-container container" ng-view=""></div>
 
 	<!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -57,6 +60,7 @@
 	<!-- build:js({.tmp,app}) scripts/scripts.js -->
 	<script src="scripts/app.settings.js"></script>
 	<script src="scripts/app.maps.js"></script>
+	<script src="scripts/app.widgets.js"></script>
 	<script src="scripts/app.js"></script>
 	<script src="scripts/controllers/main.js"></script>
 	<script src="scripts/controllers/start.js"></script>
@@ -70,6 +74,7 @@
 	<script src="scripts/directives/maps.game.js"></script>
 	<script src="scripts/services/days.js"></script>
 	<script src="scripts/directives/landmark-card.js"></script>
+	<script src="scripts/directives/widgets.js"></script>
 	<!-- endbuild -->
 </body>
 
