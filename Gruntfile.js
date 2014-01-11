@@ -259,7 +259,8 @@ grunt.loadNpmTasks('grunt-html2js');
             'views/{,*/}*.html',
             'bower_components/**/*',
             'images/{,*/}*.{webp}',
-            'fonts/*'
+            'fonts/*',
+            'templates/*'
           ]
         }, {
           expand: true,
