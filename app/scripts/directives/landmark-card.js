@@ -7,6 +7,6 @@ angular.module('travelPlanningGame.app')
 			, scope: {
 				landmark: '='
 			}
-			, templateUrl: '../../templates/landmark-card.tpl.html'
+			, templateUrl: 'templates/landmark-card.tpl.html'
 		};
 	});

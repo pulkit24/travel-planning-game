@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('travelPlanningGame.maps', ['AngularGM']);
+angular.module('travelPlanningGame.maps', ['AngularGM', 'travelPlanningGame.templates']);

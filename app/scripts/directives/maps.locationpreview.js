@@ -3,7 +3,7 @@
 angular.module('travelPlanningGame.maps')
 	.directive('locationPreviewMap', function() {
 		return {
-			templateUrl: '../../templates/maps.locationpreview.tpl.html'
+			templateUrl: 'templates/maps.locationpreview.tpl.html'
 			, restrict: 'EA'
 			, scope: {
 				selectedLocation: '='

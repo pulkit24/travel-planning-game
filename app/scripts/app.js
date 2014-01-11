@@ -10,6 +10,7 @@ angular.module('travelPlanningGame.app', [
 	, 'travelPlanningGame.settings'
 	, 'travelPlanningGame.maps'
 	, 'travelPlanningGame.widgets'
+	, 'travelPlanningGame.templates'
 ])
 	.config(function($routeProvider) {
 		$routeProvider.when('/start', {

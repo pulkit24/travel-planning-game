@@ -15,6 +15,8 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+grunt.loadNpmTasks('grunt-html2js');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -321,6 +323,22 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js'
       }
     }
+
+	, html2js: {
+		options: {
+			module: 'travelPlanningGame.templates'
+			, useStrict: true
+			, quoteChar: '\''
+			, rename: function(name) {
+				return name.replace('../app/', '');
+			}
+		},
+		main: {
+			src: ['app/templates/*'],
+			dest: 'app/scripts/templates.js'
+		}
+	}
+
   });
 
 
@@ -332,6 +350,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'bower-install',
+      'html2js',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
@@ -355,6 +374,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'bower-install',
+    'html2js',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',

@@ -1,0 +1,15 @@
+<div gm-map
+	ng-if="isEnabled()"
+	class="map-canvas"
+	gm-map-id="'locationPreviewMap'"
+	gm-center="center"
+	gm-zoom="zoom"
+	gm-bounds="bounds"
+	gm-map-type-id="type">
+	<div gm-markers
+		gm-objects="availableLocations"
+		gm-id="object.id"
+		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
+		gm-on-click="selectLocation(object, marker)">
+	</div>
+</div>
