@@ -1,0 +1,43 @@
+<div class="panel panel-primary landmark-card">
+	<div class="panel-header panel-heading">
+		<h3>{{ landmark.name }}</h3>
+	</div>
+	<div class="panel-body" ng-style="{'background-image': 'url({{ landmark.image }})'}">
+		<div class="col-xs-offset-9">
+			<div class="thumbnail resource text-center">
+				<small>LODGING</small>
+				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>
+				</h3>
+				<small>PER DAY</small>
+			</div>
+			<div class="thumbnail resource text-center">
+				<small>VISITING</small>
+				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>
+				</h3>
+				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>
+			</div>
+			<div class="thumbnail resource text-center">
+				<h3>{{ landmark.souvenirs }} <i class="fa fa-shopping-cart"></i>
+				</h3>
+				<small>FOR {{ landmark.souvenirCost }} <i class="fa fa-dollar"></i>
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<ul class="list-group">
+		<li class="list-group-item list-item" ng-repeat="bonus in landmark.bonuses">
+			<span class="pull-right text-primary" ng-show="bonus.type">{{ bonus.type | uppercase }}</span>
+			<i class="fa" ng-class="bonus.icon"></i> {{ bonus.flavour }}
+			<em class="text-muted" ng-show="bonus.implication">
+				<small>({{ bonus.implication }})</small>
+			</em>
+		</li>
+	</ul>
+
+	<div class="panel-footer text-center">
+		One-time visiting bonus:
+		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>
+		</strong>
+	</div>
+</div>

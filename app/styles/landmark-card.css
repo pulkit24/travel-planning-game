@@ -1,0 +1,22 @@
+.landmark-card h1, .landmark-card h2, .landmark-card h3, .landmark-card h4, .landmark-card h5, .landmark-card h6 {
+	margin:0;
+	padding:0;
+}
+.landmark-card .panel-body {
+	background-position: top left;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+.landmark-card .thumbnail {
+	margin: 1px;
+	border: none;
+}
+.landmark-card .resource:first-child {
+	background-color: lightblue;
+}
+.landmark-card .resource:first-child+.resource {
+	background-color: lemonchiffon;
+}
+.landmark-card .resource:last-child {
+	background-color: lightsalmon;
+}
