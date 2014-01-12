@@ -6,8 +6,8 @@ angular.module('travelPlanningGame.maps')
 			templateUrl: 'templates/maps.game.tpl.html'
 			, restrict: 'EA'
 			, scope: {
-				initialLocation: '='
-				, selectedLocation: '='
+				focalPoint: '='
+				, ngModel: '='
 				, availableLocations: '='
 			}
 			, link: function(scope, elem, attrs) {
@@ -24,7 +24,7 @@ angular.module('travelPlanningGame.maps')
 
 				// Change location as needed
 				$scope.selectLocation = function(location, marker) {
-					$scope.selectedLocation = location;
+					$scope.ngModel = location;
 				};
 
 				// On load, modify the default Google map parameters as needed
@@ -53,6 +53,13 @@ angular.module('travelPlanningGame.maps')
 									$scope.$broadcast('gmMarkersUpdate');
 								}
 							});
+					});
+
+					// Focus on the focal point, whenever provided
+					$scope.$watch('focalPoint', function(newValue) {
+						if(newValue && newValue.lat && newValue.lng) {
+							gmap.panTo(angulargmUtils.objToLatLng(newValue));
+						}
 					});
 				});
 			}

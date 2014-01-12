@@ -1,3 +1,50 @@
+[landmark-card] {
+	position: absolute;
+	top: 15%;
+	left: 5%;
+	width: 400px;
+	height: 490px;
+	zoom: 0.85;
+}
+.landmark-card {
+	position: relative;
+	width: inherit;
+	height: inherit;
+}
+.landmark-card .landmark-card-face.landmark-card-face-front {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 900;
+	float: none;
+	width: inherit;
+	height: inherit;
+	transition: all .4s ease-in-out;
+	transform: rotateX(0deg) rotateY(0deg);
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+}
+.landmark-card .landmark-card-face.landmark-card-face-back {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 800;
+	float: none;
+	width: inherit;
+	height: inherit;
+	transition: all .4s ease-in-out;
+	transform: rotateY(-179deg);
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+}
+.landmark-card.flipped .landmark-card-face.landmark-card-face-front {
+	z-index: 900;
+	transform: rotateY(180deg);
+}
+.landmark-card.flipped .landmark-card-face.landmark-card-face-back {
+	z-index: 1000;
+	transform: rotateX(0deg) rotateY(0deg);
+}
 .landmark-card h1, .landmark-card h2, .landmark-card h3, .landmark-card h4, .landmark-card h5, .landmark-card h6 {
 	margin:0;
 	padding:0;
@@ -19,4 +66,7 @@
 }
 .landmark-card .resource:last-child {
 	background-color: lightsalmon;
+}
+.landmark-card .close {
+	color: white;
 }

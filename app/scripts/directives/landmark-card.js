@@ -4,6 +4,7 @@ angular.module('travelPlanningGame.app')
 	.directive('landmarkCard', function() {
 		return {
 			restrict: 'EA'
+			, transclude: true
 			, scope: {
 				landmark: '='
 			}

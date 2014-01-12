@@ -42,7 +42,7 @@ describe('Controller: PlayCtrl', function() {
 	});
 
 	it('first day budget should be set by default', function() {
-		expect(scope.play.settings.finances.budget).toBe(5000);
+		expect(scope.play.settings.finances.funds).toBe(5000);
 	});
 
 });

@@ -9,19 +9,26 @@
 	<!-- end initial budget -->
 
 	<!-- Sandbox mode -->
-	<br/>
-	<div class="checkbox col-md-6">
-		<label>
-			<input type="checkbox" ng-model="settings.game.sandboxMode" />Sandbox Mode
-		</label>
+	<div class="form-group col-md-3">
+		<br/>
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" ng-model="settings.game.sandboxMode" />Sandbox Mode
+			</label>
+		</div>
 	</div>
+	<!-- end sandbox mode -->
 
-	<!-- Initial budget -->
-	<div class="form-group">
+	<!-- Days of travel -->
+	<div class="form-group col-md-3">
 		<label>Days of travel:</label>
 		<input type="number" class="form-control" ng-model="settings.game.daysOfTravel" required min="1" step="1" />
 	</div>
-	<!-- end initial budget -->
+	<!-- end days -->
+
+	<div class="col-md-12 text-right">
+		<a href="#/play" class="btn btn-primary">Start</a>
+	</div>
 
 	<!-- Location map -->
 	<div class="form-group col-md-12">
@@ -29,16 +36,10 @@
 		<p>{{ settings.game.locations[settings.game.selectedLocation].city }}, {{ settings.game.locations[settings.game.selectedLocation].country }}</p>
 
 		<!-- Location preview map -->
-		<div location-preview-map
-			selected-location="settings.game.selectedLocation"
-			available-locations="settings.game.locations">
+		<div location-preview-map selected-location="settings.game.selectedLocation" available-locations="settings.game.locations">
 		</div>
 
 	</div>
 	<!-- end location map -->
-
-	<div class="col-md-12 text-right">
-		<a href="#/play" class="btn btn-primary">Start</a>
-	</div>
 
 </form>

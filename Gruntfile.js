@@ -47,6 +47,10 @@ grunt.loadNpmTasks('grunt-html2js');
       gruntfile: {
         files: ['Gruntfile.js']
       },
+      templates: {
+        files: ['<%= yeoman.app %>/templates/*.html'],
+        tasks: ['html2js']
+      },
       livereload: {
         options: {
           livereload: '<%= connect.options.livereload %>'

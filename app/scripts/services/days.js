@@ -25,11 +25,12 @@ angular.module('travelPlanningGame.app')
 			day.gains.souvenirs = 0; // number of items purchased by shopping
 
 			day.addLandmark = function(landmark) {
+				this.landmarksVisited.push(landmark);
 				if(!isLandmarkVisited(landmark)) {
-					this.landmarksVisited.push(landmark);
-					this.gains.xp += landmark.xp.oneTime;
+					this.gains.xp += landmark.exp;
 				}
-				this.gains.xp += landmark.xp.eachTime;
+				this.gains.xp += landmark.visitingExp;
+				this.finances.expenses.general += landmark.visitingCost + landmark.lodgingCost;
 				return this;
 			};
 			day.addGeneralExpense = function(expense) {
@@ -42,7 +43,11 @@ angular.module('travelPlanningGame.app')
 				return this;
 			};
 			day.end = function() {
-				days.push(day);
+				days.push(this);
+				return day;
+			};
+			day.getTotalExpenses = function() {
+				return this.finances.expenses.general + this.finances.expenses.shopping + this.finances.expenses.random;
 			};
 
 			return day;

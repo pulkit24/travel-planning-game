@@ -26,6 +26,6 @@ angular.module('travelPlanningGame.app', [
 				, controller: 'EndCtrl'
 			})
 			.otherwise({
-				redirectTo: '/play'
+				redirectTo: '/start'
 			});
 	});

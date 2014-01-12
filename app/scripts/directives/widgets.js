@@ -13,4 +13,14 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.role === 'budget' ? 'dollar' : (scope.role === 'xp' ? 'star' : 'shopping-cart');
 			}
 		};
+	})
+	.directive('widgetDayCounter', function() {
+		return {
+			restrict: 'EA'
+			, templateUrl: 'templates/widgets.day-counter.tpl.html'
+			, scope: {
+				ngModel: '='
+				, total: '='
+			}
+		};
 	});
