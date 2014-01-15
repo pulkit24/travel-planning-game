@@ -6,4 +6,4 @@ Current stage: _prototype_.
 
 Developers: Pulkit Karwal and Hsun-Yu Chen.
 
-[Live demo](http://pulkit24.github.io/travel-planning-game/dist)
+[Live demo](http://pulkit24.github.io/travel-planning-game/app)
