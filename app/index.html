@@ -15,15 +15,11 @@
 	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 	<!-- build:css styles/vendor.css -->
 	<!-- bower:css -->
-	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 	<!-- endbower -->
 	<!-- endbuild -->
 	<!-- build:css({.tmp,app}) styles/main.css -->
-	<link rel="stylesheet" href="styles/main.css">
-	<link rel="stylesheet" href="styles/maps.css">
-	<link rel="stylesheet" href="styles/landmark-card.css">
-	<link rel="stylesheet" href="styles/widgets.css">
 	<!-- endbuild -->
+	<link rel="stylesheet" href="app/dist/all.min.css">
 </head>
 
 <body ng-app="travelPlanningGame.app">
@@ -41,41 +37,13 @@
 
 	<!-- build:js scripts/vendor.js -->
 	<!-- bower:js -->
-	<script src="bower_components/jquery/jquery.js"></script>
-	<script src="bower_components/angular/angular.js"></script>
-	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="bower_components/angular-resource/angular-resource.js"></script>
-	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-	<script src="bower_components/angular-route/angular-route.js"></script>
-	<script src="bower_components/AngularGM/angular-gm.js"></script>
-	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-	<script src="bower_components/underscore/underscore.js"></script>
-	<script src="bower_components/angular-underscore/angular-underscore.js"></script>
 	<!-- endbower -->
-	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
 	<!-- endbuild -->
 
 	<!-- build:js({.tmp,app}) scripts/scripts.js -->
-	<script src="scripts/templates.js"></script>
-	<script src="scripts/app.settings.js"></script>
-	<script src="scripts/app.maps.js"></script>
-	<script src="scripts/app.widgets.js"></script>
-	<script src="scripts/app.js"></script>
-	<script src="scripts/controllers/main.js"></script>
-	<script src="scripts/controllers/start.js"></script>
-	<script src="scripts/controllers/play.js"></script>
-	<script src="scripts/controllers/end.js"></script>
-	<script src="scripts/services/landmarks.js"></script>
-	<script src="scripts/services/settings.game.js"></script>
-	<script src="scripts/services/settings.user.js"></script>
-	<script src="scripts/services/maps.geocoder.js"></script>
-	<script src="scripts/directives/maps.locationpreview.js"></script>
-	<script src="scripts/directives/maps.game.js"></script>
-	<script src="scripts/services/days.js"></script>
-	<script src="scripts/directives/landmark-card.js"></script>
-	<script src="scripts/directives/widgets.js"></script>
 	<!-- endbuild -->
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
+	<script src="app/dist/all.min.js"></script>
 </body>
 
 </html>

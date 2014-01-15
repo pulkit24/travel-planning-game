@@ -9,8 +9,12 @@ angular.module('travelPlanningGame.widgets')
 				ngModel: '='
 				, role: '@'
 			}
-			, link: function(scope, elem, attrs) {
+			, link: function(scope, elem, attrs, $filter) {
 				scope.icon = scope.role === 'budget' ? 'dollar' : (scope.role === 'xp' ? 'star' : 'shopping-cart');
+
+				scope.getValue = function() {
+					return $filter("number")(scope.ngModel);
+				};
 			}
 		};
 	})

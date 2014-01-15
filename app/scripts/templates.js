@@ -187,8 +187,8 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
   'use strict';
   $templateCache.put('templates/widgets.resource-indicator.tpl.html',
     '<div class="widget-resource-indicator" ng-class="\'widget-resource-indicator-\' + role">\n' +
-    '	<i class="widget-resource-indicator-icon fa fa-fw fa-3x" ng-click="ngModel = ngModel + 1" ng-class="\'fa-\' + icon"></i>\n' +
-    '	<span class="widget-resource-indicator-value">{{ ngModel | number }}</span>\n' +
+    '	<i class="widget-resource-indicator-icon fa fa-fw fa-3x" ng-class="\'fa-\' + icon"></i>\n' +
+    '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
     '</div>\n' +
     '');
 }]);

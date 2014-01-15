@@ -32,12 +32,13 @@ angular.module('travelPlanningGame.app')
 
 			// Note the repurcussions, if any
 			$scope.play.settings.finances.totalExpense += day.getTotalExpenses();
-			$scope.play.settings.finances.funds -= $scope.play.settings.finances.totalExpense;
+			$scope.play.settings.finances.funds = $scope.settings.game.finances.budget - $scope.play.settings.finances.totalExpense;
 			$scope.play.settings.gains.xp += day.gains.xp;
 			$scope.play.settings.gains.souvenirs += day.gains.souvenirs;
 
 			// On to the next day
 			$scope.play.day++;
+			$scope.selectedLandmark = null;
 		};
 
 	});

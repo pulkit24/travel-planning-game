@@ -10,10 +10,8 @@
 	, "newcap": true
 	, "laxcomma": true
 	, "noarg": true
-	, "quotmark": "single"
 	, "regexp": true
 	, "undef": true
-	, "strict": true
 	, "trailing": true
 	, "smarttabs": true
 	, "globals": {
