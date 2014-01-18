@@ -46,6 +46,16 @@ angular.module('travelPlanningGame.app')
 				days.push(this);
 				return day;
 			};
+			day.skip = function(currentDayIndex) {
+				var previousDayIndex = currentDayIndex - 1;
+				if(previousDayIndex >= 0) {
+					var previousLandmarks = days[previousDayIndex].landmarksVisited;
+					var currentLandmark = previousLandmarks[previousLandmarks.length - 1];
+					this.finances.expenses.general += currentLandmark.lodgingCost;
+				}
+				days.push(this);
+				return day;
+			};
 			day.getTotalExpenses = function() {
 				return this.finances.expenses.general + this.finances.expenses.shopping + this.finances.expenses.random;
 			};

@@ -13,7 +13,7 @@ angular.module('travelPlanningGame.app')
 			$scope.play.settings = {};
 			$scope.play.settings.finances = {};
 			$scope.play.settings.finances.totalExpense = 0;
-			$scope.play.settings.finances.funds = $scope.settings.game.finances.budget - $scope.play.settings.finances.totalExpense;
+			$scope.play.settings.finances.funds = $scope.settings.game.sandboxMode ? 0 : $scope.settings.game.finances.budget - $scope.play.settings.finances.totalExpense;
 
 			$scope.play.settings.gains = {};
 			$scope.play.settings.gains.xp = 0;
@@ -22,6 +22,35 @@ angular.module('travelPlanningGame.app')
 			$scope.play.day = 1;
 		}
 		init();
+
+		// Check conditions for eligibility for another round
+		$scope.canPlay = function(giveReason) {
+			// Landmark selected?
+			if (!$scope.selectedLandmark) {
+				return giveReason ? 'Select a landmark to visit.' : false;
+			}
+
+			// Everything is permitted in sandbox mode (once a landmark is selected)
+			if ($scope.settings.game.sandboxMode) {
+				return true;
+			}
+
+			// Days left?
+			if ($scope.play.day >= $scope.settings.game.daysOfTravel) {
+				return giveReason ? 'Your trip is over.' : false;
+			}
+
+			// Funds left?
+			if ($scope.play.settings.finances.funds < ($scope.selectedLandmark.visitingCost + $scope.selectedLandmark.lodgingCost)) {
+				return giveReason ? 'Not enough funds for this landmark.' : false;
+			}
+
+			return giveReason ? 'I don\'t know, you should be able to!' : true;
+		};
+
+		$scope.whyCantIPlay = function() {
+			return $scope.canPlay(true);
+		};
 
 		// Complete a day
 		$scope.simulateDay = function() {
@@ -39,6 +68,19 @@ angular.module('travelPlanningGame.app')
 			// On to the next day
 			$scope.play.day++;
 			$scope.selectedLandmark = null;
+		};
+
+		$scope.skipDay = function() {
+			// Simulate a new day
+			var day = days.newDay($scope.play.settings.finances.budget)
+				.skip($scope.play.day - 1);
+
+			// Note the repurcussions, if any
+			$scope.play.settings.finances.totalExpense += day.getTotalExpenses();
+			$scope.play.settings.finances.funds -= $scope.play.settings.finances.totalExpense;
+
+			// On to the next day
+			$scope.play.day++;
 		};
 
 	});

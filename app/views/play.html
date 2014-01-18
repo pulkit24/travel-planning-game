@@ -1,8 +1,5 @@
 <!-- Game map layer -->
-<div game-map class="layer"
-	ng-model="selectedLandmark"
-	available-locations="landmarks"
-	focal-point="selectedLandmark.coords">
+<div game-map class="layer" ng-model="selectedLandmark" available-locations="landmarks" focal-point="selectedLandmark.coords">
 </div>
 
 <!-- Game HUD layers -->
@@ -12,9 +9,11 @@
 	<div widget-resource-indicator role="souvenirs" ng-model="play.settings.gains.souvenirs"></div>
 </div>
 <div widget-day-counter ng-model="play.day" total="settings.game.daysOfTravel" class="layer"></div>
-<button class="btn btn-warning btn-lg layer play-button" ng-click="simulateDay()" ng-disabled="play.day >= settings.game.daysOfTravel">Go!</button>
+<button class="btn btn-warning btn-lg layer play-button" ng-click="simulateDay()" ng-show="canPlay()">Go!</button>
+<button class="btn btn-default btn-lg layer play-button" ng-click="skipDay()" ng-show="!canPlay()">Skip</button>
 <a href="#/start" class="btn btn-default btn-lg layer back-button">Back</a>
 
 <!-- Landmark card -->
 <div landmark-card landmark="selectedLandmark" class="layer" ng-show="selectedLandmark"></div>
 
+<div collapsible-column collapsible default-collapsed ng-model="show" class="span3">h</div>
