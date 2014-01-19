@@ -16,11 +16,13 @@ angular.module('travelPlanningGame.maps')
 					return !elem.attr('disabled');
 				};
 			}
-			, controller: function($scope, $q, angulargmContainer, angulargmUtils, mapGeocoder) {
+			, controller: function($scope, $q, $filter, angulargmContainer, angulargmUtils, mapGeocoder, mapStyles) {
 				// Initialise all fixed map parameters
 				$scope.zoom = 12;
 				$scope.type = 'roadmap';
 				$scope.bounds = new google.maps.LatLngBounds();
+
+				$scope.styles = mapStyles.routeXL;
 
 				// Change location as needed
 				$scope.selectLocation = function(location, marker) {
@@ -32,6 +34,13 @@ angular.module('travelPlanningGame.maps')
 					// Request Google map to kindly use our preset parameters
 					gmap.mapTypeId = $scope.type;
 					gmap.zoom = $scope.zoom;
+					gmap.setOptions({
+						styles: $scope.styles
+					});
+
+					// Show transit layer
+					var transitLayer = new google.maps.TransitLayer();
+					transitLayer.setMap(gmap);
 
 					// Get geo coords for all available locations
 					angular.forEach($scope.availableLocations, function(location, index) {
@@ -52,16 +61,53 @@ angular.module('travelPlanningGame.maps')
 									// Update the markers being displayed on the map
 									$scope.$broadcast('gmMarkersUpdate');
 								}
+
+								$scope.showLabel(location, null, gmap);
 							});
 					});
 
 					// Focus on the focal point, whenever provided
 					$scope.$watch('focalPoint', function(newValue) {
-						if(newValue && newValue.lat && newValue.lng) {
+						if (newValue && newValue.lat && newValue.lng) {
 							gmap.panTo(angulargmUtils.objToLatLng(newValue));
 						}
 					});
 				});
+
+				// Construct an info window for the landmark label
+				$scope.showLabel = function(location, marker, map) {
+					// Either of map and marker must be provided
+					if(!marker && !map) {
+						return false;
+					}
+
+					var options = {};
+					options.content = '<span style="font-weight: 700">' + location.name + '</span>';
+					options.position = angulargmUtils.objToLatLng(location.coords);
+					options.pixelOffset = new google.maps.Size(0, -30);
+
+					var infoWindow = new google.maps.InfoWindow(options);
+
+					if(!map) {
+						map = marker.getMap();
+					}
+
+					infoWindow.open(map);
+					return true;
+				};
+
+				// Marker appearance
+				$scope.getMarkerOptions = function(location) {
+					var options = {
+						title: "Click to select " + location.name
+						, icon: (
+							location === $scope.ngModel ? '../../images/marker-green.png' :
+							(location.isOnHover ? '../../images/marker-orange.png' : '../../images/marker-grey.png')
+						)
+					};
+
+					return options;
+				};
 			}
 		};
 	});

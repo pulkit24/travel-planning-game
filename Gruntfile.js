@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
 	grunt.initConfig({
 		clean: {
-			pre: ["dist"]
+			pre: ["app/dist/*"]
 			, post: ["app/dist/*", "!app/dist/*.min.*"]
 		}
 		, concat: {
@@ -11,49 +11,25 @@ module.exports = function(grunt) {
 			}
 			, jsLocal: {
 				src: [
-				'app/scripts/components/*.js'
-				, 'app/scripts/templates.js'
-				, 'app/scripts/app.settings.js'
-				, 'app/scripts/app.maps.js'
-				, 'app/scripts/app.widgets.js'
-				, 'app/scripts/app.js'
-				, 'app/scripts/filters/*.js'
-				, 'app/scripts/services/*.js'
-				, 'app/scripts/directives/*.js'
-				, 'app/scripts/controllers/*.js'
+					'app/scripts/components/*.js', 'app/scripts/app.settings.js', 'app/scripts/app.maps.js', 'app/scripts/app.widgets.js', 'app/scripts/app.js', 'app/scripts/filters/*.js', 'app/scripts/services/*.js', 'app/scripts/directives/*.js', 'app/scripts/controllers/*.js', '<%= html2js.main.dest %>'
 				]
 				, dest: 'app/dist/all.local.js'
 			}
 			, jsVendor: {
 				src: [
-					'app/bower_components/jquery/jquery.min.js'
-					, 'app/bower_components/es5-shim/es5-shim.min.js'
-					, 'app/bower_components/json3/lib/json3.min.js'
-					, 'app/bower_components/angular/angular.min.js'
-					, 'app/bower_components/underscore/underscore-min.js'
-					, 'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
-					, 'app/bower_components/angular-cookies/angular-cookies.min.js'
-					, 'app/bower_components/angular-resource/angular-resource.min.js'
-					, 'app/bower_components/angular-route/angular-route.min.js'
-					, 'app/bower_components/angular-sanitize/angular-sanitize.min.js'
-					, 'app/bower_components/angular-underscore/angular-underscore.js'
-					, 'app/bower_components/AngularGM/angular-gm.min.js'
+					'app/bower_components/jquery/jquery.min.js', 'app/bower_components/es5-shim/es5-shim.min.js', 'app/bower_components/json3/lib/json3.min.js', 'app/bower_components/angular/angular.min.js', 'app/bower_components/underscore/underscore-min.js', 'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js', 'app/bower_components/angular-cookies/angular-cookies.min.js', 'app/bower_components/angular-resource/angular-resource.min.js', 'app/bower_components/angular-route/angular-route.min.js', 'app/bower_components/angular-sanitize/angular-sanitize.min.js', 'app/bower_components/angular-underscore/angular-underscore.js', 'app/bower_components/AngularGM/angular-gm.min.js'
 				]
 				, dest: 'app/dist/all.vendor.js'
 			}
 			, js: {
 				src: [
-					'<%= concat.jsVendor.dest %>'
-					, '<%= concat.jsLocal.dest %>'
+					'<%= concat.jsVendor.dest %>', '<%= concat.jsLocal.dest %>'
 				]
 				, dest: 'app/dist/all.js'
 			}
 			, css: {
 				src: [
-					'app/bower_components/bootstrap/dist/css/bootstrap.min.css'
-					, 'app/bower_components/font-awesome/css/font-awesome.min.css'
-					, 'app/styles/*.css'
-					, 'app/styles/**/*.css'
+					'app/bower_components/bootstrap/dist/css/bootstrap.min.css', 'app/bower_components/font-awesome/css/font-awesome.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
 				]
 				, dest: 'app/dist/all.css'
 			}
@@ -82,20 +58,18 @@ module.exports = function(grunt) {
 				expand: true
 				, src: '<%= concat.css.dest %>'
 				, dest: ''
-				, ext: '.min.css'
 			}
 		}
 		, copy: {
-			dev: {
+			build: {
 				files: [{
-						expand: false
-						, src: '<%= concat.css.dest %>'
-						, dest: 'app/dist/all.min.css'
-				}
-				, {
-						expand: false
-						, src: '<%= concat.js.dest %>'
-						, dest: 'app/dist/all.min.js'
+					expand: false
+					, src: '<%= concat.css.dest %>'
+					, dest: 'app/dist/all.min.css'
+				}, {
+					expand: false
+					, src: '<%= concat.js.dest %>'
+					, dest: 'app/dist/all.min.js'
 				}]
 			}
 		}
@@ -110,7 +84,7 @@ module.exports = function(grunt) {
 			}
 			, main: {
 				src: ['app/templates/*']
-				, dest: 'app/scripts/templates.js'
+				, dest: 'app/dist/app.templates.js'
 			}
 		}
 		, connect: {
@@ -136,11 +110,7 @@ module.exports = function(grunt) {
 			js: {
 				files: ['app/scripts/{,*/}*.js']
 				, tasks: [
-					'concat_byAuthor'
-					, 'ngmin'
-					, 'concat_all'
-					, 'uglify'
-					, 'clean:post'
+					 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'copy:build', 'clean:post'
 				]
 				, options: {
 					livereload: true
@@ -149,17 +119,15 @@ module.exports = function(grunt) {
 			, css: {
 				files: ['app/styles/{,*/}*.css']
 				, tasks: [
-					'concat_all'
-					, 'cssmin'
-					, 'clean:post'
+					'concat_all', 'cssmin', 'clean:post'
 				]
 				, options: {
 					livereload: true
 				}
 			}
-			, templates: {
+			, tpl: {
 				files: ['app/templates/*.html']
-				, tasks: ['html2js']
+				, tasks: '<%= watch.js.tasks %>'
 				, options: {
 					livereload: true
 				}
@@ -188,31 +156,15 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-html2js');
 
 	grunt.registerTask('concat_byAuthor', [
-		'concat:jsLocal'
-		, 'concat:jsVendor'
+		'concat:jsLocal', 'concat:jsVendor'
 	]);
 	grunt.registerTask('concat_all', [
-		'concat:js'
-		, 'concat:css'
+		'concat:js', 'concat:css'
 	]);
 	grunt.registerTask('default', [
-		'clean:pre'
-		, 'html2js'
-		, 'concat_byAuthor'
-		, 'ngmin'
-		, 'uglify'
-		, 'concat_all'
-		, 'cssmin'
-		, 'clean:post'
-	    , 'connect:livereload'
-		, 'watch'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'cssmin', 'copy:build', 'clean:post', 'connect:livereload', 'watch'
 	]);
 	grunt.registerTask('dev', [
-		'clean:pre'
-		, 'html2js'
-		, 'concat_byAuthor'
-		, 'concat_all'
-		, 'copy:dev'
-	    , 'connect:dev:keepalive'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'concat_all', 'copy:build', 'connect:dev:keepalive'
 	]);
 };
