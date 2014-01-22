@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('travelPlanningGame.app')
-	.controller('PlayCtrl', function($scope, gameSettings, landmarks, days) {
+	.controller('PlayCtrl', function($scope, gameSettings, landmarks, days, bankingManager) {
 		$scope.settings = {};
 		$scope.landmarks = [];
 		$scope.play = {};
@@ -9,16 +9,9 @@ angular.module('travelPlanningGame.app')
 		// Init
 		function init() {
 			$scope.settings.game = gameSettings.getSettings();
-			$scope.landmarks = landmarks.getLandmarks();
+			$scope.landmarks = landmarks.get();
 			$scope.play.settings = {};
-			$scope.play.settings.finances = {};
-			$scope.play.settings.finances.totalExpense = 0;
-			$scope.play.settings.finances.funds = $scope.settings.game.sandboxMode ? 0 : $scope.settings.game.finances.budget - $scope.play.settings.finances.totalExpense;
-
-			$scope.play.settings.gains = {};
-			$scope.play.settings.gains.xp = 0;
-			$scope.play.settings.gains.souvenirs = 0;
-
+			$scope.play.finances = bankingManager.manage("playFinances", $scope.settings.game.finances.budget);
 			$scope.play.day = 1;
 		}
 		init();
@@ -41,7 +34,7 @@ angular.module('travelPlanningGame.app')
 			}
 
 			// Funds left?
-			if ($scope.play.settings.finances.funds < ($scope.selectedLandmark.visitingCost + $scope.selectedLandmark.lodgingCost)) {
+			if ($scope.play.finances.getBudget() < ($scope.selectedLandmark.visitingCost + $scope.selectedLandmark.lodgingCost)) {
 				return giveReason ? 'Not enough funds for this landmark.' : false;
 			}
 
@@ -55,15 +48,9 @@ angular.module('travelPlanningGame.app')
 		// Complete a day
 		$scope.simulateDay = function() {
 			// Simulate a new day
-			var day = days.newDay($scope.play.settings.finances.budget)
+			var day = days.newDay($scope.play.day, $scope.play.finances)
 				.addLandmark($scope.selectedLandmark)
 				.end();
-
-			// Note the repurcussions, if any
-			$scope.play.settings.finances.totalExpense += day.getTotalExpenses();
-			$scope.play.settings.finances.funds = $scope.settings.game.finances.budget - $scope.play.settings.finances.totalExpense;
-			$scope.play.settings.gains.xp += day.gains.xp;
-			$scope.play.settings.gains.souvenirs += day.gains.souvenirs;
 
 			// On to the next day
 			$scope.play.day++;
@@ -72,12 +59,8 @@ angular.module('travelPlanningGame.app')
 
 		$scope.skipDay = function() {
 			// Simulate a new day
-			var day = days.newDay($scope.play.settings.finances.budget)
+			var day = days.newDay($scope.play.day, $scope.play.finances)
 				.skip($scope.play.day - 1);
-
-			// Note the repurcussions, if any
-			$scope.play.settings.finances.totalExpense += day.getTotalExpenses();
-			$scope.play.settings.finances.funds -= $scope.play.settings.finances.totalExpense;
 
 			// On to the next day
 			$scope.play.day++;

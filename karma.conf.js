@@ -9,21 +9,21 @@ module.exports = function(config) {
 		frameworks: ['jasmine']
 		, // list of files / patterns to load in the browser
 		files: [
-			'app/bower_components/angular/angular.js',
-			'app/bower_components/angular-mocks/angular-mocks.js',
-			'app/bower_components/angular-resource/angular-resource.js',
-			'app/bower_components/angular-cookies/angular-cookies.js',
-			'app/bower_components/angular-sanitize/angular-sanitize.js',
-			'app/bower_components/angular-route/angular-route.js',
-			'app/bower_components/AngularGM/angular-gm.js',
-			'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-			'app/bower_components/underscore/underscore.js',
-			'app/bower_components/angular-underscore/angular-underscore.js',
+			'app/vendor/angular/angular.js',
+			'app/vendor/angular-mocks/angular-mocks.js',
+			'app/vendor/angular-resource/angular-resource.js',
+			'app/vendor/angular-cookies/angular-cookies.js',
+			'app/vendor/angular-sanitize/angular-sanitize.js',
+			'app/vendor/angular-route/angular-route.js',
+			'app/vendor/AngularGM/angular-gm.js',
+			'app/vendor/angular-bootstrap/ui-bootstrap-tpls.js',
+			'app/vendor/underscore/underscore.js',
+			'app/vendor/angular-underscore/angular-underscore.js',
+			'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
 			'app/scripts/*.js',
 			'app/scripts/**/*.js',
 			'test/mock/**/*.js',
-			'test/spec/**/*.js',
-			'app/templates/*.html'
+			'test/spec/**/*.js'
 		]
 		, // list of files / patterns to exclude
 		exclude: []

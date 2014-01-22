@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('travelPlanningGame.app')
-	.factory('days', function($filter) {
+	.factory('days', function($filter, bankingManager) {
 		var days = [];
 
 		var daysFactory = {};
@@ -11,35 +11,33 @@ angular.module('travelPlanningGame.app')
 		daysFactory.getDay = function(index) {
 			return days[index];
 		};
-		daysFactory.newDay = function(budget) {
+		daysFactory.newDay = function(finances) {
 			var day = {};
-			day.finances = {};
-			day.finances.budget = budget; // in $
-			day.finances.expenses = {};
-			day.finances.expenses.general = 0; // food, lodging etc., in $
-			day.finances.expenses.shopping = 0; // in $
-			day.finances.expenses.random = 0; // from random events, in $
+			day.finances = finances;
 			day.landmarksVisited = []; // list of landmark objects (see landmarks service)
-			day.gains = {};
-			day.gains.xp = 0; // experience points gained
-			day.gains.souvenirs = 0; // number of items purchased by shopping
 
+			day.toTimestamp = function() {
+				return "day" + days.length;
+			};
 			day.addLandmark = function(landmark) {
 				this.landmarksVisited.push(landmark);
-				if(!isLandmarkVisited(landmark)) {
-					this.gains.xp += landmark.exp;
+				if (!isLandmarkVisited(landmark)) {
+					this.finances.addGain(landmark.exp, bankingManager.types.XP, bankingManager.categories.ONETIME,
+						this.toTimestamp());
 				}
-				this.gains.xp += landmark.visitingExp;
-				this.finances.expenses.general += landmark.visitingCost + landmark.lodgingCost;
-				return this;
-			};
-			day.addGeneralExpense = function(expense) {
-				this.finances.expenses.general += expense;
+				this.finances.addGain(landmark.visitingExp, bankingManager.types.XP, bankingManager.categories
+					.VISITING, this.toTimestamp());
+				this.finances.addExpense(landmark.visitingCost, bankingManager.types.MONEY, bankingManager.categories
+					.VISITING, this.toTimestamp());
+				this.finances.addExpense(landmark.lodgingCost, bankingManager.types.MONEY, bankingManager.categories
+					.LODGING, this.toTimestamp());
 				return this;
 			};
 			day.addShopping = function(itemsBought, cost) {
-				this.finances.expense.shopping += cost;
-				this.gains.souvenirs += itemsBought;
+				this.finances.addExpense(cost, bankingManager.types.MONEY, bankingManager.categories.SHOPPING,
+					this.toTimestamp());
+				this.finances.addGain(itemsBought, bankingManager.types.SOUVENIR, bankingManager.categories.SHOPPING,
+					this.toTimestamp());
 				return this;
 			};
 			day.end = function() {
@@ -48,16 +46,14 @@ angular.module('travelPlanningGame.app')
 			};
 			day.skip = function(currentDayIndex) {
 				var previousDayIndex = currentDayIndex - 1;
-				if(previousDayIndex >= 0) {
+				if (previousDayIndex >= 0) {
 					var previousLandmarks = days[previousDayIndex].landmarksVisited;
 					var currentLandmark = previousLandmarks[previousLandmarks.length - 1];
-					this.finances.expenses.general += currentLandmark.lodgingCost;
+					this.finances.addExpense(currentLandmark.lodgingCost, bankingManager.types.MONEY,
+						bankingManager.categories.LODGING, this.toTimestamp());
 				}
 				days.push(this);
 				return day;
-			};
-			day.getTotalExpenses = function() {
-				return this.finances.expenses.general + this.finances.expenses.shopping + this.finances.expenses.random;
 			};
 
 			return day;

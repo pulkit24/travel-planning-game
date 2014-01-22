@@ -38,11 +38,13 @@ describe('Controller: PlayCtrl', function() {
 		expect(scope.settings.game.locations.length).toBe(3);
 	});
 	it('landmarks should be available', function() {
-		expect(scope.landmarks.length).toBe(5);
+		landmarks.get().then(function(data) {
+			expect(data.length).toBe(5);
+		});
 	});
 
 	it('first day budget should be set by default', function() {
-		expect(scope.play.settings.finances.funds).toBe(5000);
+		expect(scope.play.finances.getBudget()).toBe(5000);
 	});
 
 });

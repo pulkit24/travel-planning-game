@@ -6,7 +6,7 @@ angular.module('travelPlanningGame.widgets')
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.resource-indicator.tpl.html'
 			, scope: {
-				ngModel: '='
+				value: '='
 				, role: '@'
 			}
 			, link: function(scope, elem, attrs) {
@@ -15,7 +15,7 @@ angular.module('travelPlanningGame.widgets')
 			, controller: function($scope, $filter) {
 
 				$scope.getValue = function() {
-					return $filter("number")($scope.ngModel);
+					return $filter("number")($scope.value);
 				};
 			}
 		};
@@ -25,7 +25,7 @@ angular.module('travelPlanningGame.widgets')
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.day-counter.tpl.html'
 			, scope: {
-				ngModel: '='
+				value: '='
 				, total: '='
 			}
 		};

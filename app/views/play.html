@@ -1,14 +1,14 @@
 <!-- Game map layer -->
-<div game-map class="layer" ng-model="selectedLandmark" available-locations="landmarks" focal-point="selectedLandmark.coords">
+<div game-map class="layer" ng-model="selectedLandmark" available-locations="landmarks" focal-point="selectedLandmark.coords" show-transit="false">
 </div>
 
 <!-- Game HUD layers -->
 <div class="layer">
-	<div widget-resource-indicator role="budget" ng-model="play.settings.finances.funds"></div>
-	<div widget-resource-indicator role="xp" ng-model="play.settings.gains.xp"></div>
-	<div widget-resource-indicator role="souvenirs" ng-model="play.settings.gains.souvenirs"></div>
+	<div widget-resource-indicator role="budget" value="play.finances.getBudget()"></div>
+	<div widget-resource-indicator role="xp" value="play.finances.getXP()"></div>
+	<div widget-resource-indicator role="souvenirs" value="play.finances.getSouvenirs()"></div>
 </div>
-<div widget-day-counter ng-model="play.day" total="settings.game.daysOfTravel" class="layer"></div>
+<div widget-day-counter value="play.day" total="settings.game.daysOfTravel" class="layer"></div>
 <button class="btn btn-warning btn-lg layer play-button" ng-click="simulateDay()" ng-show="canPlay()">Go!</button>
 <button class="btn btn-default btn-lg layer play-button" ng-click="skipDay()" ng-show="!canPlay()">Skip</button>
 <a href="#/start" class="btn btn-default btn-lg layer back-button">Back</a>

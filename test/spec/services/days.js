@@ -6,24 +6,31 @@ describe('Service: days', function() {
 	beforeEach(module('travelPlanningGame.app'));
 
 	// instantiate service
-	var days, landmarks;
-	beforeEach(inject(function(_days_, _landmarks_) {
+	var days, bankingManager;
+	beforeEach(inject(function(_days_, _bankingManager_) {
 		days = _days_;
-		landmarks = _landmarks_;
+		bankingManager = _bankingManager_;
 	}));
 
 	it('should create a new day', function() {
-		days.newDay(10000).end();
+		var finances = bankingManager.manage('test', 10000);
+		var landmark = {visitingCost: 5000};
+
+		days.newDay(finances).addLandmark(landmark).end();
 		expect(days.getAllDays().length).toBe(1);
-		expect(days.getDay(0).finances.budget).toBe(10000);
+		expect(finances.getBudget()).toBe(5000);
 	});
 
 	it('should detect already visited landmarks', function() {
-		days.newDay(10000).addLandmark(landmarks.getLandmarks()[0]).end();
-		expect(days.getAllDays().length).toBe(1);
-		expect(days.getDay(0).gains.xp).toBe(25);
-		expect(days.getDay(0).finances.expenses.general).toBe(300);
-		days.newDay(10000).addLandmark(landmarks.getLandmarks()[0]).end();
-		expect(days.getDay(1).gains.xp).toBe(5);
+		var finances = bankingManager.manage('test', 10000);
+		var landmark1 = {id: 1, exp: 10};
+		var landmark2 = {id: 2, exp: 5};
+
+		days.newDay(finances).addLandmark(landmark1).end();
+		expect(finances.getXP()).toBe(10);
+		days.newDay(finances).addLandmark(landmark1).end();
+		expect(finances.getXP()).toBe(10);
+		days.newDay(finances).addLandmark(landmark2).end();
+		expect(finances.getXP()).toBe(15);
 	});
 });

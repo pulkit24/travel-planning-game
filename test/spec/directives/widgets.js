@@ -4,7 +4,6 @@ describe('Directive: widgets', function() {
 
 	// load the directive's module
 	beforeEach(module('travelPlanningGame.widgets'));
-	beforeEach(module('templates'));
 
 	var element,
 			scope;
