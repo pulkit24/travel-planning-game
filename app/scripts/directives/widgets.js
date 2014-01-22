@@ -6,16 +6,18 @@ angular.module('travelPlanningGame.widgets')
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.resource-indicator.tpl.html'
 			, scope: {
-				value: '='
-				, role: '@'
+				resources: '='
+				, type: '@'
+				, category: "@"
 			}
 			, link: function(scope, elem, attrs) {
-				scope.icon = scope.role === 'budget' ? 'dollar' : (scope.role === 'xp' ? 'star' : 'shopping-cart');
+				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
+					'shopping-cart');
 			}
-			, controller: function($scope, $filter) {
-
+			, controller: function($scope, $filter, resources) {
 				$scope.getValue = function() {
-					return $filter("number")($scope.value);
+					return $filter("number")($scope.resources.get(resources.categories[$scope.category],
+						resources.types[$scope.type]));
 				};
 			}
 		};
@@ -24,9 +26,10 @@ angular.module('travelPlanningGame.widgets')
 		return {
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.day-counter.tpl.html'
-			, scope: {
-				value: '='
-				, total: '='
+			, scope: {}
+			, controller: function($scope, timer) {
+				$scope.now = timer.now();
+				$scope.limits = timer.getLimits();
 			}
 		};
 	});

@@ -21,6 +21,8 @@ angular.module('travelPlanningGame.maps')
 			}
 			, controller: function($scope, $q, $filter, angulargmContainer, angulargmUtils, mapGeocoder,
 				mapStyles, rome2rio) {
+				if(angular.isUndefined(google)) return;
+
 				// Initialise all fixed map parameters
 				$scope.map = {};
 				$scope.map.zoom = 12;
@@ -30,20 +32,38 @@ angular.module('travelPlanningGame.maps')
 
 				// Change location as needed
 				$scope.selectLocation = function(location, marker) {
+
+					// Note the previous location for directions measurement
 					var previousLocation = $scope.ngModel;
 
+					// Update the location
 					$scope.ngModel = location;
+					$scope.focalPoint = location; // focus on it
 
-					// Test: use Rome2Rio to get the travel cost
+					// Use Rome2Rio to get the travel cost
 					if (previousLocation) {
 						rome2rio.search(previousLocation.name, location.name,
 							rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng), rome2rio.toPosition(
 								location.coords.lat, location.coords.lng))
 							.then(function(routes) {
-								alert(routes.getCost());
+
+
+								new google.maps.DirectionsService().route({
+									origin: rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng)
+									, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
+									, travelMode: google.maps.TravelMode.DRIVING
+								}, function(result, status) {
+									if (status == google.maps.DirectionsStatus.OK) {
+										var x = new google.maps.DirectionsRenderer();
+										x.setMap(marker.getMap());
+										x.setDirections(result);
+									}
+								});
+
+
+
+
 							});
-					} else {
-						alert("no cost");
 					}
 				};
 				$scope.$watch("ngModel", function() {
@@ -58,6 +78,15 @@ angular.module('travelPlanningGame.maps')
 					gmap.zoom = $scope.map.zoom;
 					gmap.setOptions({
 						styles: $scope.map.styles
+						, panControl: false
+						, scaleControl: false
+						, mapTypeControl: false
+						, streetViewControl: false
+						, overviewMapControl: false
+						, zoomControlOptions: {
+							style: google.maps.ZoomControlStyle.SMALL
+							, position: google.maps.ControlPosition.RIGHT_CENTER
+						}
 					});
 
 					// Show transit layer
@@ -92,10 +121,32 @@ angular.module('travelPlanningGame.maps')
 
 					// Focus on the focal point, whenever provided
 					$scope.$watch('focalPoint', function(newValue) {
-						if (newValue && newValue.lat && newValue.lng) {
-							gmap.panTo(angulargmUtils.objToLatLng(newValue));
+						if (newValue && newValue.coords) {
+							gmap.panTo(angulargmUtils.objToLatLng(newValue.coords));
 						}
 					});
+
+					// // Draw the directions whenever available from
+					// $scope.$watch('directions', function(newValue) {
+					// 	if (newValue) {
+
+
+					// 		// $scope.directions_plotted = [];
+
+					// 		// angular.forEach(newValue, function(path, index) {
+					// 		// 	this.push(
+					// 		// 		new google.maps.Polyline({
+					// 		// 			path: google.maps.geometry.encoding.decodePath(path)
+					// 		// 			, map: gmap
+					// 		// 			, clickable: false
+					// 		// 			, strokeColor: '#288536'
+					// 		// 			, strokeOpacity: 0.8
+					// 		// 			, strokeWeight: 4
+					// 		// 		})
+					// 		// 	);
+					// 		// }, $scope.directions_plotted);
+					// 	}
+					// });
 				});
 
 				// Construct an info window for the landmark label

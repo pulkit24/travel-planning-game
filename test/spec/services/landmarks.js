@@ -2,25 +2,31 @@
 
 describe('Service: landmarks', function() {
 
-	// load the service's module
+	// load the directive's module
 	beforeEach(module('travelPlanningGame.app'));
 
-	// instantiate service
-	var landmarks, $httpBackend;
-	beforeEach(inject(function(_landmarks_, _$httpBackend_) {
+	var landmarks, resources, $httpBackend;
+
+	beforeEach(inject(function(_landmarks_, _resources_, _$httpBackend_) {
 		landmarks = _landmarks_;
+		resources = _resources_;
 		$httpBackend = _$httpBackend_;
 	}));
 
-	it('should fetch landmarks', function() {
+	it('should have some landmarks', inject(function() {
 		$httpBackend.expectGET('landmarks.json').respond([{
 			'name': 'Landmark 1'
-		}, {
-			'name': 'Landmark 2'
+			, 'visitingCost': '100'
+			, 'lodgingCost': '500'
+			, 'visitingExp': '10'
+			, 'souvenirs': '10'
+			, 'souvenirCost': '299'
+			, 'exp': '15'
 		}]);
-		landmarks.get().then(function(data) {
-			expect(data.length).toBe(2);
-		});
-	});
 
+		landmarks.get().then(function(landmarks) {
+			expect(landmarks.length).toBe(1);
+			expect(landmarks[0].resources[resources.categories.VISITING][resources.types.XP]).toBe('10');
+		});
+	}));
 });

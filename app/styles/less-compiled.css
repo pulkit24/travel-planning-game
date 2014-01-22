@@ -1,0 +1,90 @@
+/* Variables */
+
+/* Styles */
+
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #777;
+}
+
+.game-container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.layer {
+  position: absolute;
+}
+
+.play-button {
+  right: 0;
+  bottom: 0;
+  width: 30%;
+}
+
+.play-button .btn {
+  width: 100%;
+}
+
+.back-button {
+  bottom: 0;
+  left: 0;
+}
+
+.sidebar {
+  top: 75px;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background-color: #FFEDD4;
+}
+
+a.accordion-toggle {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-top-bar {
+  width: 100%;
+  height: 75px;
+  color: white;
+  background-color: #395363;
+}
+
+.menu-top-bar h1 {
+  padding: 0;
+  margin: 0;
+  line-height: 75px;
+  white-space: nowrap;
+  animation: flight-schedule-marquee 4s linear infinite;
+}
+
+@keyframes flight-schedule-marquee {
+  from {
+    margin-left: 800px;
+  }
+  to {
+    margin-left: -400px;
+  }
+}
+
+.alert-notice {
+  right: 0;
+  width: 70%;
+  background-color: #fc9526;
+}
+
+.alert-notice .alert-main {
+  width: 40%;
+}
+
+.alert-notice .alert-side {
+  width: 30%;
+  background-color: #231200;
+}

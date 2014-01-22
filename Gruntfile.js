@@ -11,8 +11,8 @@ module.exports = function(grunt) {
 			}
 			, jsLocal: {
 				src: [
-					'app/scripts/components/*.js', 'app/scripts/app.settings.js', 'app/scripts/app.maps.js',
-					'app/scripts/app.widgets.js', 'app/scripts/app.js', 'app/scripts/filters/*.js',
+					'app/scripts/components/*.js', 'app/scripts/app.*.js', 'app/scripts/app.js',
+					'app/scripts/filters/*.js',
 					'app/scripts/services/*.js', 'app/scripts/directives/*.js', 'app/scripts/controllers/*.js',
 					'<%= html2js.main.dest %>'
 				]
@@ -64,6 +64,25 @@ module.exports = function(grunt) {
 				files: {
 					'<%= concat.jsLocal.dest %>': ['<%= concat.jsLocal.dest %>']
 				}
+			}
+		}
+		, autoprefixer: {
+			options: {
+				browsers: ['last 2 versions', 'ie 8', 'ie 9']
+			}
+			, css: {
+				src: '<%= concat.css.dest %>'
+				, dest: '<%= concat.css.dest %>'
+			}
+		}
+		, recess: {
+			dist: {
+				options: {
+					compile: true
+					, includePath: 'app/styles'
+				}
+				, src: 'app/styles/{,*/}*.less'
+				, dest: 'app/styles/less-compiled.css'
 			}
 		}
 		, cssmin: {
@@ -140,16 +159,18 @@ module.exports = function(grunt) {
 			js: {
 				files: ['app/scripts/{,*/}*.js']
 				, tasks: [
-					'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'copy:build', 'clean:post'
+					'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'copy:build', 'clean:post',
+					'targethtml'
 				]
 				, options: {
 					livereload: true
 				}
 			}
 			, css: {
-				files: ['app/styles/{,*/}*.css']
+				files: ['app/styles/{,*/}*.css', 'app/styles/{,*/}*.less']
 				, tasks: [
-					'concat_all', 'cssmin', 'clean:post'
+					'concat_byAuthor', 'concat_all', 'autoprefixer', 'cssmin', 'copy:build', 'clean:post',
+					'targethtml'
 				]
 				, options: {
 					livereload: true
@@ -176,10 +197,35 @@ module.exports = function(grunt) {
 				files: ['test/spec/{,*/}*.js']
 				, tasks: ['karma']
 			}
+			, dev: {
+				files: [
+					'app/scripts/{,*/}*.js', 'app/styles/{,*/}*.css', 'app/styles/{,*/}*.less', 'app/templates/*.html'
+				]
+				, tasks: [
+					'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build', 'targethtml'
+				]
+				, options: {
+					livereload: true
+				}
+			}
 		}
 		, karma: {
 			unit: {
 				configFile: 'karma.conf.js'
+			}
+		}
+		, targethtml: {
+			main: {
+				options: {
+					curlyTags: {
+						date: '<%= grunt.template.today("yyyymmddHHMMss") %>'
+						, blockStart: '<!--(if target main)>'
+						, blockEnd: '<!(endif)-->'
+					}
+				}
+				, files: {
+					'app/index.html': 'app/index.src.html'
+				}
 			}
 		}
 	});
@@ -195,21 +241,26 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-ngmin');
 	grunt.loadNpmTasks('grunt-html2js');
 	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-autoprefixer');
+	grunt.loadNpmTasks('grunt-targethtml');
+	grunt.loadNpmTasks('grunt-recess');
 
 	grunt.registerTask('concat_byAuthor', [
 		'concat:jsLocal', 'concat:jsVendor'
 	]);
 	grunt.registerTask('concat_all', [
-		'concat:js', 'concat:css'
+		'concat:js', 'recess', 'concat:css'
 	]);
 	grunt.registerTask('test', [
 		'connect:test', 'karma'
 	]);
 	grunt.registerTask('default', [
-		'clean:pre', 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'cssmin',
-		'copy:build', 'clean:post', 'concurrent:main'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'autoprefixer',
+		'cssmin',
+		'copy:build', 'clean:post', 'targethtml', 'concurrent:main'
 	]);
 	grunt.registerTask('dev', [
-		'clean:pre', 'html2js', 'concat_byAuthor', 'concat_all', 'copy:build', 'connect:dev:keepalive'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build',
+		'targethtml', 'connect:dev', 'watch:dev'
 	]);
 };
