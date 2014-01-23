@@ -40,6 +40,10 @@ angular.module("travelPlanningGame.app")
 			$scope.current.state = "menu";
 		};
 
+		$scope.getDay = function() {
+			return timer.now().day;
+		};
+
 		/////////////////
 		// Game turns //
 		/////////////////
@@ -53,14 +57,15 @@ angular.module("travelPlanningGame.app")
 			if ($scope.settings.sandboxMode)
 				return giveReason ? null : true;
 
-			// Days left?
-			if (timer.isLast())
-				return giveReason ? 'Your trip is over.' : false;
-
-			// Funds left?
-			if (!resources.canDelta(resources, resources.categories.ALL, $scope.locations.selected.resources,
+			// Funds left for visiting?
+			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
 				resources.categories.VISITING))
 				return giveReason ? 'Not enough funds for visiting this landmark.' : false;
+
+			// If EOD, funds left for lodging?
+			if (timer.isEOD() && !resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
+				resources.categories.LODGING))
+				return giveReason ? 'Not enough funds for lodging around here.' : false;
 
 			return giveReason ? null : true;
 		};
@@ -78,7 +83,7 @@ angular.module("travelPlanningGame.app")
 		};
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
-			if (!resources.canDelta(resources, resources.categories.ALL, $scope.current.location.resources,
+			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.SHOPPING))
 				return giveReason ? 'Not enough funds for shopping today.' : false;
 
@@ -87,10 +92,26 @@ angular.module("travelPlanningGame.app")
 		$scope.game.shop = function() {
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				resources.category.SHOPPING);
+				resources.categories.SHOPPING);
 		};
 		$scope.game.endTurn = function() {
+			// Is this EOD? Charge for lodging
+			if (timer.isEOD())
+				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+					resources.categories.LODGING);
+
+			// Days left?
+			if (timer.isLast())
+				$scope.game.end();;
+
 			// Next turn this day
+			timer.next();
+
+			// Close the side bar
+			$scope.isInTurn = false;
+
+			// Un-set as current location [FIXME]
+			$scope.locations.selected = null;
 		};
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false

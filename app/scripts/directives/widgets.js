@@ -26,10 +26,15 @@ angular.module('travelPlanningGame.widgets')
 		return {
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.day-counter.tpl.html'
-			, scope: {}
+			, scope: {
+				day: "="
+			}
 			, controller: function($scope, timer) {
-				$scope.now = timer.now();
-				$scope.limits = timer.getLimits();
+
+				$scope.$watch("day", function(newValue) {
+					$scope.now = timer.now();
+					$scope.limits = timer.getLimits();
+				});
 			}
 		};
 	});

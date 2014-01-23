@@ -64,12 +64,12 @@
 
 	<!-- Game board -->
 	<div class="layer">
-		<div disabled game-map focal-point="current.location" ng-model="locations.selected" available-locations="locations.landmarks"></div>
+		<div game-map focal-point="current.location" ng-model="locations.selected" available-locations="locations.landmarks"></div>
 	</div>
 	<!-- end game board -->
 
 	<!-- Alert requesting you to select your starting location -->
-	<div class="layer alert-notice" ng-if="!current.location">
+<!-- 	<div class="layer alert-notice" ng-if="!current.location">
 			<div class="alert-main">
 			<h4>Where do you start?</h4>
 			<p>Select your hotel location on the map.</p>
@@ -79,24 +79,15 @@
 			<p>and start from the airport</p>
 		</div>
 	</div>
-
+ -->
 	<!-- Selected landmark card -->
 	<div landmark-card landmark="locations.selected" ng-show="locations.selected" class="layer"></div>
 	<!-- end landmark card -->
 
-	<!-- Resource indicators -->
-	<div class="layer">
-		<div widget-resource-indicator type="MONEY" category="ALL" resources="resources"></div>
-		<div widget-resource-indicator type="XP" category="ALL" resources="resources"></div>
-		<div widget-resource-indicator type="SOUVENIR" category="ALL" resources="resources"></div>
-	</div>
-	<!-- Time indicators -->
-	<div widget-day-counter class="layer"></div>
-
 	<!-- Sidebar for turn options -->
-	<div class="layer sidebar" ng-if="isInTurn">
+	<div class="layer sidebar turn-sidebar" ng-if="isInTurn">
 		<!-- Shopping option -->
-		<div>
+		<div class="turn-option">
 			<img src="http://placehold.it/100x100" />Singaporean Pineapple
 			<button type="button" class="btn btn-default" ng-click="shop.shop()" ng-disabled="!game.canShop()">
 				{{ whyCantI(game.canShop) || "Buy" }}
@@ -105,13 +96,22 @@
 		<!-- end shopping option -->
 
 		<!-- Optional features -->
-		<div ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'topn">
+		<div class="turn-option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
 			<h4>Optional</h4>
 			{{ bonus.flavour }}
 			<button type="button" class="btn btn-default">Play</button>
 		</div>
 	</div>
 	<!-- end turn sidebar -->
+
+	<!-- Resource indicators -->
+	<div class="layer">
+		<div widget-resource-indicator type="MONEY" category="ALL" resources="resources"></div>
+		<div widget-resource-indicator type="XP" category="ALL" resources="resources"></div>
+		<div widget-resource-indicator type="SOUVENIR" category="ALL" resources="resources"></div>
+	</div>
+	<!-- Time indicators -->
+	<div widget-day-counter day="getDay()" class="layer"></div>
 
 	<!-- Start turn button -->
 	<div class="layer play-button" ng-if="!isInTurn">
@@ -122,7 +122,7 @@
 	<!-- end start button -->
 
 	<!-- End turn button -->
-	<div class="layer play-button" ng-if="!sInTurn">
+	<div class="layer play-button" ng-if="isInTurn">
 		<button type="button" class="btn btn-lg btn-default" ng-click="game.endTurn()">
 			End Turn
 		</button>
@@ -131,3 +131,8 @@
 
 </div>
 <!-- end play page -->
+
+<!-- Stats page -->
+<div ng-if="current.state === 'stats'">
+	<h1>Game over!</h1>
+</div>

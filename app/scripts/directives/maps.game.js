@@ -21,7 +21,7 @@ angular.module('travelPlanningGame.maps')
 			}
 			, controller: function($scope, $q, $filter, angulargmContainer, angulargmUtils, mapGeocoder,
 				mapStyles, rome2rio) {
-				if(angular.isUndefined(google)) return;
+				if (angular.isUndefined(google)) return;
 
 				// Initialise all fixed map parameters
 				$scope.map = {};
@@ -31,42 +31,62 @@ angular.module('travelPlanningGame.maps')
 				$scope.map.styles = mapStyles.routeXL;
 
 				// Change location as needed
+				$scope.currentLocation = null;
 				$scope.selectLocation = function(location, marker) {
 
 					// Note the previous location for directions measurement
-					var previousLocation = $scope.ngModel;
+					// var currentLocation = $scope.ngModel;
+					if (!$scope.currentLocation) {
+						mapGeocoder.toCoords("Singapore")
+							.then(function(coords) {
+								// Add the coords into the location
+								$scope.currentLocation = {};
+								$scope.currentLocation.coords = angular.copy(coords);
+							});
+					}
 
 					// Update the location
 					$scope.ngModel = location;
 					$scope.focalPoint = location; // focus on it
 
 					// Use Rome2Rio to get the travel cost
-					if (previousLocation) {
-						rome2rio.search(previousLocation.name, location.name,
-							rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng), rome2rio.toPosition(
+					if ($scope.currentLocation) {
+						rome2rio.search($scope.currentLocation.name, location.name,
+							rome2rio.toPosition($scope.currentLocation.coords.lat, $scope.currentLocation.coords.lng), rome2rio.toPosition(
 								location.coords.lat, location.coords.lng))
 							.then(function(routes) {
 
-
-								new google.maps.DirectionsService().route({
-									origin: rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng)
-									, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
-									, travelMode: google.maps.TravelMode.DRIVING
-								}, function(result, status) {
-									if (status == google.maps.DirectionsStatus.OK) {
-										var x = new google.maps.DirectionsRenderer();
-										x.setMap(marker.getMap());
-										x.setDirections(result);
-									}
+								// Use route from Rome2Rio
+								angular.forEach(routes.getPaths(), function(path, index) {
+									new google.maps.Polyline({
+										strokeColor: '#3ABA3A'
+										, strokeOpacity: 1.0
+										, strokeWeight: 5
+										, map: marker.getMap()
+										, path: google.maps.geometry.encoding.decodePath(path)
+									});
 								});
 
-
-
-
+								// Fetch route from Google
+								// new google.maps.DirectionsService().route({
+								// 	origin: rome2rio.toPosition(currentLocation.coords.lat, currentLocation.coords.lng)
+								// 	, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
+								// 	, travelMode: google.maps.TravelMode.DRIVING
+								// }, function(result, status) {
+								// 	if (status === google.maps.DirectionsStatus.OK) {
+								// 		var x = new google.maps.DirectionsRenderer();
+								// 		x.setMap(marker.getMap());
+								// 		x.setDirections(result);
+								// 	}
+								// });
 							});
 					}
 				};
-				$scope.$watch("ngModel", function() {
+				$scope.$watch("ngModel", function(newValue, oldValue) {
+					// If being unset, record as current location internally
+					if(!newValue && oldValue)
+						$scope.currentLocation = oldValue;
+
 					// Update the markers being displayed on the map
 					$scope.$broadcast('gmMarkersUpdate');
 				});

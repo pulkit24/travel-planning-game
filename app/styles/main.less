@@ -1,5 +1,6 @@
 /* Variables */
  @game-width: 800px;
+ @game-height: ((@game-width * 3) / 4);
  @hud-top-height: 75px;
  @sidebar-width: 30%;
  @menu-bar-colour: #395363;
@@ -16,7 +17,7 @@
 	overflow: hidden;
 	margin: 0 auto;
 	width: @game-width;
-	height: ((@game-width * 3) / 4);
+	height: @game-height;
 	border: 1px solid #eee;
 }
 .layer {
@@ -41,6 +42,18 @@
 	height: 100%;
 	background-color: #FFEDD4;
 }
+
+.turn-sidebar {
+	top: 0;
+	padding-top: (@game-height / 3.2);
+	.turn-option {
+		margin-bottom: 2px;
+		height: (@game-height / 3.2);
+		background-color: #92CED1;
+		padding: 10px;
+	}
+}
+
 a.accordion-toggle {
 	display: block;
 	text-decoration: none;

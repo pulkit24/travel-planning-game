@@ -4455,14 +4455,14 @@ angular.module("travelPlanningGame.app")
 			if (isLast())
 				return false;
 
-			var nextDay = _isEOD() ? (current.day + 1) : current.day;
-			var nextTime = _isEOD() ? 1 : (current.time + 1);
+			var nextDay = isEOD() ? (current.day + 1) : current.day;
+			var nextTime = isEOD() ? 1 : (current.time + 1);
 
 			current = new Time(nextDay, nextTime);
 			return true;
 		}
 
-		function _isEOD() {
+		function isEOD() {
 			return current.time === limits.times;
 		}
 
@@ -4471,7 +4471,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function isLast() {
-			return _isLastDay() && _isEOD();
+			return _isLastDay() && isEOD();
 		}
 
 		return {
@@ -4480,6 +4480,7 @@ angular.module("travelPlanningGame.app")
 			, start: start
 			, next: next
 			, isLast: isLast
+			, isEOD: isEOD
 			, now: getCurrent
 			, toTimestamp: getTimestamp
 			, fromTimestamp: fromTimestamp
@@ -4524,7 +4525,7 @@ angular.module('travelPlanningGame.maps')
 			}
 			, controller: function($scope, $q, $filter, angulargmContainer, angulargmUtils, mapGeocoder,
 				mapStyles, rome2rio) {
-				if(angular.isUndefined(google)) return;
+				if (angular.isUndefined(google)) return;
 
 				// Initialise all fixed map parameters
 				$scope.map = {};
@@ -4534,42 +4535,62 @@ angular.module('travelPlanningGame.maps')
 				$scope.map.styles = mapStyles.routeXL;
 
 				// Change location as needed
+				$scope.currentLocation = null;
 				$scope.selectLocation = function(location, marker) {
 
 					// Note the previous location for directions measurement
-					var previousLocation = $scope.ngModel;
+					// var currentLocation = $scope.ngModel;
+					if (!$scope.currentLocation) {
+						mapGeocoder.toCoords("Singapore")
+							.then(function(coords) {
+								// Add the coords into the location
+								$scope.currentLocation = {};
+								$scope.currentLocation.coords = angular.copy(coords);
+							});
+					}
 
 					// Update the location
 					$scope.ngModel = location;
 					$scope.focalPoint = location; // focus on it
 
 					// Use Rome2Rio to get the travel cost
-					if (previousLocation) {
-						rome2rio.search(previousLocation.name, location.name,
-							rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng), rome2rio.toPosition(
+					if ($scope.currentLocation) {
+						rome2rio.search($scope.currentLocation.name, location.name,
+							rome2rio.toPosition($scope.currentLocation.coords.lat, $scope.currentLocation.coords.lng), rome2rio.toPosition(
 								location.coords.lat, location.coords.lng))
 							.then(function(routes) {
 
-
-								new google.maps.DirectionsService().route({
-									origin: rome2rio.toPosition(previousLocation.coords.lat, previousLocation.coords.lng)
-									, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
-									, travelMode: google.maps.TravelMode.DRIVING
-								}, function(result, status) {
-									if (status == google.maps.DirectionsStatus.OK) {
-										var x = new google.maps.DirectionsRenderer();
-										x.setMap(marker.getMap());
-										x.setDirections(result);
-									}
+								// Use route from Rome2Rio
+								angular.forEach(routes.getPaths(), function(path, index) {
+									new google.maps.Polyline({
+										strokeColor: '#3ABA3A'
+										, strokeOpacity: 1.0
+										, strokeWeight: 5
+										, map: marker.getMap()
+										, path: google.maps.geometry.encoding.decodePath(path)
+									});
 								});
 
-
-
-
+								// Fetch route from Google
+								// new google.maps.DirectionsService().route({
+								// 	origin: rome2rio.toPosition(currentLocation.coords.lat, currentLocation.coords.lng)
+								// 	, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
+								// 	, travelMode: google.maps.TravelMode.DRIVING
+								// }, function(result, status) {
+								// 	if (status === google.maps.DirectionsStatus.OK) {
+								// 		var x = new google.maps.DirectionsRenderer();
+								// 		x.setMap(marker.getMap());
+								// 		x.setDirections(result);
+								// 	}
+								// });
 							});
 					}
 				};
-				$scope.$watch("ngModel", function() {
+				$scope.$watch("ngModel", function(newValue, oldValue) {
+					// If being unset, record as current location internally
+					if(!newValue && oldValue)
+						$scope.currentLocation = oldValue;
+
 					// Update the markers being displayed on the map
 					$scope.$broadcast('gmMarkersUpdate');
 				});
@@ -4738,20 +4759,25 @@ angular.module('travelPlanningGame.widgets')
 		return {
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.day-counter.tpl.html'
-			, scope: {}
+			, scope: {
+				day: "="
+			}
 			, controller: function($scope, timer) {
-				$scope.now = timer.now();
-				$scope.limits = timer.getLimits();
+
+				$scope.$watch("day", function(newValue) {
+					$scope.now = timer.now();
+					$scope.limits = timer.getLimits();
+				});
 			}
 		};
 	});
 
 angular.module("travelPlanningGame.app")
 	.controller("BootCtrl", function($scope) {
-			$scope.isReady = function() {
-				return angular.isDefined(google));
+		$scope.isReady = function() {
+			return angular.isDefined(google);
 		};
-});
+	});
 
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, timer, landmarks, resources) {
@@ -4795,6 +4821,10 @@ angular.module("travelPlanningGame.app")
 			$scope.current.state = "menu";
 		};
 
+		$scope.getDay = function() {
+			return timer.now().day;
+		};
+
 		/////////////////
 		// Game turns //
 		/////////////////
@@ -4808,14 +4838,15 @@ angular.module("travelPlanningGame.app")
 			if ($scope.settings.sandboxMode)
 				return giveReason ? null : true;
 
-			// Days left?
-			if (timer.isLast())
-				return giveReason ? 'Your trip is over.' : false;
-
-			// Funds left?
-			if (!resources.canDelta(resources, resources.categories.ALL, $scope.locations.selected.resources,
+			// Funds left for visiting?
+			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
 				resources.categories.VISITING))
 				return giveReason ? 'Not enough funds for visiting this landmark.' : false;
+
+			// If EOD, funds left for lodging?
+			if (timer.isEOD() && !resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
+				resources.categories.LODGING))
+				return giveReason ? 'Not enough funds for lodging around here.' : false;
 
 			return giveReason ? null : true;
 		};
@@ -4833,7 +4864,7 @@ angular.module("travelPlanningGame.app")
 		};
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
-			if (!resources.canDelta(resources, resources.categories.ALL, $scope.current.location.resources,
+			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.SHOPPING))
 				return giveReason ? 'Not enough funds for shopping today.' : false;
 
@@ -4842,10 +4873,26 @@ angular.module("travelPlanningGame.app")
 		$scope.game.shop = function() {
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				resources.category.SHOPPING);
+				resources.categories.SHOPPING);
 		};
 		$scope.game.endTurn = function() {
+			// Is this EOD? Charge for lodging
+			if (timer.isEOD())
+				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+					resources.categories.LODGING);
+
+			// Days left?
+			if (timer.isLast())
+				$scope.game.end();;
+
 			// Next turn this day
+			timer.next();
+
+			// Close the side bar
+			$scope.isInTurn = false;
+
+			// Un-set as current location [FIXME]
+			$scope.locations.selected = null;
 		};
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false

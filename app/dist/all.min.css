@@ -144,6 +144,18 @@ body {
   background-color: #FFEDD4;
 }
 
+.turn-sidebar {
+  top: 0;
+  padding-top: 187.5px;
+}
+
+.turn-sidebar .turn-option {
+  height: 187.5px;
+  padding: 10px;
+  margin-bottom: 2px;
+  background-color: #92CED1;
+}
+
 a.accordion-toggle {
   display: block;
   text-decoration: none;

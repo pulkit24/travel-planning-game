@@ -59,14 +59,14 @@ angular.module("travelPlanningGame.app")
 			if (isLast())
 				return false;
 
-			var nextDay = _isEOD() ? (current.day + 1) : current.day;
-			var nextTime = _isEOD() ? 1 : (current.time + 1);
+			var nextDay = isEOD() ? (current.day + 1) : current.day;
+			var nextTime = isEOD() ? 1 : (current.time + 1);
 
 			current = new Time(nextDay, nextTime);
 			return true;
 		}
 
-		function _isEOD() {
+		function isEOD() {
 			return current.time === limits.times;
 		}
 
@@ -75,7 +75,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function isLast() {
-			return _isLastDay() && _isEOD();
+			return _isLastDay() && isEOD();
 		}
 
 		return {
@@ -84,6 +84,7 @@ angular.module("travelPlanningGame.app")
 			, start: start
 			, next: next
 			, isLast: isLast
+			, isEOD: isEOD
 			, now: getCurrent
 			, toTimestamp: getTimestamp
 			, fromTimestamp: fromTimestamp
