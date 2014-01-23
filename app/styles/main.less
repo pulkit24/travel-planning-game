@@ -1,0 +1,94 @@
+/* Variables */
+ @game-width: 800px;
+ @game-height: ((@game-width * 3) / 4);
+ @hud-top-height: 75px;
+ @sidebar-width: 30%;
+ @menu-bar-colour: #395363;
+ @alert-background-colour: #FC9526;
+
+/* Styles */
+ body {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	background-color: #777;
+}
+.game-container {
+	position: relative;
+	overflow: hidden;
+	margin: 0 auto;
+	width: @game-width;
+	height: @game-height;
+	border: 1px solid #eee;
+}
+.layer {
+	position: absolute;
+}
+.play-button {
+	right: 0;
+	bottom: 0;
+	width: @sidebar-width;
+	.btn {
+		width: 100%;
+	}
+}
+.back-button {
+	bottom: 0;
+	left: 0;
+}
+.sidebar {
+	top: @hud-top-height;
+	right: 0;
+	width: @sidebar-width;
+	height: 100%;
+	background-color: #FFEDD4;
+}
+
+.turn-sidebar {
+	top: 0;
+	padding-top: (@game-height / 3.2);
+	.turn-option {
+		margin-bottom: 2px;
+		height: (@game-height / 3.2);
+		background-color: #92CED1;
+		padding: 10px;
+	}
+}
+
+a.accordion-toggle {
+	display: block;
+	text-decoration: none;
+	cursor: pointer;
+}
+.menu-top-bar {
+	width: 100%;
+	height: @hud-top-height;
+	background-color: @menu-bar-colour;
+	color: white;
+	h1 {
+		line-height: @hud-top-height;
+		white-space: nowrap;
+		margin: 0;
+		padding: 0;
+		animation: flight-schedule-marquee 4s linear infinite;
+	}
+}
+@keyframes flight-schedule-marquee {
+	from {
+		margin-left: @game-width;
+	}
+	to {
+		margin-left: (-1 * @game-width) / 2;
+	}
+}
+.alert-notice {
+	background-color: @alert-background-colour;
+	right: 0;
+	width: (100% - @sidebar-width);
+	.alert-main {
+		width: (100% - (2 * @sidebar-width));
+	}
+	.alert-side {
+		background-color: darken(@alert-background-colour, 50%);
+		width: @sidebar-width;
+	}
+}

@@ -1,0 +1,138 @@
+<!-- Menu page stuff -->
+<div ng-if="current.state === 'menu'">
+
+	<!-- Sidebar for more settings -->
+	<div class="layer sidebar">
+		<accordion close-others="'true'">
+
+			<!-- Initial configuration -->
+			<accordion-group heading="Budget" is-open="true">
+				<form>
+
+					<!-- Budget -->
+					<div class="form-group">
+						<label for="menu-budget">Money</label>
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							<input type="number" id="menu-budget" class="form-control" ng-model="settings.budget" min="100" step="100"
+							required />
+						</div>
+					</div>
+					<!-- end of budget -->
+
+					<!-- Days of travel -->
+					<div class="form-group">
+						<label for="menu-days">Days Travelling</label>
+						<input type="number" id="menu-days" class="form-control" ng-model="settings.travelDays" min="1" step="1"
+						required />
+					</div>
+					<!-- end of days -->
+
+				</form>
+			</accordion-group>
+			<!-- end of initial config -->
+
+			<!-- Upgrades -->
+			<accordion-group heading="Upgrades (Locked)">
+				<em>Unlock these awesome upgrades by playing!</em>
+			</accordion-group>
+			<!-- end of upgrades -->
+
+		</accordion>
+	</div>
+	<!-- end settings sidebar -->
+
+	<!-- Start game button -->
+	<div class="layer play-button">
+		<button type="button" class="btn btn-lg btn-primary" ng-click="game.start()">
+			Start
+		</button>
+	</div>
+	<!-- end start button -->
+
+	<!-- Selected destination -->
+	<div class="layer menu-top-bar">
+		<h1>Destination: {{ current.city }}</h1>
+	</div>
+	<!-- end selected destination -->
+
+</div>
+<!-- end menu page -->
+
+<!-- Play page -->
+<div ng-if="current.state === 'playing'">
+
+	<!-- Game board -->
+	<div class="layer">
+		<div game-map focal-point="current.location" ng-model="locations.selected" available-locations="locations.landmarks"></div>
+	</div>
+	<!-- end game board -->
+
+	<!-- Alert requesting you to select your starting location -->
+<!-- 	<div class="layer alert-notice" ng-if="!current.location">
+			<div class="alert-main">
+			<h4>Where do you start?</h4>
+			<p>Select your hotel location on the map.</p>
+		</div>
+		<div class="alert-side">
+			<h4>Skip</h4>
+			<p>and start from the airport</p>
+		</div>
+	</div>
+ -->
+	<!-- Selected landmark card -->
+	<div landmark-card landmark="locations.selected" ng-show="locations.selected" class="layer"></div>
+	<!-- end landmark card -->
+
+	<!-- Sidebar for turn options -->
+	<div class="layer sidebar turn-sidebar" ng-if="isInTurn">
+		<!-- Shopping option -->
+		<div class="turn-option">
+			<img src="http://placehold.it/100x100" />Singaporean Pineapple
+			<button type="button" class="btn btn-default" ng-click="shop.shop()" ng-disabled="!game.canShop()">
+				{{ whyCantI(game.canShop) || "Buy" }}
+			</button>
+		</div>
+		<!-- end shopping option -->
+
+		<!-- Optional features -->
+		<div class="turn-option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
+			<h4>Optional</h4>
+			{{ bonus.flavour }}
+			<button type="button" class="btn btn-default">Play</button>
+		</div>
+	</div>
+	<!-- end turn sidebar -->
+
+	<!-- Resource indicators -->
+	<div class="layer">
+		<div widget-resource-indicator type="MONEY" category="ALL" resources="resources"></div>
+		<div widget-resource-indicator type="XP" category="ALL" resources="resources"></div>
+		<div widget-resource-indicator type="SOUVENIR" category="ALL" resources="resources"></div>
+	</div>
+	<!-- Time indicators -->
+	<div widget-day-counter day="getDay()" class="layer"></div>
+
+	<!-- Start turn button -->
+	<div class="layer play-button" ng-if="!isInTurn">
+		<button type="button" class="btn btn-lg btn-warning" ng-click="game.startTurn()" ng-disabled="!game.canPlay()">
+			{{ whyCantI(game.canPlay) || "Go!" }}
+		</button>
+	</div>
+	<!-- end start button -->
+
+	<!-- End turn button -->
+	<div class="layer play-button" ng-if="isInTurn">
+		<button type="button" class="btn btn-lg btn-default" ng-click="game.endTurn()">
+			End Turn
+		</button>
+	</div>
+	<!-- end end-turn button -->
+
+</div>
+<!-- end play page -->
+
+<!-- Stats page -->
+<div ng-if="current.state === 'stats'">
+	<h1>Game over!</h1>
+</div>

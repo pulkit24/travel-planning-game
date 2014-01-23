@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
 	grunt.initConfig({
 		clean: {
-			pre: ["dist"]
+			pre: ["app/dist/*"]
 			, post: ["app/dist/*", "!app/dist/*.min.*"]
 		}
 		, concat: {
@@ -11,49 +11,38 @@ module.exports = function(grunt) {
 			}
 			, jsLocal: {
 				src: [
-				'app/scripts/components/*.js'
-				, 'app/scripts/templates.js'
-				, 'app/scripts/app.settings.js'
-				, 'app/scripts/app.maps.js'
-				, 'app/scripts/app.widgets.js'
-				, 'app/scripts/app.js'
-				, 'app/scripts/filters/*.js'
-				, 'app/scripts/services/*.js'
-				, 'app/scripts/directives/*.js'
-				, 'app/scripts/controllers/*.js'
+					'app/scripts/components/*.js', 'app/scripts/app.*.js', 'app/scripts/app.js',
+					'app/scripts/filters/*.js',
+					'app/scripts/services/*.js', 'app/scripts/directives/*.js', 'app/scripts/controllers/*.js',
+					'<%= html2js.main.dest %>'
 				]
 				, dest: 'app/dist/all.local.js'
 			}
 			, jsVendor: {
 				src: [
-					'app/bower_components/jquery/jquery.min.js'
-					, 'app/bower_components/es5-shim/es5-shim.min.js'
-					, 'app/bower_components/json3/lib/json3.min.js'
-					, 'app/bower_components/angular/angular.min.js'
-					, 'app/bower_components/underscore/underscore-min.js'
-					, 'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
-					, 'app/bower_components/angular-cookies/angular-cookies.min.js'
-					, 'app/bower_components/angular-resource/angular-resource.min.js'
-					, 'app/bower_components/angular-route/angular-route.min.js'
-					, 'app/bower_components/angular-sanitize/angular-sanitize.min.js'
-					, 'app/bower_components/angular-underscore/angular-underscore.js'
-					, 'app/bower_components/AngularGM/angular-gm.min.js'
+					'app/vendor/jquery/jquery.min.js', 'app/vendor/es5-shim/es5-shim.min.js',
+					'app/vendor/json3/lib/json3.min.js', 'app/vendor/angular/angular.min.js',
+					'app/vendor/underscore/underscore-min.js',
+					'app/vendor/angular-bootstrap/ui-bootstrap-tpls.js',
+					'app/vendor/angular-cookies/angular-cookies.min.js',
+					'app/vendor/angular-resource/angular-resource.min.js',
+					'app/vendor/angular-route/angular-route.min.js',
+					'app/vendor/angular-sanitize/angular-sanitize.min.js',
+					'app/vendor/angular-underscore/angular-underscore.js',
+					'app/vendor/AngularGM/angular-gm.min.js', 'app/vendor/angular-rome2rio/angular-rome2rio.js'
 				]
 				, dest: 'app/dist/all.vendor.js'
 			}
 			, js: {
 				src: [
-					'<%= concat.jsVendor.dest %>'
-					, '<%= concat.jsLocal.dest %>'
+					'<%= concat.jsVendor.dest %>', '<%= concat.jsLocal.dest %>'
 				]
 				, dest: 'app/dist/all.js'
 			}
 			, css: {
 				src: [
-					'app/bower_components/bootstrap/dist/css/bootstrap.min.css'
-					, 'app/bower_components/font-awesome/css/font-awesome.min.css'
-					, 'app/styles/*.css'
-					, 'app/styles/**/*.css'
+					'app/vendor/bootstrap/dist/css/bootstrap.min.css',
+					'app/vendor/font-awesome/css/font-awesome.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
 				]
 				, dest: 'app/dist/all.css'
 			}
@@ -77,25 +66,42 @@ module.exports = function(grunt) {
 				}
 			}
 		}
+		, autoprefixer: {
+			options: {
+				browsers: ['last 2 versions', 'ie 8', 'ie 9']
+			}
+			, css: {
+				src: '<%= concat.css.dest %>'
+				, dest: '<%= concat.css.dest %>'
+			}
+		}
+		, recess: {
+			dist: {
+				options: {
+					compile: true
+					, includePath: 'app/styles'
+				}
+				, src: 'app/styles/{,*/}*.less'
+				, dest: 'app/styles/less-compiled.css'
+			}
+		}
 		, cssmin: {
 			minify: {
 				expand: true
 				, src: '<%= concat.css.dest %>'
 				, dest: ''
-				, ext: '.min.css'
 			}
 		}
 		, copy: {
-			dev: {
+			build: {
 				files: [{
-						expand: false
-						, src: '<%= concat.css.dest %>'
-						, dest: 'app/dist/all.min.css'
-				}
-				, {
-						expand: false
-						, src: '<%= concat.js.dest %>'
-						, dest: 'app/dist/all.min.js'
+					expand: false
+					, src: '<%= concat.css.dest %>'
+					, dest: 'app/dist/all.min.css'
+				}, {
+					expand: false
+					, src: '<%= concat.js.dest %>'
+					, dest: 'app/dist/all.min.js'
 				}]
 			}
 		}
@@ -110,7 +116,7 @@ module.exports = function(grunt) {
 			}
 			, main: {
 				src: ['app/templates/*']
-				, dest: 'app/scripts/templates.js'
+				, dest: 'app/dist/app.templates.js'
 			}
 		}
 		, connect: {
@@ -125,6 +131,15 @@ module.exports = function(grunt) {
 					, base: ['app', '.']
 				}
 			}
+			, test: {
+				options: {
+					port: 9001
+					, base: [
+						'test',
+						'app'
+					]
+				}
+			}
 			, livereload: {
 				options: {
 					open: true
@@ -132,34 +147,38 @@ module.exports = function(grunt) {
 				}
 			}
 		}
+		, concurrent: {
+			options: {
+				logConcurrentOutput: true
+			}
+			, main: {
+				tasks: ['test', 'connect:livereload:keepalive', 'watch']
+			}
+		}
 		, watch: {
 			js: {
 				files: ['app/scripts/{,*/}*.js']
 				, tasks: [
-					'concat_byAuthor'
-					, 'ngmin'
-					, 'concat_all'
-					, 'uglify'
-					, 'clean:post'
+					'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'copy:build', 'clean:post',
+					'targethtml'
 				]
 				, options: {
 					livereload: true
 				}
 			}
 			, css: {
-				files: ['app/styles/{,*/}*.css']
+				files: ['app/styles/{,*/}*.css', 'app/styles/{,*/}*.less']
 				, tasks: [
-					'concat_all'
-					, 'cssmin'
-					, 'clean:post'
+					'concat_byAuthor', 'concat_all', 'autoprefixer', 'cssmin', 'copy:build', 'clean:post',
+					'targethtml'
 				]
 				, options: {
 					livereload: true
 				}
 			}
-			, templates: {
+			, tpl: {
 				files: ['app/templates/*.html']
-				, tasks: ['html2js']
+				, tasks: '<%= watch.js.tasks %>'
 				, options: {
 					livereload: true
 				}
@@ -174,6 +193,40 @@ module.exports = function(grunt) {
 					'app/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
 				]
 			}
+			, test: {
+				files: ['test/spec/{,*/}*.js']
+				, tasks: ['karma']
+			}
+			, dev: {
+				files: [
+					'app/scripts/{,*/}*.js', 'app/styles/{,*/}*.css', 'app/styles/{,*/}*.less', 'app/templates/*.html'
+				]
+				, tasks: [
+					'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build', 'targethtml'
+				]
+				, options: {
+					livereload: true
+				}
+			}
+		}
+		, karma: {
+			unit: {
+				configFile: 'karma.conf.js'
+			}
+		}
+		, targethtml: {
+			main: {
+				options: {
+					curlyTags: {
+						date: '<%= grunt.template.today("yyyymmddHHMMss") %>'
+						, blockStart: '<!--(if target main)>'
+						, blockEnd: '<!(endif)-->'
+					}
+				}
+				, files: {
+					'app/index.html': 'app/index.src.html'
+				}
+			}
 		}
 	});
 
@@ -184,35 +237,30 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-connect');
+	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-ngmin');
 	grunt.loadNpmTasks('grunt-html2js');
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-autoprefixer');
+	grunt.loadNpmTasks('grunt-targethtml');
+	grunt.loadNpmTasks('grunt-recess');
 
 	grunt.registerTask('concat_byAuthor', [
-		'concat:jsLocal'
-		, 'concat:jsVendor'
+		'concat:jsLocal', 'concat:jsVendor'
 	]);
 	grunt.registerTask('concat_all', [
-		'concat:js'
-		, 'concat:css'
+		'concat:js', 'recess', 'concat:css'
+	]);
+	grunt.registerTask('test', [
+		'connect:test', 'karma'
 	]);
 	grunt.registerTask('default', [
-		'clean:pre'
-		, 'html2js'
-		, 'concat_byAuthor'
-		, 'ngmin'
-		, 'uglify'
-		, 'concat_all'
-		, 'cssmin'
-		, 'clean:post'
-	    , 'connect:livereload'
-		, 'watch'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'autoprefixer',
+		'cssmin',
+		'copy:build', 'clean:post', 'targethtml', 'concurrent:main'
 	]);
 	grunt.registerTask('dev', [
-		'clean:pre'
-		, 'html2js'
-		, 'concat_byAuthor'
-		, 'concat_all'
-		, 'copy:dev'
-	    , 'connect:dev:keepalive'
+		'clean:pre', 'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build',
+		'targethtml', 'connect:dev', 'watch:dev'
 	]);
 };

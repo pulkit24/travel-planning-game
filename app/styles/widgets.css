@@ -23,27 +23,27 @@
 	font-weight: bold;
 	font-size: 18px;
 }
-.widget-resource-indicator-budget .widget-resource-indicator-icon {
+.widget-resource-indicator-MONEY .widget-resource-indicator-icon {
 	color: #FFB03B;
 	text-shadow: 2px 2px 5px #A76C13;
 }
-.widget-resource-indicator-budget .widget-resource-indicator-value {
+.widget-resource-indicator-MONEY .widget-resource-indicator-value {
 	border: 2px solid #85774d;
 	background-color: #deb850;
 }
-.widget-resource-indicator-xp .widget-resource-indicator-icon {
+.widget-resource-indicator-XP .widget-resource-indicator-icon {
 	color: #d41200;
 	text-shadow: 2px 2px 5px #6b1c01;
 }
-.widget-resource-indicator-xp .widget-resource-indicator-value {
+.widget-resource-indicator-XP .widget-resource-indicator-value {
 	border: 2px solid #8a300f;
 	background-color: #de7350;
 }
-.widget-resource-indicator-souvenirs .widget-resource-indicator-icon {
+.widget-resource-indicator-SOUVENIR .widget-resource-indicator-icon {
 	color: #27b3e6;
 	text-shadow: 2px 2px 5px #1f3b4f;
 }
-.widget-resource-indicator-souvenirs .widget-resource-indicator-value {
+.widget-resource-indicator-SOUVENIR .widget-resource-indicator-value {
 	border: 2px solid #426c8a;
 	background-color: #509ede;
 }

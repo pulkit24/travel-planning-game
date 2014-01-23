@@ -9,7 +9,13 @@
 	<div gm-markers
 		gm-objects="availableLocations"
 		gm-id="object.id"
+		gm-marker-options="getMarkerOptions(object)"
 		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
-		gm-on-click="selectLocation(object, marker)">
+		gm-on-click="selectLocation(object, marker); showLabel(object, marker)">
+	</div>
+	<div id="map-infoWindow-markerLabel-sample">
+		<div class="well">
+			<strong>{{ location.name }}</strong>
+		</div>
 	</div>
 </div>

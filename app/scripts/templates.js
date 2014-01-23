@@ -1,4 +1,17 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/maps.game.tpl.html', 'templates/maps.locationpreview.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/collapsible-column.tpl.html', 'templates/landmark-card.tpl.html', 'templates/maps.game.tpl.html', 'templates/maps.locationpreview.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+
+angular.module('templates/collapsible-column.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/collapsible-column.tpl.html',
+    '<div class="collapsible-column" ng-class="{collapsed: collapsed, \'not-collapsed\': !collapsed, collapsible: collapsible}" ng-init="collapsed = true">\n' +
+    '	<button class="collapsible-column-toggle btn btn-default" ng-click="collapsed = !collapsed" ng-show="collapsible"><i class="icon icon-reorder"></i>\n' +
+    '	</button>\n' +
+    '	<div class="collapsible-content" ng-hide="collapsible && collapsed">\n' +
+    '		<div ng-transclude></div>\n' +
+    '	</div>\n' +
+    '</div>\n' +
+    '');
+}]);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';

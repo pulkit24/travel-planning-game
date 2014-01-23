@@ -13,9 +13,9 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width">
 
-	
-	<link rel="stylesheet" href="dist/all.min.css?20140123113859">
-	
+	<!--(if target main)><!-->
+	<link rel="stylesheet" href="dist/all.min.css?{{date}}">
+	<!--<!(endif)-->
 </head>
 
 <body ng-app="travelPlanningGame.app" ng-controller="BootCtrl">
@@ -32,9 +32,9 @@
     <![endif]-->
 
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en&libraries=geometry"></script>
-	
-	<script src="dist/all.min.js?20140123113859"></script>
-	
+	<!--(if target main)><!-->
+	<script src="dist/all.min.js?{{date}}"></script>
+	<!--<!(endif)-->
 </body>
 
 </html>
