@@ -37,4 +37,16 @@ angular.module('travelPlanningGame.widgets')
 				});
 			}
 		};
+	})
+	.directive('widgetAlert', function() {
+		return {
+			restrict: 'EA'
+			, templateUrl: 'templates/widgets.alert.tpl.html'
+			, transclude: true
+			, scope: {
+				chevron: "@"
+			}
+			, controller: function($scope) {
+			}
+		};
 	});

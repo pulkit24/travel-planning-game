@@ -1,5 +1,5 @@
 <!-- Menu page stuff -->
-<div ng-if="current.state === 'menu'">
+<div ng-if="current.state.isMenu()">
 
 	<!-- Sidebar for more settings -->
 	<div class="layer sidebar">
@@ -60,28 +60,26 @@
 <!-- end menu page -->
 
 <!-- Play page -->
-<div ng-if="current.state === 'playing'">
+<div ng-if="current.state.isPlaying()">
 
 	<!-- Game board -->
 	<div class="layer">
-		<div game-map focal-point="current.location" ng-model="locations.selected" available-locations="locations.landmarks"></div>
+		<div game-map
+			ng-if="!map.state.isUnavailable()"
+			options="map.options"
+			current="current.location"
+			selected="locations.selected"></div>
 	</div>
 	<!-- end game board -->
 
-	<!-- Alert requesting you to select your starting location -->
-<!-- 	<div class="layer alert-notice" ng-if="!current.location">
-			<div class="alert-main">
-			<h4>Where do you start?</h4>
-			<p>Select your hotel location on the map.</p>
-		</div>
-		<div class="alert-side">
-			<h4>Skip</h4>
-			<p>and start from the airport</p>
-		</div>
+	<!-- Alerts container -->
+	<div widget-alert chevron="down" class="layer" ng-class="{visible: showAlert}">
+		<h2>Where will you be starting?</h2>
+		<p>Select your hotel location on the map.</p>
 	</div>
- -->
+
 	<!-- Selected landmark card -->
-	<div landmark-card landmark="locations.selected" ng-show="locations.selected" class="layer"></div>
+	<div landmark-card landmark="locations.selected" ng-show="locations.selected && map.options.selectable == 'location'" class="layer"></div>
 	<!-- end landmark card -->
 
 	<!-- Sidebar for turn options -->
@@ -113,8 +111,18 @@
 	<!-- Time indicators -->
 	<div widget-day-counter day="getDay()" class="layer"></div>
 
+	<!-- Start game button -->
+	<div class="layer play-button" ng-if="!current.location">
+		<button type="button" class="btn btn-lg btn-warning" ng-click="game.setStartPoint()"
+		 ng-disabled="!locations.selected">
+			<span ng-if="!locations.selected">Select your start point.</span>
+			<span ng-if="locations.selected">Let's begin!</span>
+		</button>
+	</div>
+	<!-- end start button -->
+
 	<!-- Start turn button -->
-	<div class="layer play-button" ng-if="!isInTurn">
+	<div class="layer play-button" ng-if="!isInTurn && current.location">
 		<button type="button" class="btn btn-lg btn-warning" ng-click="game.startTurn()" ng-disabled="!game.canPlay()">
 			{{ whyCantI(game.canPlay) || "Go!" }}
 		</button>
@@ -122,7 +130,7 @@
 	<!-- end start button -->
 
 	<!-- End turn button -->
-	<div class="layer play-button" ng-if="isInTurn">
+	<div class="layer play-button" ng-if="isInTurn && current.location">
 		<button type="button" class="btn btn-lg btn-default" ng-click="game.endTurn()">
 			End Turn
 		</button>
@@ -133,6 +141,8 @@
 <!-- end play page -->
 
 <!-- Stats page -->
-<div ng-if="current.state === 'stats'">
+<div ng-if="current.state.isStats()">
 	<h1>Game over!</h1>
 </div>
+
+<button class="layer" ng-click="test()">Test</button>

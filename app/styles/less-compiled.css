@@ -86,17 +86,237 @@ a.accordion-toggle {
   }
 }
 
-.alert-notice {
+/* Loading screen */
+
+.loading-screen {
+  width: 100%;
+  height: 100%;
+  margin: auto auto;
+  text-align: center;
+  vertical-align: middle;
+  background-color: white;
+}
+
+/*Resource indicator buttons*/
+
+[widget-resource-indicator] {
+  display: inline-block;
+}
+
+[widget-resource-indicator] .widget-resource-indicator {
+  position: relative;
+  margin: 5px;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-icon {
+  position: relative;
+  z-index: 20;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-value {
+  position: relative;
+  z-index: 10;
+  padding: 5px 20px 5px 40px;
+  margin-left: -30px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border-radius: 7px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+[widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-icon {
+  color: #ffb03b;
+  text-shadow: 2px 2px 5px #a76c13;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-value {
+  background-color: #deb850;
+  border: 2px solid #85774d;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-icon {
+  color: #d41200;
+  text-shadow: 2px 2px 5px #6b1c01;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-value {
+  background-color: #de7350;
+  border: 2px solid #8a300f;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-icon {
+  color: #27b3e6;
+  text-shadow: 2px 2px 5px #1f3b4f;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-value {
+  background-color: #509ede;
+  border: 2px solid #426c8a;
+}
+
+/*Day indicator*/
+
+[widget-day-counter] {
+  top: -95px;
+  right: -95px;
+  width: 200px;
+  height: 200px;
+  background-color: #F7E5C5;
+  border: 5px solid green;
+  border-radius: 200px;
+}
+
+[widget-day-counter] .widget-day-counter {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+[widget-day-counter] .widget-day-counter h1 {
+  line-height: 20px;
+}
+
+/* Alert */
+
+/* Variables */
+
+/* Styles */
+
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #777;
+}
+
+.game-container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.layer {
+  position: absolute;
+}
+
+.play-button {
   right: 0;
-  width: 70%;
+  bottom: 0;
+  width: 30%;
+}
+
+.play-button .btn {
+  width: 100%;
+}
+
+.back-button {
+  bottom: 0;
+  left: 0;
+}
+
+.sidebar {
+  top: 75px;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background-color: #FFEDD4;
+}
+
+.turn-sidebar {
+  top: 0;
+  padding-top: 187.5px;
+}
+
+.turn-sidebar .turn-option {
+  height: 187.5px;
+  padding: 10px;
+  margin-bottom: 2px;
+  background-color: #92CED1;
+}
+
+a.accordion-toggle {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-top-bar {
+  width: 100%;
+  height: 75px;
+  color: white;
+  background-color: #395363;
+}
+
+.menu-top-bar h1 {
+  padding: 0;
+  margin: 0;
+  line-height: 75px;
+  white-space: nowrap;
+  animation: flight-schedule-marquee 4s linear infinite;
+}
+
+@keyframes flight-schedule-marquee {
+  from {
+    margin-left: 800px;
+  }
+  to {
+    margin-left: -400px;
+  }
+}
+
+/* Loading screen */
+
+.loading-screen {
+  width: 100%;
+  height: 100%;
+  margin: auto auto;
+  text-align: center;
+  vertical-align: middle;
+  background-color: white;
+}
+
+[widget-alert] {
+  top: 100%;
+  width: 100%;
+  text-align: center;
+  background-color: #fc9526;
+  transition: 0.75s;
+}
+
+[widget-alert] .widget-alert {
+  display: inline-block;
+  width: 100%;
+  margin: 0 auto;
+  color: white;
   background-color: #fc9526;
 }
 
-.alert-notice .alert-main {
-  width: 40%;
+[widget-alert] .widget-alert h2 {
+  margin-top: 5px;
 }
 
-.alert-notice .alert-side {
-  width: 30%;
-  background-color: #231200;
+[widget-alert].visible {
+  top: 75px;
+}
+
+[widget-alert] .chevron {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  margin-left: -30px;
+  pointer-events: none;
+  border: solid transparent;
+  border-color: transparent;
+  border-top-color: #fc9526;
+  border-width: 30px;
+  border-top-width: 20px;
 }

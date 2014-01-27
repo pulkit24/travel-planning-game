@@ -2,7 +2,7 @@
 
 angular.module('travelPlanningGame.maps')
 	.factory('mapGeocoder', function($q, angulargmUtils) {
-		if(angular.isUndefined(google)) return {};
+		if(!google) return;
 
 		// Geocoder
 		var geocoder = new google.maps.Geocoder();
