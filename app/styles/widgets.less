@@ -1,0 +1,96 @@
+/*Resource indicator buttons*/
+[widget-resource-indicator] {
+	display: inline-block;
+	.widget-resource-indicator {
+		position: relative;
+		margin: 5px;
+		.widget-resource-indicator-icon {
+			position: relative;
+			z-index: 20;
+			vertical-align: middle;
+			font-weight: bold;
+		}
+		.widget-resource-indicator-value {
+			position: relative;
+			z-index: 10;
+			margin-left: -30px;
+			padding: 5px 20px 5px 40px;
+			border-radius: 7px;
+			box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+			color: white;
+			font-weight: bold;
+			font-size: 18px;
+		}
+	}
+	.widget-resource-indicator(@colour, @textShadowColour, @borderColour, @backgroundColour) {
+		.widget-resource-indicator-icon {
+			color: @colour;
+			text-shadow: 2px 2px 5px @textShadowColour;
+		}
+		.widget-resource-indicator-value {
+			border: 2px solid @borderColour;
+			background-color: @backgroundColour;
+		}
+	}
+	.widget-resource-indicator-MONEY {
+		.widget-resource-indicator(#FFB03B, #A76C13, #85774d, #deb850);
+	}
+	.widget-resource-indicator-XP {
+		.widget-resource-indicator(#d41200, #6b1c01, #8a300f, #de7350);
+	}
+	.widget-resource-indicator-SOUVENIR {
+		.widget-resource-indicator(#27b3e6, #1f3b4f, #426c8a, #509ede);
+	}
+}
+/*Day indicator*/
+[widget-day-counter] {
+	top: -95px;
+	right: -95px;
+	width: 200px;
+	height: 200px;
+	border: 5px solid green;
+	border-radius: 200px;
+	background-color: #F7E5C5;
+	.widget-day-counter {
+		position: absolute;
+		bottom: 10px;
+		left: 20px;
+		text-align: right;
+		text-transform: uppercase;
+		h1 {
+			line-height: 20px;
+		}
+	}
+}
+/* Alert */
+[widget-alert] {
+	top: @hud-top-height;
+	width: 100%;
+	background-color: @alert-background-colour;
+	text-align: center;
+	transition: 0.75s;
+	.widget-alert {
+		display: inline-block;
+		margin: 0 auto;
+		width: 100%;
+		background-color: @alert-background-colour;
+		color: white;
+		h2 {
+			margin-top: 5px;
+		}
+	}
+	.chevron {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		margin-left: -30px;
+		width: 0;
+		height: 0;
+		border: solid transparent;
+		border-width: 30px;
+		border-color: transparent;
+		border-top-width: 20px;
+		border-top-color: @alert-background-colour;
+		pointer-events: none;
+	}
+}

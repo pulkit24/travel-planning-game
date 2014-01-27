@@ -29,7 +29,9 @@ module.exports = function(grunt) {
 					'app/vendor/angular-route/angular-route.min.js',
 					'app/vendor/angular-sanitize/angular-sanitize.min.js',
 					'app/vendor/angular-underscore/angular-underscore.js',
-					'app/vendor/AngularGM/angular-gm.min.js', 'app/vendor/angular-rome2rio/angular-rome2rio.js'
+					'app/vendor/AngularGM/angular-gm.min.js',
+					'app/vendor/angular-rome2rio/angular-rome2rio.js',
+					'app/vendor/state-tracker/state-tracker.min.js'
 				]
 				, dest: 'app/dist/all.vendor.js'
 			}
@@ -42,7 +44,8 @@ module.exports = function(grunt) {
 			, css: {
 				src: [
 					'app/vendor/bootstrap/dist/css/bootstrap.min.css',
-					'app/vendor/font-awesome/css/font-awesome.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
+					'app/vendor/font-awesome/css/font-awesome.min.css',
+					'app/vendor/animate/animate.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
 				]
 				, dest: 'app/dist/all.css'
 			}
@@ -81,7 +84,7 @@ module.exports = function(grunt) {
 					compile: true
 					, includePath: 'app/styles'
 				}
-				, src: 'app/styles/{,*/}*.less'
+				, src: 'app/styles/main.less'
 				, dest: 'app/styles/less-compiled.css'
 			}
 		}

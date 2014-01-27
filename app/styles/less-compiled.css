@@ -44,12 +44,12 @@ body {
   background-color: #FFEDD4;
 }
 
-.turn-sidebar {
+.sidebar.turn-sidebar {
   top: 0;
   padding-top: 187.5px;
 }
 
-.turn-sidebar .turn-option {
+.sidebar.turn-sidebar .turn-option {
   height: 187.5px;
   padding: 10px;
   margin-bottom: 2px;
@@ -86,17 +86,188 @@ a.accordion-toggle {
   }
 }
 
-.alert-notice {
-  right: 0;
-  width: 70%;
+/* Loading screen */
+
+.loading-screen {
+  width: 100%;
+  height: 100%;
+  margin: auto auto;
+  text-align: center;
+  vertical-align: middle;
+  background-color: white;
+}
+
+/* Other styles */
+
+/*Resource indicator buttons*/
+
+[widget-resource-indicator] {
+  display: inline-block;
+}
+
+[widget-resource-indicator] .widget-resource-indicator {
+  position: relative;
+  margin: 5px;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-icon {
+  position: relative;
+  z-index: 20;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-value {
+  position: relative;
+  z-index: 10;
+  padding: 5px 20px 5px 40px;
+  margin-left: -30px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border-radius: 7px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+[widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-icon {
+  color: #ffb03b;
+  text-shadow: 2px 2px 5px #a76c13;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-value {
+  background-color: #deb850;
+  border: 2px solid #85774d;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-icon {
+  color: #d41200;
+  text-shadow: 2px 2px 5px #6b1c01;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-value {
+  background-color: #de7350;
+  border: 2px solid #8a300f;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-icon {
+  color: #27b3e6;
+  text-shadow: 2px 2px 5px #1f3b4f;
+}
+
+[widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-value {
+  background-color: #509ede;
+  border: 2px solid #426c8a;
+}
+
+/*Day indicator*/
+
+[widget-day-counter] {
+  top: -95px;
+  right: -95px;
+  width: 200px;
+  height: 200px;
+  background-color: #F7E5C5;
+  border: 5px solid green;
+  border-radius: 200px;
+}
+
+[widget-day-counter] .widget-day-counter {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+[widget-day-counter] .widget-day-counter h1 {
+  line-height: 20px;
+}
+
+/* Alert */
+
+[widget-alert] {
+  top: 75px;
+  width: 100%;
+  text-align: center;
+  background-color: #fc9526;
+  transition: 0.75s;
+}
+
+[widget-alert] .widget-alert {
+  display: inline-block;
+  width: 100%;
+  margin: 0 auto;
+  color: white;
   background-color: #fc9526;
 }
 
-.alert-notice .alert-main {
-  width: 40%;
+[widget-alert] .widget-alert h2 {
+  margin-top: 5px;
 }
 
-.alert-notice .alert-side {
-  width: 30%;
-  background-color: #231200;
+[widget-alert] .chevron {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  margin-left: -30px;
+  pointer-events: none;
+  border: solid transparent;
+  border-color: transparent;
+  border-top-color: #fc9526;
+  border-width: 30px;
+  border-top-width: 20px;
+}
+
+[landmark-card] {
+  top: 15%;
+  left: 5%;
+  width: 400px;
+  /*height: 490px;*/
+
+  zoom: 0.85;
+  animation-duration: 0.5s;
+}
+
+.landmark-card {
+  border-radius: 4px;
+  box-shadow: 0 0 15px 2px black;
+}
+
+.landmark-card h1,
+.landmark-card h2,
+.landmark-card h3,
+.landmark-card h4,
+.landmark-card h5,
+.landmark-card h6 {
+  padding: 0;
+  margin: 0;
+}
+
+.landmark-card .panel-body {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.landmark-card .thumbnail {
+  margin: 1px;
+  border: none;
+}
+
+.landmark-card .resource:first-child {
+  background-color: lightblue;
+}
+
+.landmark-card .resource:first-child + .landmark-card .resource {
+  background-color: lemonchiffon;
+}
+
+.landmark-card .resource:last-child {
+  background-color: lightsalmon;
+}
+
+.landmark-card .resource .close {
+  color: white;
 }

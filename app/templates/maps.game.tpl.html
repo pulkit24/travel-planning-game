@@ -1,17 +1,25 @@
 <div gm-map
-	ng-if="isEnabled()"
+	ng-if="!disabled"
 	class="map-canvas"
 	gm-map-id="'gameMap'"
 	gm-center="center"
 	gm-zoom="zoom"
 	gm-bounds="bounds"
-	gm-map-type-id="type">
+	gm-map-type-id="type"
+	gm-on-click="selectPoint(map, event)">
 	<div gm-markers
-		gm-objects="availableLocations"
+		gm-objects="locations"
 		gm-id="object.id"
 		gm-marker-options="getMarkerOptions(object)"
 		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
-		gm-on-click="selectLocation(object, marker); showLabel(object, marker)">
+		gm-on-click="selectLocation(object, marker)">
+	</div>
+	<div gm-markers
+		gm-objects="points"
+		gm-id="object.id"
+		gm-marker-options="getMarkerOptions(object)"
+		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
+		gm-on-click="selectPoint(map, event)">
 	</div>
 	<div id="map-infoWindow-markerLabel-sample">
 		<div class="well">

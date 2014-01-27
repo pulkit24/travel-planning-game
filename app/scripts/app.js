@@ -2,7 +2,7 @@
 
 angular.module('travelPlanningGame.app', [
 	'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'angular-underscore',
-	'angular-rome2rio', 'travelPlanningGame.maps', 'travelPlanningGame.widgets',
+	'angular-rome2rio', 'state-tracker', 'travelPlanningGame.maps', 'travelPlanningGame.widgets',
 	'travelPlanningGame.templates'
 ])
 	.config(function($routeProvider, rome2rioProvider) {
@@ -21,4 +21,5 @@ angular.module('travelPlanningGame.app', [
 	})
 	.run(function(landmarks) {
 		landmarks.get();
+		landmarks.getCities();
 	});

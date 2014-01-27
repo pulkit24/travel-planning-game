@@ -6,98 +6,68 @@ angular.module('travelPlanningGame.maps')
 			templateUrl: 'templates/maps.game.tpl.html'
 			, restrict: 'EA'
 			, scope: {
-				focalPoint: '='
-				, ngModel: '='
-				, availableLocations: '='
+				config: "&options"
+				, current: "="
+				, selected: "="
 			}
-			, link: function(scope, elem, attrs) {
-				// Proceed only if this map is enabled (helps prevent unncessary Google API calls during development)
-				scope.isEnabled = function() {
-					return !elem.attr('disabled');
-				};
+			, controller: function($scope, $q, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
+				mapGeocoder, stateTracker) {
 
-				scope.showTransit = angular.isDefined(elem.attr("show-transit")) && String(elem.attr(
-					"show-transit")).toLowerCase() !== "false";
-			}
-			, controller: function($scope, $q, $filter, angulargmContainer, angulargmUtils, mapGeocoder,
-				mapStyles, rome2rio) {
-				if (angular.isUndefined(google)) return;
-
-				// Initialise all fixed map parameters
-				$scope.map = {};
-				$scope.map.zoom = 12;
-				$scope.map.type = 'roadmap';
-				$scope.map.bounds = new google.maps.LatLngBounds();
-				$scope.map.styles = mapStyles.routeXL;
-
-				// Change location as needed
-				$scope.currentLocation = null;
-				$scope.selectLocation = function(location, marker) {
-
-					// Note the previous location for directions measurement
-					// var currentLocation = $scope.ngModel;
-					if (!$scope.currentLocation) {
-						mapGeocoder.toCoords("Singapore")
-							.then(function(coords) {
-								// Add the coords into the location
-								$scope.currentLocation = {};
-								$scope.currentLocation.coords = angular.copy(coords);
-							});
-					}
-
-					// Update the location
-					$scope.ngModel = location;
-					$scope.focalPoint = location; // focus on it
-
-					// Use Rome2Rio to get the travel cost
-					if ($scope.currentLocation) {
-						rome2rio.search($scope.currentLocation.name, location.name,
-							rome2rio.toPosition($scope.currentLocation.coords.lat, $scope.currentLocation.coords.lng), rome2rio.toPosition(
-								location.coords.lat, location.coords.lng))
-							.then(function(routes) {
-
-								// Use route from Rome2Rio
-								angular.forEach(routes.getPaths(), function(path, index) {
-									new google.maps.Polyline({
-										strokeColor: '#3ABA3A'
-										, strokeOpacity: 1.0
-										, strokeWeight: 5
-										, map: marker.getMap()
-										, path: google.maps.geometry.encoding.decodePath(path)
-									});
-								});
-
-								// Fetch route from Google
-								// new google.maps.DirectionsService().route({
-								// 	origin: rome2rio.toPosition(currentLocation.coords.lat, currentLocation.coords.lng)
-								// 	, destination: rome2rio.toPosition(location.coords.lat, location.coords.lng)
-								// 	, travelMode: google.maps.TravelMode.DRIVING
-								// }, function(result, status) {
-								// 	if (status === google.maps.DirectionsStatus.OK) {
-								// 		var x = new google.maps.DirectionsRenderer();
-								// 		x.setMap(marker.getMap());
-								// 		x.setDirections(result);
-								// 	}
-								// });
-							});
-					}
-				};
-				$scope.$watch("ngModel", function(newValue, oldValue) {
-					// If being unset, record as current location internally
-					if(!newValue && oldValue)
-						$scope.currentLocation = oldValue;
-
-					// Update the markers being displayed on the map
-					$scope.$broadcast('gmMarkersUpdate');
+				// On load, see if the map data is ready
+				$scope.mapState = stateTracker.get("mapState");
+				$scope.mapState.$on("updated", function() {
+					$scope.mapState.load();
+					loadMap();
+					$scope.mapState.ready();
 				});
 
-				// On load, modify the default Google map parameters as needed
+				// As soon as Google maps is ready, grab a handle
 				angulargmContainer.getMapPromise('gameMap').then(function(gmap) {
+					$scope.map = gmap;
+				});
+
+				function loadMap() {
 					// Request Google map to kindly use our preset parameters
-					gmap.mapTypeId = $scope.map.type;
-					gmap.zoom = $scope.map.zoom;
-					gmap.setOptions({
-						styles: $scope.map.styles
+					initMap();
+
+					// Get geo coords for all available locations
+					angular.forEach($scope.locations, function(location, index) {
+						// Give it an id
+						location.id = index;
+
+						plotLocation(location).then(function() {
+							$scope.focus();
+
+							// Update the markers being displayed on the map
+							$scope.$broadcast('gmMarkersUpdate');
+
+							// If last, mark geocoding as complete
+							if (index === $scope.locations.length - 1)
+								stateTracker.new("geocodingState").complete();
+						});
+					});
+
+					// When geocoding is complete, prefetch all routes
+					stateTracker.new("geocodingState").$on("complete", function() {
+						mapRouter.prefetch($scope.locations);
+					});
+				}
+
+				// When the map is ready, apply the params and updates
+				function initMap() {
+					// Initialise all map parameters
+					angular.extend($scope, $scope.config());
+
+					$scope.disabled = $scope.disabled || angular.isUndefined(google);
+					$scope.type = 'roadmap';
+					$scope.bounds = new google.maps.LatLngBounds();
+					$scope.styles = mapStyles.routeXL;
+
+					// Request Google map to kindly use our preset parameters
+					$scope.map.mapTypeId = $scope.type;
+					$scope.map.zoom = $scope.zoom;
+					$scope.map.setOptions({
+						styles: $scope.styles
 						, panControl: false
 						, scaleControl: false
 						, mapTypeControl: false
@@ -112,62 +82,100 @@ angular.module('travelPlanningGame.maps')
 					// Show transit layer
 					if ($scope.showTransit) {
 						var transitLayer = new google.maps.TransitLayer();
-						transitLayer.setMap(gmap);
+						transitLayer.setMap($scope.map);
 					}
+				}
 
-					// Get geo coords for all available locations
-					angular.forEach($scope.availableLocations, function(location, index) {
-						// Give it an id
-						location.id = index;
+				// Plot location markers on the map
+				function plotLocation(location) {
+					var deferred = $q.defer();
 
-						mapGeocoder.toCoords(location.address)
-							.then(function(coords) {
+					mapGeocoder.toCoords(location.address)
+						.then(
+							function success(coords) {
 								// Add the coords into the location
 								location.coords = angular.copy(coords);
-								$scope.map.bounds.extend(angulargmUtils.objToLatLng(coords));
+								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
 
-								// Refresh the map once everything is done
-								if (index === $scope.availableLocations.length - 1) {
-									// Auto center and zoom the map
-									gmap.fitBounds($scope.map.bounds);
+								// Show landmark label
+								$scope.showLabel(location, null, $scope.map);
 
-									// Update the markers being displayed on the map
-									$scope.$broadcast('gmMarkersUpdate');
-								}
+								deferred.resolve();
+							}
+							, function error() {
+								deferred.resolve();
+							}
+						);
 
-								$scope.showLabel(location, null, gmap);
-							});
-					});
+					return deferred.promise;
+				}
 
-					// Focus on the focal point, whenever provided
-					$scope.$watch('focalPoint', function(newValue) {
-						if (newValue && newValue.coords) {
-							gmap.panTo(angulargmUtils.objToLatLng(newValue.coords));
-						}
-					});
+				// Focus on the focusable location - either selected or current
+				// based on the initial config
+				$scope.focus = function() {
+					var focalPoint = null;
 
-					// // Draw the directions whenever available from
-					// $scope.$watch('directions', function(newValue) {
-					// 	if (newValue) {
+					if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
+						focalPoint = $scope.selected;
+					else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
+						focalPoint = $scope.current;
 
+					if (focalPoint && focalPoint.coords) {
+						$scope.map.panTo(angulargmUtils.objToLatLng({
+							lat: focalPoint.coords.lat
+							, lng: focalPoint.coords.lng - 0.02
+						}));
+					} else {
+						// Auto center and zoom the map
+						$scope.map.fitBounds($scope.bounds);
+					}
+				};
 
-					// 		// $scope.directions_plotted = [];
+				// Select a point on the map (other than a marker/location)
+				$scope.selectPoint = function(map, event) {
+					if ($scope.selectable !== "point" && $scope.selectable !== "all") return;
 
-					// 		// angular.forEach(newValue, function(path, index) {
-					// 		// 	this.push(
-					// 		// 		new google.maps.Polyline({
-					// 		// 			path: google.maps.geometry.encoding.decodePath(path)
-					// 		// 			, map: gmap
-					// 		// 			, clickable: false
-					// 		// 			, strokeColor: '#288536'
-					// 		// 			, strokeOpacity: 0.8
-					// 		// 			, strokeWeight: 4
-					// 		// 		})
-					// 		// 	);
-					// 		// }, $scope.directions_plotted);
-					// 	}
-					// });
-				});
+					var point = {
+						id: 'startingPoint'
+						, name: 'I start from here!'
+						, coords: angulargmUtils.latLngToObj(event.latLng)
+					};
+
+					// Create a single-member collection of points for this selected starting point
+					$scope.points = [point];
+
+					// Mark as selected
+					$scope.selected = point;
+					$scope.focus(); // focus if needed
+
+					// Show label
+					$scope.showLabel(point, null, $scope.map);
+
+					// // Update the markers being displayed on the map
+					$scope.$broadcast('gmMarkersUpdate');
+				};
+
+				// Change location as needed
+				$scope.selectLocation = function(location, marker) {
+					if ($scope.selectable !== "location" && $scope.selectable !== "all") return;
+
+					// Update the location
+					$scope.selected = location;
+					$scope.focus(); // focus if needed
+
+					// Draw route
+					if($scope.current) {
+						mapRouter.fetch($scope.current, $scope.selected).then(function(route) {
+							mapRouter.draw(route, $scope.map);
+						});
+					}
+
+					// Show label
+					$scope.showLabel(location, null, $scope.map);
+
+					// Update the markers being displayed on the map
+					$scope.$broadcast('gmMarkersUpdate');
+				};
 
 				// Construct an info window for the landmark label
 				$scope.infoWindows = {}; // track all info windows
@@ -180,18 +188,18 @@ angular.module('travelPlanningGame.maps')
 					// Does an infowindow already exist for this location?
 					var infoWindow;
 					if ($scope.infoWindows[location.id]) {
-						// Yes, reuse it
-						infoWindow = $scope.infoWindows[location.id];
-					} else {
-						// No, create one
-						var options = {};
-						options.content = '<span style="font-weight: 700">' + location.name + '</span>';
-						options.position = angulargmUtils.objToLatLng(location.coords);
-						options.pixelOffset = new google.maps.Size(0, -15);
-
-						infoWindow = new google.maps.InfoWindow(options);
-						$scope.infoWindows[location.id] = infoWindow;
+						// Yes, destroy it
+						$scope.infoWindows[location.id].close();
 					}
+
+					// Now, create one
+					var options = {};
+					options.content = '<span style="font-weight: 700">' + location.name + '</span>';
+					options.position = angulargmUtils.objToLatLng(location.coords);
+					options.pixelOffset = new google.maps.Size(0, -15);
+
+					infoWindow = new google.maps.InfoWindow(options);
+					$scope.infoWindows[location.id] = infoWindow;
 
 					if (!map) {
 						map = marker.getMap();
@@ -203,18 +211,38 @@ angular.module('travelPlanningGame.maps')
 				// Marker appearance
 				$scope.getMarkerOptions = function(location) {
 
-					var icon = {};
-					if ($scope.ngModel && location.id === $scope.ngModel.id) {
-						icon.url = '../../images/marker-orange.png';
-						icon.size = new google.maps.Size(66, 66);
-						icon.origin = new google.maps.Point(0, 0);
-						icon.anchor = new google.maps.Point(33, 33);
-					} else {
-						icon.url = '../../images/marker-grey.png';
-						icon.size = new google.maps.Size(30, 30);
-						icon.origin = new google.maps.Point(0, 0);
-						icon.anchor = new google.maps.Point(15, 15);
-					}
+					// Standard marker
+					var defaultMarker = {
+						url: '../../images/markers/marker-grey.png'
+						, size: new google.maps.Size(30, 30)
+						, origin: new google.maps.Point(0, 0)
+						, anchor: new google.maps.Point(15, 15)
+					};
+
+					// Selected location marker
+					var selectedMarker = {
+						url: '../../images/markers/marker-orange.png'
+						, size: new google.maps.Size(66, 66)
+						, origin: new google.maps.Point(0, 0)
+						, anchor: new google.maps.Point(33, 33)
+					};
+
+					// Current location marker
+					var currentMarker = {
+						url: '../../images/markers/marker-green.png'
+						, size: new google.maps.Size(104, 104)
+						, origin: new google.maps.Point(0, 0)
+						, anchor: new google.maps.Point(52, 52)
+					};
+
+					// Pick a marker based on the location
+					var icon = null;
+					if ($scope.current && $scope.current.id === location.id)
+						icon = currentMarker;
+					else if ($scope.selected && $scope.selected.id === location.id)
+						icon = selectedMarker;
+					else
+						icon = defaultMarker;
 
 					var options = {
 						title: "Click to select " + location.name
@@ -223,6 +251,8 @@ angular.module('travelPlanningGame.maps')
 
 					return options;
 				};
+
+
 			}
 		};
 	});
