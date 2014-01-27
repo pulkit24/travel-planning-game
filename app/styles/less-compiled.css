@@ -283,7 +283,6 @@ a.accordion-toggle {
 }
 
 [widget-alert] {
-  top: 100%;
   width: 100%;
   text-align: center;
   background-color: #fc9526;
@@ -302,8 +301,20 @@ a.accordion-toggle {
   margin-top: 5px;
 }
 
-[widget-alert].visible {
+[widget-alert].alert-below {
+  top: 100%;
+}
+
+[widget-alert].alert-visible {
   top: 75px;
+}
+
+[widget-alert].alert-above {
+  animation: alert-dismiss 2s ease infinite;
+}
+
+[widget-alert].alert-hidden {
+  display: none;
 }
 
 [widget-alert] .chevron {
@@ -319,4 +330,16 @@ a.accordion-toggle {
   border-top-color: #fc9526;
   border-width: 30px;
   border-top-width: 20px;
+}
+
+@keyframes alert-dismiss {
+  0% {
+    top: 75px;
+  }
+  15% {
+    top: 90px;
+  }
+  100% {
+    top: -100%;
+  }
 }

@@ -56,7 +56,7 @@ angular.module("travelPlanningGame.app")
 				}
 			};
 
-
+			// Get a record
 			this.retrieve = function getRecord(timestamp) {
 				try {
 					var marshalledState = this._records[timestamp];
@@ -66,6 +66,29 @@ angular.module("travelPlanningGame.app")
 				} catch (e) {
 					return null;
 				}
+			};
+
+			// Get all records
+			this.retrieveAll = function getAllRecords() {
+				var records = angular.copy(this._records);
+				angular.forEach(records, function(marshalledState, timestamp) {
+					records[timestamp] = angular.fromJson(marshalledState);
+				});
+				return records;
+			};
+
+			// Find a record - a value-based lookup
+			// Returns the timestamp back
+			this.find = function findRecord(state) {
+				var marshalledState = angular.toJson(state);
+				var foundTimestamp = null;
+
+				angular.forEach(this._records, function(recordedState, timestamp) {
+					if(marshalledState === recordedState)
+						foundTimestamp = timestamp;
+				});
+
+				return foundTimestamp;
 			};
 		};
 
@@ -165,12 +188,12 @@ angular.module("travelPlanningGame.app")
 			var resourceTracker = resources.new();
 
 			// Landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
-			resourceTracker.add(resources.categories.VISITING, resources.types.MONEY, landmark.visitingCost);
-			resourceTracker.add(resources.categories.LODGING, resources.types.MONEY, landmark.lodgingCost);
-			resourceTracker.add(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
-			resourceTracker.add(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
-			resourceTracker.add(resources.categories.SHOPPING, resources.types.MONEY, landmark.souvenirCost);
-			resourceTracker.add(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
+			resourceTracker.set(resources.categories.VISITING, resources.types.MONEY, -1 * landmark.visitingCost);
+			resourceTracker.set(resources.categories.LODGING, resources.types.MONEY, -1 * landmark.lodgingCost);
+			resourceTracker.set(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.souvenirCost);
+			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
 
 			return resourceTracker;
 		}
@@ -231,7 +254,7 @@ angular.module('travelPlanningGame.maps')
 'use strict';
 
 angular.module('travelPlanningGame.maps')
-	.factory('mapRouter', function($q, rome2rio, history) {
+	.factory('mapRouter', function($q, $timeout, rome2rio, history) {
 
 		///////////////////////
 		// Route providers //
@@ -247,88 +270,121 @@ angular.module('travelPlanningGame.maps')
 			currentProvider = provider;
 		}
 
-		////////////////
-		// Routes  //
-		////////////////
+		/////////////////////////
+		// Routing providers //
+		/////////////////////////
 
-		var Route = function(provider) {
+		var RouteProvider = function(provider, from, to) {
 			// Get routing and drawing functions from the
 			// required providers
 			switch (provider) {
 				case providers.rome2rio:
-					angular.extend(this, new Rome2RioRoute());
+					angular.extend(this, new Rome2RioRouteProvider(provider, from, to));
 					break;
 				case providers.google:
-					angular.extend(this, new GoogleRoute());
+					angular.extend(this, new GoogleRouteProvider(provider, from, to));
 			}
 		};
 
-		var Rome2RioRoute = function() {
-			this._routes = null;
+		var Rome2RioRouteProvider = function(provider, from, to) {
+			this._from = from;
+			this._to = to;
 
-			this.route = function(from, to) {
+			this.route = function() {
 				var deferred = $q.defer();
-				var self = this;
 
 				rome2rio.search(
-					from.name, to.name, rome2rio.toPosition(
-						from.coords.lat, from.coords.lng
+					this._from.name, this._to.name, rome2rio.toPosition(
+						this._from.coords.lat, this._from.coords.lng
 					), rome2rio.toPosition(
-						to.coords.lat, to.coords.lng
+						this._to.coords.lat, this._to.coords.lng
 					)
 				)
 					.then(function(routes) {
-						self._routes = routes;
-						deferred.resolve(self);
+						deferred.resolve(routes);
 					});
 
 				return deferred.promise;
 			};
+		};
+
+		var GoogleRouteProvider = function(provider, from, to) {
+			this._from = from;
+			this._to = to;
+
+			this.route = function() {
+				var deferred = $q.defer();
+
+				// Fetch route from Google
+				new google.maps.DirectionsService().route({
+					origin: rome2rio.toPosition(this._from.coords.lat, this._from.coords.lng)
+					, destination: rome2rio.toPosition(this._to.coords.lat, this._to.coords.lng)
+					, travelMode: google.maps.TravelMode.DRIVING
+				}, function(result, status) {
+					if (status === google.maps.DirectionsStatus.OK) {
+						deferred.resolve(result);
+					}
+				});
+
+				return deferred.promise;
+			};
+		};
+
+		//////////////////////
+		// Route handlers //
+		//////////////////////
+
+		var Route = function(provider, routes, drawn) {
+			// Get cost and drawing functions from the
+			// required providers
+			switch (provider) {
+				case providers.rome2rio:
+					angular.extend(this, new Rome2RioRoute(routes, drawn));
+					break;
+				case providers.google:
+					angular.extend(this, new GoogleRoute(routes, drawn));
+			}
+		};
+
+		var Rome2RioRoute = function(routes, drawn) {
+			this._routes = routes;
+			this._drawn = drawn ? drawn : [];
 
 			this.getCost = function() {
 				if (this._routes)
-					return this._routes.getCost();
+					return this._routes.costs;
 				else
 					return null;
 			};
 
 			this.draw = function(map) {
 				if (this._routes) {
-					angular.forEach(this._routes.getPaths(), function(path, index) {
-						new google.maps.Polyline({
+					var _drawn = [];
+					angular.forEach(this._routes.paths, function(path, index) {
+						var drawnPath = new google.maps.Polyline({
 							strokeColor: '#3ABA3A'
 							, strokeOpacity: 1.0
 							, strokeWeight: 5
 							, map: map
 							, path: google.maps.geometry.encoding.decodePath(path)
 						});
+						_drawn.push(drawnPath);
 					});
+					this._drawn = _drawn;
 				} else
 					return null;
 			};
+
+			this.clear = function() {
+				angular.forEach(this._drawn, function(drawnPath, index) {
+					drawnPath.setMap(null);
+				});
+			};
 		};
 
-		var GoogleRoute = function() {
-			this._routes = null;
-
-			this.route = function(from, to) {
-				var deferred = $q.defer();
-				var self = this;
-
-				// Fetch route from Google
-				new google.maps.DirectionsService().route({
-					origin: rome2rio.toPosition(from.coords.lat, from.coords.lng)
-					, destination: rome2rio.toPosition(to.coords.lat, to.coords.lng)
-					, travelMode: google.maps.TravelMode.DRIVING
-				}, function(result, status) {
-					if (status === google.maps.DirectionsStatus.OK) {
-						self._routes = result;
-						deferred.resolve(self);
-					}
-				});
-
-				return deferred.promise;
-			};
+		var GoogleRoute = function(routes, drawn) {
+			this._routes = routes;
+			this._drawn = drawn ? drawn : null;
 
 			this.getCost = function() {
 				return null;
@@ -336,11 +392,25 @@ angular.module('travelPlanningGame.maps')
 
 			this.draw = function(map) {
 				if (this._routes) {
-					var rendered = new google.maps.DirectionsRenderer();
-					rendered.setMap(map);
-					rendered.setDirections(this._routes);
+					this._drawn = new google.maps.DirectionsRenderer({
+						suppressMarkers: true
+						, suppressInfoWindows: true
+						, polylineOptions: {
+							clickable: false
+							, strokeColor: '#3ABA3A'
+							, strokeOpacity: 1.0
+							, strokeWeight: 5
+						}
+					});
+					this._drawn.setMap(map);
+					this._drawn.setDirections(this._routes);
 				} else
 					return null;
+			};
+
+			this.clear = function() {
+				if(this._drawn)
+					this._drawn.setMap(null);
 			};
 		};
 
@@ -348,19 +418,21 @@ angular.module('travelPlanningGame.maps')
 		// Route management //
 		/////////////////////////
 
-		var routingHistory = history.getInstance("mapRouter");
+		var routingHistory = {
+			history: {}
+			, record: function(id, route) {
+				history[id] = route;
+			}
+			, retrieve: function(id) {
+				return history[id];
+			}
+			, retrieveAll: function() {
+				return history;
+			}
+		};
 
-		// Add to history
-		function saveRoute(id, route) {
-			return routingHistory.record(id, route);
-		}
-
-		// Retrieve from history
-		function restoreRoute(id) {
-			return routingHistory.retrieve(id);
-		}
-
-		function _marshalLocations(locationA, locationB) {
+		// Generate a unique, commutable identifier for the route request
+		function _routeIdentifier(locationA, locationB) {
 			var idA = locationA.id;
 			var idB = locationB.id;
 			if (idA < idB)
@@ -369,17 +441,61 @@ angular.module('travelPlanningGame.maps')
 				return idB + "," + idA;
 		}
 
-		function getRoute(fromLocation, toLocation) {
-			var router = restoreRoute(_marshalLocations(fromLocation, toLocation));
-			if(!router)
-				router = new Route(currentProvider);
-			return router.route(fromLocation, toLocation);
+		// Return a previously fetched route from history immediately
+		function getRoute(from, to) {
+			var route = routingHistory.retrieve(_routeIdentifier(from, to));
+			if(route)
+				return new Route(currentProvider, route._routes, route._drawn);
+			else
+				return null;
+		}
+
+		// Fetch a route, and return a promise
+		function fetchRoute(from, to) {
+			var deferred = $q.defer();
+
+			$timeout(function() {
+				var routeObject = routingHistory.retrieve(_routeIdentifier(from, to));
+				if (routeObject) {
+					deferred.resolve(new Route(currentProvider, routeObject._routes, routeObject._drawn));
+
+				} else {
+					new RouteProvider(currentProvider, from, to).route().then(function(rawRoute) {
+						var routeObject = new Route(currentProvider, rawRoute);
+
+						routingHistory.record(_routeIdentifier(from, to), routeObject);
+
+						deferred.resolve(routeObject);
+					});
+				}
+			}, 0);
+
+			return deferred.promise;
+		}
+
+		function fetchAllRoutes(endPoints) {
+			angular.forEach(endPoints, function(from, index) {
+				angular.forEach(endPoints, function(to, index) {
+					if (from !== to && !routingHistory.retrieve(_routeIdentifier(from, to))) {
+						fetchRoute(from, to);
+					}
+				});
+			});
+		}
+
+		function clearAll() {
+			angular.forEach(routingHistory.retrieveAll(), function(route, id) {
+				new Route(currentProvider, route._routes, route._drawn).clear();
+			});
 		}
 
 		return {
 			providers: providers
 			, use: chooseRouteProvider
-			, route: getRoute
+			, prefetch: fetchAllRoutes
+			, fetchRoute: fetchRoute
+			, getRoute: getRoute
+			, clearAll: clearAll
 		};
 	});
 
@@ -450,7 +566,22 @@ angular.module("travelPlanningGame.app")
 					return 0;
 			};
 
+			// Set the value of a resource
+			// Only use this at the start, to initial the resources
+			// as this function doesn't impose resource validations
+			this.set = function setResource(category, type, amount) {
+				// Create if no prevalent track
+				if (!this[category])
+					this[category] = {};
+				if (!this[category][type])
+					this[category][type] = 0;
+
+				this[category][type] += amount;
+				return this;
+			};
+
 			// Ability to update the value of any resource
+			// Checks are made to validate the update
 			this.update = function updateResource(category, type, amount) {
 				// Create if no prevalent track
 				if (!this[category])
@@ -476,6 +607,14 @@ angular.module("travelPlanningGame.app")
 			return new Resources();
 		}
 
+		function duplicateTracker(tracker) {
+			var trackerCopy = new Resources();
+			angular.forEach(categories, function(category, index) {
+				trackerCopy[category] = angular.copy(tracker[category]);
+			});
+			return trackerCopy;
+		}
+
 		// Check whether updating source Resources by destination Resources is possible
 		function canDelta(sourceResources, sourceCategory, destinationResources, destinationCategory) {
 			var possible = true;
@@ -497,6 +636,7 @@ angular.module("travelPlanningGame.app")
 
 		return {
 			new: startTracker
+			, copy: duplicateTracker
 			, canDelta: canDelta
 			, delta: delta
 			, types: types
@@ -650,12 +790,23 @@ angular.module('travelPlanningGame.maps')
 						location.id = index;
 
 						plotLocation(location).then(function() {
-							// Auto center and zoom the map
-							$scope.map.fitBounds($scope.bounds);
+							$scope.focus();
 
 							// Update the markers being displayed on the map
 							$scope.$broadcast('gmMarkersUpdate');
+
+							// If last, mark geocoding as complete
+							if (index === $scope.locations.length - 1)
+								stateTracker.new("geocodingState").complete();
 						});
+					});
+
+					// Set route provider
+					mapRouter.use(mapRouter.providers.google);
+
+					// When geocoding is complete, prefetch all routes
+					stateTracker.new("geocodingState").$on("complete", function() {
+						mapRouter.prefetch($scope.locations);
 					});
 				}
 
@@ -668,9 +819,6 @@ angular.module('travelPlanningGame.maps')
 					$scope.type = 'roadmap';
 					$scope.bounds = new google.maps.LatLngBounds();
 					$scope.styles = mapStyles.routeXL;
-
-					// Prepare the route
-					mapRouter.use(mapRouter.providers.rome2rio);
 
 					// Request Google map to kindly use our preset parameters
 					$scope.map.mapTypeId = $scope.type;
@@ -719,19 +867,22 @@ angular.module('travelPlanningGame.maps')
 				$scope.focus = function() {
 					var focalPoint = null;
 
-					if ($scope.focusOn === "selected")
+					if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
 						focalPoint = $scope.selected;
-					else if ($scope.focusOn === "current")
+					else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
 						focalPoint = $scope.current;
 
 					if (focalPoint && focalPoint.coords) {
 						$scope.map.panTo(angulargmUtils.objToLatLng(focalPoint.coords));
+					} else {
+						// Auto center and zoom the map
+						$scope.map.fitBounds($scope.bounds);
 					}
 				};
 
 				// Select a point on the map (other than a marker/location)
 				$scope.selectPoint = function(map, event) {
-					if($scope.selectable !== "point" && $scope.selectable !== "all") return;
+					if ($scope.selectable !== "point" && $scope.selectable !== "all") return;
 
 					var point = {
 						id: 'startingPoint'
@@ -755,15 +906,18 @@ angular.module('travelPlanningGame.maps')
 
 				// Change location as needed
 				$scope.selectLocation = function(location, marker) {
-					if($scope.selectable !== "location" && $scope.selectable !== "all") return;
+					if ($scope.selectable !== "location" && $scope.selectable !== "all") return;
 
 					// Update the location
 					$scope.selected = location;
 					$scope.focus(); // focus if needed
 
-					// Calculate the route from the current location
-					if ($scope.current) {
-						mapRouter.route($scope.current, $scope.selected);
+					// Draw route
+					if($scope.current) {
+						mapRouter.clearAll();
+						mapRouter.fetchRoute($scope.current, $scope.selected).then(function(route) {
+							route.draw($scope.map);
+						});
 					}
 
 					// Show label
@@ -897,9 +1051,9 @@ angular.module('travelPlanningGame.widgets')
 		return {
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.alert.tpl.html'
-			, transclude: true
 			, scope: {
-				chevron: "@"
+				content: "=widgetAlert"
+				, chevron: "@"
 			}
 			, controller: function($scope) {
 			}
@@ -915,7 +1069,7 @@ angular.module("travelPlanningGame.app")
 
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
-		stateTracker) {
+		stateTracker, mapRouter) {
 
 		/////////////////////////
 		// Current game state //
@@ -951,7 +1105,7 @@ angular.module("travelPlanningGame.app")
 
 			// Create a resource tracker
 			var resourceTracker = resources.new();
-			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
+			resourceTracker.set(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
 			$scope.resources = resourceTracker;
 
 			// Start the timer
@@ -979,18 +1133,28 @@ angular.module("travelPlanningGame.app")
 		/////////////////
 
 		function initPlay() {
+			$scope.alertMessage =
+				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
 			$timeout(function() {
-				$scope.showAlert = true;
+				stateTracker.get("alert").show();
 			}, 500);
 		}
 
+		// Set the selected location/point as the current start point
 		$scope.game.setStartPoint = function() {
 			$scope.current.location = $scope.locations.selected;
 			$scope.locations.selected = null;
+			$scope.map.options.selectable = "location";
+
+			stateTracker.get("alert").dismiss();
+
+			$scope.map.state.update();
 		};
 
 		// Check conditions for eligibility for another round
 		$scope.game.canPlay = function(giveReason) {
+			var deferred = $q.defer();
+
 			// Landmark selected?
 			if (!$scope.locations.selected)
 				return giveReason ? 'Select a landmark to visit.' : false;
@@ -999,7 +1163,20 @@ angular.module("travelPlanningGame.app")
 			if ($scope.settings.sandboxMode)
 				return giveReason ? null : true;
 
-			// Funds left for visiting?
+			// Funds left for visiting/travelling/lodging?
+			var expectedCosts = resources.copy($scope.locations.selected.resources);
+			// Add travel costs
+			var travelCost = 0;
+			if($scope.current.location) {
+				var travelRoute = mapRouter.getRoute($scope.current.location, $scope.locations.selected);
+				if(travelRoute)
+					travelCost = travelRoute.getCost();
+			}
+
+			expectedCosts.set(resources.categories.VISITING, resources.types.MONEY,
+				expectedCosts.get(resources.categories.VISITING, resources.types.MONEY) - travelCost
+			);
+
 			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
 				resources.categories.VISITING))
 				return giveReason ? 'Not enough funds to visit.' : false;
@@ -1012,18 +1189,28 @@ angular.module("travelPlanningGame.app")
 
 			return giveReason ? null : true;
 		};
+
+		// Start this turn
 		$scope.game.startTurn = function() {
-			// Start this turn
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
+			// Restrict further selection to landmarks only
+			$scope.map.options.selectable = "location";
+			$scope.map.state.update();
 
-			// Charge for visiting costs and such
+			// Charge for visiting costs and experience
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.VISITING);
+
+			// One-time xp points for "discovery"
+			if (!history.getInstance("landmarks").find($scope.current.location))
+				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+					resources.categories.DISCOVERY);
 
 			// open the side bar
 			$scope.isInTurn = true;
 		};
+
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
 			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
@@ -1032,11 +1219,13 @@ angular.module("travelPlanningGame.app")
 
 			return giveReason ? null : true;
 		};
+
 		$scope.game.shop = function() {
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.SHOPPING);
 		};
+
 		$scope.game.endTurn = function() {
 			// Is this EOD? Charge for lodging
 			if (timer.isEOD())
@@ -1045,10 +1234,11 @@ angular.module("travelPlanningGame.app")
 
 			// Days left?
 			if (timer.isLast())
-				$scope.game.end();
+				$scope.game.end(); // end game
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
 
 			// Next turn this day
 			timer.next();
@@ -1122,8 +1312,8 @@ angular.module("travelPlanningGame.app")
 		$scope.map.options = {
 			zoom: 12
 			, locations: null
-			, selectable: "all"
-			, focusOn: "selected"
+			, selectable: "all" // all, point, location, none
+			, focusOn: "auto" // auto, selected, current, none
 			, disabled: false
 			, showTransit: false
 		};
@@ -1307,7 +1497,7 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
 angular.module('templates/widgets.alert.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.alert.tpl.html',
-    '<div class="widget-alert" ng-transclude></div>\n' +
+    '<div class="widget-alert" ng-bind-html="content"></div>\n' +
     '<div class="chevron" ng-class="chevron" ng-if="chevron"></div>');
 }]);
 

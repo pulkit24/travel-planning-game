@@ -169,7 +169,7 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
 angular.module('templates/widgets.alert.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.alert.tpl.html',
-    '<div class="widget-alert" ng-transclude></div>\n' +
+    '<div class="widget-alert" ng-bind-html="content"></div>\n' +
     '<div class="chevron" ng-class="chevron" ng-if="chevron"></div>');
 }]);
 

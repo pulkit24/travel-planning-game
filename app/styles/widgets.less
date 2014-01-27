@@ -66,7 +66,6 @@
  @import 'main.less';
  @alert-background-colour: #FC9526;
 [widget-alert] {
-	top: 100%;
 	width: 100%;
 	background-color: @alert-background-colour;
 	text-align: center;
@@ -81,8 +80,17 @@
 			margin-top: 5px;
 		}
 	}
-	&.visible {
+	&.alert-below {
+		top: 100%;
+	}
+	&.alert-visible {
 		top: @hud-top-height;
+	}
+	&.alert-above {
+		animation: alert-dismiss 2s ease infinite;
+	}
+	&.alert-hidden {
+		display: none;
 	}
 	.chevron {
 		position: absolute;
@@ -97,5 +105,16 @@
 		border-top-width: 20px;
 		border-top-color: @alert-background-colour;
 		pointer-events: none;
+	}
+}
+@keyframes alert-dismiss {
+	0% {
+		top: @hud-top-height;
+	}
+	15% {
+		top: (@hud-top-height + 15);
+	}
+	100% {
+		top: -100%;
 	}
 }

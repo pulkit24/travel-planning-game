@@ -42,9 +42,9 @@ angular.module('travelPlanningGame.widgets')
 		return {
 			restrict: 'EA'
 			, templateUrl: 'templates/widgets.alert.tpl.html'
-			, transclude: true
 			, scope: {
-				chevron: "@"
+				content: "=widgetAlert"
+				, chevron: "@"
 			}
 			, controller: function($scope) {
 			}

@@ -66,12 +66,12 @@ angular.module("travelPlanningGame.app")
 			var resourceTracker = resources.new();
 
 			// Landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
-			resourceTracker.add(resources.categories.VISITING, resources.types.MONEY, landmark.visitingCost);
-			resourceTracker.add(resources.categories.LODGING, resources.types.MONEY, landmark.lodgingCost);
-			resourceTracker.add(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
-			resourceTracker.add(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
-			resourceTracker.add(resources.categories.SHOPPING, resources.types.MONEY, landmark.souvenirCost);
-			resourceTracker.add(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
+			resourceTracker.set(resources.categories.VISITING, resources.types.MONEY, -1 * landmark.visitingCost);
+			resourceTracker.set(resources.categories.LODGING, resources.types.MONEY, -1 * landmark.lodgingCost);
+			resourceTracker.set(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.souvenirCost);
+			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
 
 			return resourceTracker;
 		}

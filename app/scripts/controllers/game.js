@@ -1,6 +1,6 @@
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
-		stateTracker) {
+		stateTracker, mapRouter) {
 
 		/////////////////////////
 		// Current game state //
@@ -36,7 +36,7 @@ angular.module("travelPlanningGame.app")
 
 			// Create a resource tracker
 			var resourceTracker = resources.new();
-			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
+			resourceTracker.set(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
 			$scope.resources = resourceTracker;
 
 			// Start the timer
@@ -64,18 +64,28 @@ angular.module("travelPlanningGame.app")
 		/////////////////
 
 		function initPlay() {
+			$scope.alertMessage =
+				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
 			$timeout(function() {
-				$scope.showAlert = true;
+				stateTracker.get("alert").show();
 			}, 500);
 		}
 
+		// Set the selected location/point as the current start point
 		$scope.game.setStartPoint = function() {
 			$scope.current.location = $scope.locations.selected;
 			$scope.locations.selected = null;
+			$scope.map.options.selectable = "location";
+
+			stateTracker.get("alert").dismiss();
+
+			$scope.map.state.update();
 		};
 
 		// Check conditions for eligibility for another round
 		$scope.game.canPlay = function(giveReason) {
+			var deferred = $q.defer();
+
 			// Landmark selected?
 			if (!$scope.locations.selected)
 				return giveReason ? 'Select a landmark to visit.' : false;
@@ -84,7 +94,20 @@ angular.module("travelPlanningGame.app")
 			if ($scope.settings.sandboxMode)
 				return giveReason ? null : true;
 
-			// Funds left for visiting?
+			// Funds left for visiting/travelling/lodging?
+			var expectedCosts = resources.copy($scope.locations.selected.resources);
+			// Add travel costs
+			var travelCost = 0;
+			if($scope.current.location) {
+				var travelRoute = mapRouter.getRoute($scope.current.location, $scope.locations.selected);
+				if(travelRoute)
+					travelCost = travelRoute.getCost();
+			}
+
+			expectedCosts.set(resources.categories.VISITING, resources.types.MONEY,
+				expectedCosts.get(resources.categories.VISITING, resources.types.MONEY) - travelCost
+			);
+
 			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
 				resources.categories.VISITING))
 				return giveReason ? 'Not enough funds to visit.' : false;
@@ -97,18 +120,28 @@ angular.module("travelPlanningGame.app")
 
 			return giveReason ? null : true;
 		};
+
+		// Start this turn
 		$scope.game.startTurn = function() {
-			// Start this turn
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
+			// Restrict further selection to landmarks only
+			$scope.map.options.selectable = "location";
+			$scope.map.state.update();
 
-			// Charge for visiting costs and such
+			// Charge for visiting costs and experience
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.VISITING);
+
+			// One-time xp points for "discovery"
+			if (!history.getInstance("landmarks").find($scope.current.location))
+				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+					resources.categories.DISCOVERY);
 
 			// open the side bar
 			$scope.isInTurn = true;
 		};
+
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
 			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
@@ -117,11 +150,13 @@ angular.module("travelPlanningGame.app")
 
 			return giveReason ? null : true;
 		};
+
 		$scope.game.shop = function() {
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				resources.categories.SHOPPING);
 		};
+
 		$scope.game.endTurn = function() {
 			// Is this EOD? Charge for lodging
 			if (timer.isEOD())
@@ -130,10 +165,11 @@ angular.module("travelPlanningGame.app")
 
 			// Days left?
 			if (timer.isLast())
-				$scope.game.end();
+				$scope.game.end(); // end game
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
 
 			// Next turn this day
 			timer.next();
@@ -207,8 +243,8 @@ angular.module("travelPlanningGame.app")
 		$scope.map.options = {
 			zoom: 12
 			, locations: null
-			, selectable: "all"
-			, focusOn: "selected"
+			, selectable: "all" // all, point, location, none
+			, focusOn: "auto" // auto, selected, current, none
 			, disabled: false
 			, showTransit: false
 		};

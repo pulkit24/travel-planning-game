@@ -49,7 +49,22 @@ angular.module("travelPlanningGame.app")
 					return 0;
 			};
 
+			// Set the value of a resource
+			// Only use this at the start, to initial the resources
+			// as this function doesn't impose resource validations
+			this.set = function setResource(category, type, amount) {
+				// Create if no prevalent track
+				if (!this[category])
+					this[category] = {};
+				if (!this[category][type])
+					this[category][type] = 0;
+
+				this[category][type] += amount;
+				return this;
+			};
+
 			// Ability to update the value of any resource
+			// Checks are made to validate the update
 			this.update = function updateResource(category, type, amount) {
 				// Create if no prevalent track
 				if (!this[category])
@@ -75,6 +90,14 @@ angular.module("travelPlanningGame.app")
 			return new Resources();
 		}
 
+		function duplicateTracker(tracker) {
+			var trackerCopy = new Resources();
+			angular.forEach(categories, function(category, index) {
+				trackerCopy[category] = angular.copy(tracker[category]);
+			});
+			return trackerCopy;
+		}
+
 		// Check whether updating source Resources by destination Resources is possible
 		function canDelta(sourceResources, sourceCategory, destinationResources, destinationCategory) {
 			var possible = true;
@@ -96,6 +119,7 @@ angular.module("travelPlanningGame.app")
 
 		return {
 			new: startTracker
+			, copy: duplicateTracker
 			, canDelta: canDelta
 			, delta: delta
 			, types: types

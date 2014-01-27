@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('travelPlanningGame.maps')
-	.factory('mapRouter', function($q, rome2rio, history) {
+	.factory('mapRouter', function($q, $timeout, rome2rio, history) {
 
 		///////////////////////
 		// Route providers //
@@ -17,88 +17,121 @@ angular.module('travelPlanningGame.maps')
 			currentProvider = provider;
 		}
 
-		////////////////
-		// Routes  //
-		////////////////
+		/////////////////////////
+		// Routing providers //
+		/////////////////////////
 
-		var Route = function(provider) {
+		var RouteProvider = function(provider, from, to) {
 			// Get routing and drawing functions from the
 			// required providers
 			switch (provider) {
 				case providers.rome2rio:
-					angular.extend(this, new Rome2RioRoute());
+					angular.extend(this, new Rome2RioRouteProvider(provider, from, to));
 					break;
 				case providers.google:
-					angular.extend(this, new GoogleRoute());
+					angular.extend(this, new GoogleRouteProvider(provider, from, to));
 			}
 		};
 
-		var Rome2RioRoute = function() {
-			this._routes = null;
+		var Rome2RioRouteProvider = function(provider, from, to) {
+			this._from = from;
+			this._to = to;
 
-			this.route = function(from, to) {
+			this.route = function() {
 				var deferred = $q.defer();
-				var self = this;
 
 				rome2rio.search(
-					from.name, to.name, rome2rio.toPosition(
-						from.coords.lat, from.coords.lng
+					this._from.name, this._to.name, rome2rio.toPosition(
+						this._from.coords.lat, this._from.coords.lng
 					), rome2rio.toPosition(
-						to.coords.lat, to.coords.lng
+						this._to.coords.lat, this._to.coords.lng
 					)
 				)
 					.then(function(routes) {
-						self._routes = routes;
-						deferred.resolve(self);
+						deferred.resolve(routes);
 					});
 
 				return deferred.promise;
 			};
+		};
+
+		var GoogleRouteProvider = function(provider, from, to) {
+			this._from = from;
+			this._to = to;
+
+			this.route = function() {
+				var deferred = $q.defer();
+
+				// Fetch route from Google
+				new google.maps.DirectionsService().route({
+					origin: rome2rio.toPosition(this._from.coords.lat, this._from.coords.lng)
+					, destination: rome2rio.toPosition(this._to.coords.lat, this._to.coords.lng)
+					, travelMode: google.maps.TravelMode.DRIVING
+				}, function(result, status) {
+					if (status === google.maps.DirectionsStatus.OK) {
+						deferred.resolve(result);
+					}
+				});
+
+				return deferred.promise;
+			};
+		};
+
+		//////////////////////
+		// Route handlers //
+		//////////////////////
+
+		var Route = function(provider, routes, drawn) {
+			// Get cost and drawing functions from the
+			// required providers
+			switch (provider) {
+				case providers.rome2rio:
+					angular.extend(this, new Rome2RioRoute(routes, drawn));
+					break;
+				case providers.google:
+					angular.extend(this, new GoogleRoute(routes, drawn));
+			}
+		};
+
+		var Rome2RioRoute = function(routes, drawn) {
+			this._routes = routes;
+			this._drawn = drawn ? drawn : [];
 
 			this.getCost = function() {
 				if (this._routes)
-					return this._routes.getCost();
+					return this._routes.costs;
 				else
 					return null;
 			};
 
 			this.draw = function(map) {
 				if (this._routes) {
-					angular.forEach(this._routes.getPaths(), function(path, index) {
-						new google.maps.Polyline({
+					var _drawn = [];
+					angular.forEach(this._routes.paths, function(path, index) {
+						var drawnPath = new google.maps.Polyline({
 							strokeColor: '#3ABA3A'
 							, strokeOpacity: 1.0
 							, strokeWeight: 5
 							, map: map
 							, path: google.maps.geometry.encoding.decodePath(path)
 						});
+						_drawn.push(drawnPath);
 					});
+					this._drawn = _drawn;
 				} else
 					return null;
 			};
+
+			this.clear = function() {
+				angular.forEach(this._drawn, function(drawnPath, index) {
+					drawnPath.setMap(null);
+				});
+			};
 		};
 
-		var GoogleRoute = function() {
-			this._routes = null;
-
-			this.route = function(from, to) {
-				var deferred = $q.defer();
-				var self = this;
-
-				// Fetch route from Google
-				new google.maps.DirectionsService().route({
-					origin: rome2rio.toPosition(from.coords.lat, from.coords.lng)
-					, destination: rome2rio.toPosition(to.coords.lat, to.coords.lng)
-					, travelMode: google.maps.TravelMode.DRIVING
-				}, function(result, status) {
-					if (status === google.maps.DirectionsStatus.OK) {
-						self._routes = result;
-						deferred.resolve(self);
-					}
-				});
-
-				return deferred.promise;
-			};
+		var GoogleRoute = function(routes, drawn) {
+			this._routes = routes;
+			this._drawn = drawn ? drawn : null;
 
 			this.getCost = function() {
 				return null;
@@ -106,11 +139,25 @@ angular.module('travelPlanningGame.maps')
 
 			this.draw = function(map) {
 				if (this._routes) {
-					var rendered = new google.maps.DirectionsRenderer();
-					rendered.setMap(map);
-					rendered.setDirections(this._routes);
+					this._drawn = new google.maps.DirectionsRenderer({
+						suppressMarkers: true
+						, suppressInfoWindows: true
+						, polylineOptions: {
+							clickable: false
+							, strokeColor: '#3ABA3A'
+							, strokeOpacity: 1.0
+							, strokeWeight: 5
+						}
+					});
+					this._drawn.setMap(map);
+					this._drawn.setDirections(this._routes);
 				} else
 					return null;
+			};
+
+			this.clear = function() {
+				if(this._drawn)
+					this._drawn.setMap(null);
 			};
 		};
 
@@ -118,19 +165,21 @@ angular.module('travelPlanningGame.maps')
 		// Route management //
 		/////////////////////////
 
-		var routingHistory = history.getInstance("mapRouter");
+		var routingHistory = {
+			history: {}
+			, record: function(id, route) {
+				history[id] = route;
+			}
+			, retrieve: function(id) {
+				return history[id];
+			}
+			, retrieveAll: function() {
+				return history;
+			}
+		};
 
-		// Add to history
-		function saveRoute(id, route) {
-			return routingHistory.record(id, route);
-		}
-
-		// Retrieve from history
-		function restoreRoute(id) {
-			return routingHistory.retrieve(id);
-		}
-
-		function _marshalLocations(locationA, locationB) {
+		// Generate a unique, commutable identifier for the route request
+		function _routeIdentifier(locationA, locationB) {
 			var idA = locationA.id;
 			var idB = locationB.id;
 			if (idA < idB)
@@ -139,16 +188,60 @@ angular.module('travelPlanningGame.maps')
 				return idB + "," + idA;
 		}
 
-		function getRoute(fromLocation, toLocation) {
-			var router = restoreRoute(_marshalLocations(fromLocation, toLocation));
-			if(!router)
-				router = new Route(currentProvider);
-			return router.route(fromLocation, toLocation);
+		// Return a previously fetched route from history immediately
+		function getRoute(from, to) {
+			var route = routingHistory.retrieve(_routeIdentifier(from, to));
+			if(route)
+				return new Route(currentProvider, route._routes, route._drawn);
+			else
+				return null;
+		}
+
+		// Fetch a route, and return a promise
+		function fetchRoute(from, to) {
+			var deferred = $q.defer();
+
+			$timeout(function() {
+				var routeObject = routingHistory.retrieve(_routeIdentifier(from, to));
+				if (routeObject) {
+					deferred.resolve(new Route(currentProvider, routeObject._routes, routeObject._drawn));
+
+				} else {
+					new RouteProvider(currentProvider, from, to).route().then(function(rawRoute) {
+						var routeObject = new Route(currentProvider, rawRoute);
+
+						routingHistory.record(_routeIdentifier(from, to), routeObject);
+
+						deferred.resolve(routeObject);
+					});
+				}
+			}, 0);
+
+			return deferred.promise;
+		}
+
+		function fetchAllRoutes(endPoints) {
+			angular.forEach(endPoints, function(from, index) {
+				angular.forEach(endPoints, function(to, index) {
+					if (from !== to && !routingHistory.retrieve(_routeIdentifier(from, to))) {
+						fetchRoute(from, to);
+					}
+				});
+			});
+		}
+
+		function clearAll() {
+			angular.forEach(routingHistory.retrieveAll(), function(route, id) {
+				new Route(currentProvider, route._routes, route._drawn).clear();
+			});
 		}
 
 		return {
 			providers: providers
 			, use: chooseRouteProvider
-			, route: getRoute
+			, prefetch: fetchAllRoutes
+			, fetchRoute: fetchRoute
+			, getRoute: getRoute
+			, clearAll: clearAll
 		};
 	});

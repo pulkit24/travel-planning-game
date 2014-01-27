@@ -22,7 +22,7 @@ angular.module("travelPlanningGame.app")
 				}
 			};
 
-
+			// Get a record
 			this.retrieve = function getRecord(timestamp) {
 				try {
 					var marshalledState = this._records[timestamp];
@@ -32,6 +32,29 @@ angular.module("travelPlanningGame.app")
 				} catch (e) {
 					return null;
 				}
+			};
+
+			// Get all records
+			this.retrieveAll = function getAllRecords() {
+				var records = angular.copy(this._records);
+				angular.forEach(records, function(marshalledState, timestamp) {
+					records[timestamp] = angular.fromJson(marshalledState);
+				});
+				return records;
+			};
+
+			// Find a record - a value-based lookup
+			// Returns the timestamp back
+			this.find = function findRecord(state) {
+				var marshalledState = angular.toJson(state);
+				var foundTimestamp = null;
+
+				angular.forEach(this._records, function(recordedState, timestamp) {
+					if(marshalledState === recordedState)
+						foundTimestamp = timestamp;
+				});
+
+				return foundTimestamp;
 			};
 		};
 

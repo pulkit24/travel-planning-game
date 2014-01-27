@@ -73,10 +73,16 @@
 	<!-- end game board -->
 
 	<!-- Alerts container -->
-	<div widget-alert chevron="down" class="layer" ng-class="{visible: showAlert}">
-		<h2>Where will you be starting?</h2>
-		<p>Select your hotel location on the map.</p>
-	</div>
+	<div widget-alert="alertMessage" chevron="down" class="layer"
+		state-tracker="alert"
+		state-choices="[
+			{state: 'idle', set: 'reset', check: 'isIdle'}
+			, {state: 'on', set: 'show', check: 'isOn'}
+			, {state: 'dismissed', set: 'dismiss', check: 'isDismissed'}
+			, {state: 'off', set: 'off', check: 'isOff'}
+		]"
+		state-class="['alert-below', 'alert-visible', 'alert-above', 'alert-hidden']"
+		state-transition="{dismissed: {off: 2000}, off: {idle: 500}}"></div>
 
 	<!-- Selected landmark card -->
 	<div landmark-card landmark="locations.selected" ng-show="locations.selected && map.options.selectable == 'location'" class="layer"></div>

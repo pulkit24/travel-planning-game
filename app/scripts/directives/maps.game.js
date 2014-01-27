@@ -36,12 +36,23 @@ angular.module('travelPlanningGame.maps')
 						location.id = index;
 
 						plotLocation(location).then(function() {
-							// Auto center and zoom the map
-							$scope.map.fitBounds($scope.bounds);
+							$scope.focus();
 
 							// Update the markers being displayed on the map
 							$scope.$broadcast('gmMarkersUpdate');
+
+							// If last, mark geocoding as complete
+							if (index === $scope.locations.length - 1)
+								stateTracker.new("geocodingState").complete();
 						});
+					});
+
+					// Set route provider
+					mapRouter.use(mapRouter.providers.google);
+
+					// When geocoding is complete, prefetch all routes
+					stateTracker.new("geocodingState").$on("complete", function() {
+						mapRouter.prefetch($scope.locations);
 					});
 				}
 
@@ -54,9 +65,6 @@ angular.module('travelPlanningGame.maps')
 					$scope.type = 'roadmap';
 					$scope.bounds = new google.maps.LatLngBounds();
 					$scope.styles = mapStyles.routeXL;
-
-					// Prepare the route
-					mapRouter.use(mapRouter.providers.rome2rio);
 
 					// Request Google map to kindly use our preset parameters
 					$scope.map.mapTypeId = $scope.type;
@@ -105,19 +113,22 @@ angular.module('travelPlanningGame.maps')
 				$scope.focus = function() {
 					var focalPoint = null;
 
-					if ($scope.focusOn === "selected")
+					if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
 						focalPoint = $scope.selected;
-					else if ($scope.focusOn === "current")
+					else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
 						focalPoint = $scope.current;
 
 					if (focalPoint && focalPoint.coords) {
 						$scope.map.panTo(angulargmUtils.objToLatLng(focalPoint.coords));
+					} else {
+						// Auto center and zoom the map
+						$scope.map.fitBounds($scope.bounds);
 					}
 				};
 
 				// Select a point on the map (other than a marker/location)
 				$scope.selectPoint = function(map, event) {
-					if($scope.selectable !== "point" && $scope.selectable !== "all") return;
+					if ($scope.selectable !== "point" && $scope.selectable !== "all") return;
 
 					var point = {
 						id: 'startingPoint'
@@ -141,15 +152,18 @@ angular.module('travelPlanningGame.maps')
 
 				// Change location as needed
 				$scope.selectLocation = function(location, marker) {
-					if($scope.selectable !== "location" && $scope.selectable !== "all") return;
+					if ($scope.selectable !== "location" && $scope.selectable !== "all") return;
 
 					// Update the location
 					$scope.selected = location;
 					$scope.focus(); // focus if needed
 
-					// Calculate the route from the current location
-					if ($scope.current) {
-						mapRouter.route($scope.current, $scope.selected);
+					// Draw route
+					if($scope.current) {
+						mapRouter.clearAll();
+						mapRouter.fetchRoute($scope.current, $scope.selected).then(function(route) {
+							route.draw($scope.map);
+						});
 					}
 
 					// Show label
