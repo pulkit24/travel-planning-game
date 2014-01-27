@@ -47,9 +47,6 @@ angular.module('travelPlanningGame.maps')
 						});
 					});
 
-					// Set route provider
-					mapRouter.use(mapRouter.providers.google);
-
 					// When geocoding is complete, prefetch all routes
 					stateTracker.new("geocodingState").$on("complete", function() {
 						mapRouter.prefetch($scope.locations);
@@ -94,16 +91,21 @@ angular.module('travelPlanningGame.maps')
 					var deferred = $q.defer();
 
 					mapGeocoder.toCoords(location.address)
-						.then(function(coords) {
-							// Add the coords into the location
-							location.coords = angular.copy(coords);
-							$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
+						.then(
+							function success(coords) {
+								// Add the coords into the location
+								location.coords = angular.copy(coords);
+								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
 
-							// Show landmark label
-							$scope.showLabel(location, null, $scope.map);
+								// Show landmark label
+								$scope.showLabel(location, null, $scope.map);
 
-							deferred.resolve();
-						});
+								deferred.resolve();
+							}
+							, function error() {
+								deferred.resolve();
+							}
+						);
 
 					return deferred.promise;
 				}
@@ -119,7 +121,10 @@ angular.module('travelPlanningGame.maps')
 						focalPoint = $scope.current;
 
 					if (focalPoint && focalPoint.coords) {
-						$scope.map.panTo(angulargmUtils.objToLatLng(focalPoint.coords));
+						$scope.map.panTo(angulargmUtils.objToLatLng({
+							lat: focalPoint.coords.lat
+							, lng: focalPoint.coords.lng - 0.02
+						}));
 					} else {
 						// Auto center and zoom the map
 						$scope.map.fitBounds($scope.bounds);
@@ -160,9 +165,8 @@ angular.module('travelPlanningGame.maps')
 
 					// Draw route
 					if($scope.current) {
-						mapRouter.clearAll();
-						mapRouter.fetchRoute($scope.current, $scope.selected).then(function(route) {
-							route.draw($scope.map);
+						mapRouter.fetch($scope.current, $scope.selected).then(function(route) {
+							mapRouter.draw(route, $scope.map);
 						});
 					}
 
@@ -209,7 +213,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Standard marker
 					var defaultMarker = {
-						url: '../../images/marker-grey.png'
+						url: '../../images/markers/marker-grey.png'
 						, size: new google.maps.Size(30, 30)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(15, 15)
@@ -217,7 +221,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Selected location marker
 					var selectedMarker = {
-						url: '../../images/marker-orange.png'
+						url: '../../images/markers/marker-orange.png'
 						, size: new google.maps.Size(66, 66)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(33, 33)
@@ -225,7 +229,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Current location marker
 					var currentMarker = {
-						url: '../../images/marker-green.png'
+						url: '../../images/markers/marker-green.png'
 						, size: new google.maps.Size(104, 104)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(52, 52)

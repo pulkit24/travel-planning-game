@@ -63,6 +63,8 @@ angular.module("travelPlanningGame.app")
 		// Game turns //
 		/////////////////
 
+		$scope.turnState = stateTracker.new("turnState");
+
 		function initPlay() {
 			$scope.alertMessage =
 				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
@@ -99,9 +101,9 @@ angular.module("travelPlanningGame.app")
 			// Add travel costs
 			var travelCost = 0;
 			if($scope.current.location) {
-				var travelRoute = mapRouter.getRoute($scope.current.location, $scope.locations.selected);
+				var travelRoute = mapRouter.get($scope.current.location, $scope.locations.selected);
 				if(travelRoute)
-					travelCost = travelRoute.getCost();
+					travelCost = travelRoute.cost;
 			}
 
 			expectedCosts.set(resources.categories.VISITING, resources.types.MONEY,
@@ -138,8 +140,7 @@ angular.module("travelPlanningGame.app")
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 					resources.categories.DISCOVERY);
 
-			// open the side bar
-			$scope.isInTurn = true;
+			$scope.turnState.activate();
 		};
 
 		$scope.game.canShop = function(giveReason) {
@@ -158,6 +159,8 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.game.endTurn = function() {
+			$scope.turnState.complete();
+
 			// Is this EOD? Charge for lodging
 			if (timer.isEOD())
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
@@ -173,9 +176,6 @@ angular.module("travelPlanningGame.app")
 
 			// Next turn this day
 			timer.next();
-
-			// Close the side bar
-			$scope.isInTurn = false;
 
 			// Un-set as current location [FIXME]
 			$scope.locations.selected = null;

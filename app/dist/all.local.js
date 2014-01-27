@@ -40,7 +40,12 @@ angular.module("travelPlanningGame.app")
 		///////////////////////
 
 		// Tracker for a single entity's history
-		var History = function() {
+		var History = function(serializeFn, deserializeFn) {
+
+			if(!serializeFn)
+				serializeFn = angular.toJson;
+			if(!deserializeFn)
+				deserializeFn = angular.fromJson;
 
 			// History records indexed by timestamps
 			this._records = {};
@@ -48,7 +53,7 @@ angular.module("travelPlanningGame.app")
 			// Add a record
 			this.record = function addRecord(timestamp, state) {
 				try {
-					this._records[timestamp] = angular.toJson(state);
+					this._records[timestamp] = serializeFn(state);
 					return true;
 
 				} catch (e) {
@@ -60,7 +65,7 @@ angular.module("travelPlanningGame.app")
 			this.retrieve = function getRecord(timestamp) {
 				try {
 					var marshalledState = this._records[timestamp];
-					var state = angular.fromJson(marshalledState);
+					var state = deserializeFn(marshalledState);
 					return state;
 
 				} catch (e) {
@@ -72,7 +77,7 @@ angular.module("travelPlanningGame.app")
 			this.retrieveAll = function getAllRecords() {
 				var records = angular.copy(this._records);
 				angular.forEach(records, function(marshalledState, timestamp) {
-					records[timestamp] = angular.fromJson(marshalledState);
+					records[timestamp] = deserializeFn(marshalledState);
 				});
 				return records;
 			};
@@ -80,7 +85,7 @@ angular.module("travelPlanningGame.app")
 			// Find a record - a value-based lookup
 			// Returns the timestamp back
 			this.find = function findRecord(state) {
-				var marshalledState = angular.toJson(state);
+				var marshalledState = serializeFn(state);
 				var foundTimestamp = null;
 
 				angular.forEach(this._records, function(recordedState, timestamp) {
@@ -99,16 +104,16 @@ angular.module("travelPlanningGame.app")
 		// Registry of histories being maintained
 		var registry = {};
 
-		var _create = function createHistory() {
-			return new History();
+		var _create = function createHistory(serializeFn, deserializeFn) {
+			return new History(serializeFn, deserializeFn);
 		};
 
 		// Create or retrieve an existing history for the supplied name
-		var getInstance = function(name) {
+		var getInstance = function(name, serializeFn, deserializeFn) {
 			var history = registry[name];
 
 			if (!history) {
-				history = _create();
+				history = _create(serializeFn, deserializeFn);
 				registry[name] = history;
 			}
 
@@ -191,8 +196,8 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.set(resources.categories.VISITING, resources.types.MONEY, -1 * landmark.visitingCost);
 			resourceTracker.set(resources.categories.LODGING, resources.types.MONEY, -1 * landmark.lodgingCost);
 			resourceTracker.set(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
-			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
-			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.souvenirCost);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.shopping.souvenirs);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.shopping.cost);
 			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
 
 			return resourceTracker;
@@ -225,9 +230,12 @@ angular.module('travelPlanningGame.maps')
 			geocoder.geocode({
 				address: address
 			}, function(results) {
-				deferred.resolve(angulargmUtils.latLngToObj(
-					results[0].geometry.location
-				));
+				if(results && results[0] && results[0].geometry && results[0].geometry.location)
+					deferred.resolve(angulargmUtils.latLngToObj(
+						results[0].geometry.location
+					));
+				else
+					deferred.reject();
 			});
 
 			return deferred.promise;
@@ -242,7 +250,10 @@ angular.module('travelPlanningGame.maps')
 			geocoder.geocode({
 				latLng: coords
 			}, function(results) {
-				deferred.resolve(results[0].formatted_address);
+				if(results && results[0] && results[0].formatted_address)
+					deferred.resolve(results[0].formatted_address);
+				else
+					deferred.reject();
 			});
 
 			return deferred.promise;
@@ -254,182 +265,141 @@ angular.module('travelPlanningGame.maps')
 'use strict';
 
 angular.module('travelPlanningGame.maps')
-	.factory('mapRouter', function($q, $timeout, rome2rio, history) {
+	.factory('mapRouter', function($q, $timeout, angulargmUtils, rome2rio, history) {
 
-		///////////////////////
-		// Route providers //
-		///////////////////////
+		//////////////////////////////
+		// Get cost from Rome2Rio //
+		//////////////////////////////
 
-		var providers = {
-			rome2rio: 1
-			, google: 2
-		};
-		var currentProvider = providers.google;
+		function _getCost(from, to) {
+			var deferred = $q.defer();
 
-		function chooseRouteProvider(provider) {
-			currentProvider = provider;
+			rome2rio.search(
+				from.name
+				, to.name
+				, rome2rio.toPosition(from.coords.lat, from.coords.lng)
+				, rome2rio.toPosition(to.coords.lat, to.coords.lng)
+			)
+				.then(function(routes) {
+					deferred.resolve(routes.cost);
+				});
+
+			return deferred.promise;
 		}
 
-		/////////////////////////
-		// Routing providers //
-		/////////////////////////
+		//////////////////////////////
+		// Get routes from Google //
+		//////////////////////////////
 
-		var RouteProvider = function(provider, from, to) {
-			// Get routing and drawing functions from the
-			// required providers
-			switch (provider) {
-				case providers.rome2rio:
-					angular.extend(this, new Rome2RioRouteProvider(provider, from, to));
-					break;
-				case providers.google:
-					angular.extend(this, new GoogleRouteProvider(provider, from, to));
+		// Get route for mode of travel
+		// Travel modes: DRIVING, WALKING , TRANSIT
+		function _getRouteByMode(from, to, mode) {
+			var deferred = $q.defer();
+
+			// Fetch route from Google
+			new google.maps.DirectionsService().route({
+				origin: angulargmUtils.objToLatLng(from.coords)
+				, destination: angulargmUtils.objToLatLng(to.coords)
+				, travelMode: google.maps.TravelMode[mode]
 			}
+
+			, function(result, status) {
+				// Resolve if Google was able to find a route
+				if (status === google.maps.DirectionsStatus.OK)
+					deferred.resolve(result);
+
+				// Otherwise, notify failure
+				else
+					deferred.reject();
+			});
+
+			return deferred.promise;
+		}
+
+		// Generic function that attempts to fetch routes
+		// for different modes of travel, until we get a hit
+		function _getRoute(from, to) {
+			var deferred = $q.defer();
+
+			// First attempt: default driving mode
+			_getRouteByMode(from, to, "DRIVING").then(
+				function hit(result) {
+					deferred.resolve(result);
+				}
+				, function miss() {
+					// Second attempt: public transit mode
+					_getRouteByMode(from, to, "TRANSIT").then(
+						function hit(result) {
+							deferred.resolve(result);
+						}
+						, function miss() {
+							// Third attempt: walking mode
+							_getRouteByMode(from, to, "WALKING").then(
+								function hit(result) {
+									deferred.resolve(result);
+								}
+								, function miss() {
+									// No more options
+									deferred.reject();
+								}
+							);
+						}
+					);
+				}
+			);
+
+			return deferred.promise;
+		}
+
+		/////////////////////
+		// Route handler //
+		/////////////////////
+
+		var Route = function(route, cost) {
+			this.route = route;
+			this.cost = cost;
 		};
 
-		var Rome2RioRouteProvider = function(provider, from, to) {
-			this._from = from;
-			this._to = to;
+		/////////////////////////
+		// Drawing functions //
+		/////////////////////////
 
-			this.route = function() {
-				var deferred = $q.defer();
+		// Reference to the currently drawn route - used for clearing
+		var renderer = null;
 
-				rome2rio.search(
-					this._from.name, this._to.name, rome2rio.toPosition(
-						this._from.coords.lat, this._from.coords.lng
-					), rome2rio.toPosition(
-						this._to.coords.lat, this._to.coords.lng
-					)
-				)
-					.then(function(routes) {
-						deferred.resolve(routes);
-					});
-
-				return deferred.promise;
-			};
-		};
-
-		var GoogleRouteProvider = function(provider, from, to) {
-			this._from = from;
-			this._to = to;
-
-			this.route = function() {
-				var deferred = $q.defer();
-
-				// Fetch route from Google
-				new google.maps.DirectionsService().route({
-					origin: rome2rio.toPosition(this._from.coords.lat, this._from.coords.lng)
-					, destination: rome2rio.toPosition(this._to.coords.lat, this._to.coords.lng)
-					, travelMode: google.maps.TravelMode.DRIVING
-				}, function(result, status) {
-					if (status === google.maps.DirectionsStatus.OK) {
-						deferred.resolve(result);
+		function drawRoute(route, map) {
+			// Initialise the renderer
+			if(!renderer) {
+				renderer = new google.maps.DirectionsRenderer({
+					suppressMarkers: true
+					, suppressInfoWindows: true
+					, preserveViewport: true
+					, polylineOptions: {
+						clickable: false
+						, strokeColor: '#3ABA3A'
+						, strokeOpacity: 1.0
+						, strokeWeight: 5
 					}
 				});
-
-				return deferred.promise;
-			};
-		};
-
-		//////////////////////
-		// Route handlers //
-		//////////////////////
-
-		var Route = function(provider, routes, drawn) {
-			// Get cost and drawing functions from the
-			// required providers
-			switch (provider) {
-				case providers.rome2rio:
-					angular.extend(this, new Rome2RioRoute(routes, drawn));
-					break;
-				case providers.google:
-					angular.extend(this, new GoogleRoute(routes, drawn));
 			}
-		};
 
-		var Rome2RioRoute = function(routes, drawn) {
-			this._routes = routes;
-			this._drawn = drawn ? drawn : [];
-
-			this.getCost = function() {
-				if (this._routes)
-					return this._routes.costs;
-				else
-					return null;
-			};
-
-			this.draw = function(map) {
-				if (this._routes) {
-					var _drawn = [];
-					angular.forEach(this._routes.paths, function(path, index) {
-						var drawnPath = new google.maps.Polyline({
-							strokeColor: '#3ABA3A'
-							, strokeOpacity: 1.0
-							, strokeWeight: 5
-							, map: map
-							, path: google.maps.geometry.encoding.decodePath(path)
-						});
-						_drawn.push(drawnPath);
-					});
-					this._drawn = _drawn;
-				} else
-					return null;
-			};
-
-			this.clear = function() {
-				angular.forEach(this._drawn, function(drawnPath, index) {
-					drawnPath.setMap(null);
-				});
-			};
-		};
-
-		var GoogleRoute = function(routes, drawn) {
-			this._routes = routes;
-			this._drawn = drawn ? drawn : null;
-
-			this.getCost = function() {
-				return null;
-			};
-
-			this.draw = function(map) {
-				if (this._routes) {
-					this._drawn = new google.maps.DirectionsRenderer({
-						suppressMarkers: true
-						, suppressInfoWindows: true
-						, polylineOptions: {
-							clickable: false
-							, strokeColor: '#3ABA3A'
-							, strokeOpacity: 1.0
-							, strokeWeight: 5
-						}
-					});
-					this._drawn.setMap(map);
-					this._drawn.setDirections(this._routes);
-				} else
-					return null;
-			};
-
-			this.clear = function() {
-				if(this._drawn)
-					this._drawn.setMap(null);
-			};
-		};
+			// Do we have anything to draw?
+			if(route && route.route) {
+				// Yes. Draw!
+				renderer.setMap(map);
+				renderer.setDirections(route.route);
+			} else {
+				// Remove the previously displayed directions, if any
+				renderer.setMap(null);
+			}
+		}
 
 		/////////////////////////
 		// Route management //
 		/////////////////////////
 
-		var routingHistory = {
-			history: {}
-			, record: function(id, route) {
-				history[id] = route;
-			}
-			, retrieve: function(id) {
-				return history[id];
-			}
-			, retrieveAll: function() {
-				return history;
-			}
-		};
+		// Record of all previously fetched routes - fetching is expensive!
+		var routingHistory = history.getInstance("mapRouter", function(route) { return route; }, function(route) { return route; });
 
 		// Generate a unique, commutable identifier for the route request
 		function _routeIdentifier(locationA, locationB) {
@@ -443,11 +413,7 @@ angular.module('travelPlanningGame.maps')
 
 		// Return a previously fetched route from history immediately
 		function getRoute(from, to) {
-			var route = routingHistory.retrieve(_routeIdentifier(from, to));
-			if(route)
-				return new Route(currentProvider, route._routes, route._drawn);
-			else
-				return null;
+			return routingHistory.retrieve(_routeIdentifier(from, to));
 		}
 
 		// Fetch a route, and return a promise
@@ -455,18 +421,55 @@ angular.module('travelPlanningGame.maps')
 			var deferred = $q.defer();
 
 			$timeout(function() {
-				var routeObject = routingHistory.retrieve(_routeIdentifier(from, to));
-				if (routeObject) {
-					deferred.resolve(new Route(currentProvider, routeObject._routes, routeObject._drawn));
+				// Check if we have previously routed these locations
+				var routeHandler = routingHistory.retrieve(_routeIdentifier(from, to));
 
-				} else {
-					new RouteProvider(currentProvider, from, to).route().then(function(rawRoute) {
-						var routeObject = new Route(currentProvider, rawRoute);
+				// If so, resolve immediately
+				if (routeHandler) {
+					deferred.resolve(routeHandler);
+				}
 
-						routingHistory.record(_routeIdentifier(from, to), routeObject);
+				// Otherwise, fetch from scratch
+				else {
 
-						deferred.resolve(routeObject);
-					});
+					// Get the route from Google
+					_getRoute(from, to).then(
+						function success(route) {
+							// We got the route! Next, get the cost from Rome2Rio
+							_getCost(from, to).then(
+								function success(cost) {
+									// Success again! Prepare the route object
+									routeHandler = new Route(route, cost);
+
+									// Record in history
+									routingHistory.record(_routeIdentifier(from, to), routeHandler);
+
+									// Return the route!
+									deferred.resolve(routeHandler);
+								}
+								, function failure() {
+									// Never mind the cost, just return the route
+									routeHandler = new Route(route, null);
+
+									// Record in history
+									routingHistory.record(_routeIdentifier(from, to), routeHandler);
+
+									// Return the route!
+									deferred.resolve(routeHandler);
+								}
+							);
+						}
+						, function failed() {
+							// Oops, no route!
+							routeHandler = new Route(null, null);
+
+							// Record in history
+							routingHistory.record(_routeIdentifier(from, to), routeHandler);
+
+							// Return the route!
+							deferred.resolve(routeHandler);
+						}
+					);
 				}
 			}, 0);
 
@@ -476,26 +479,20 @@ angular.module('travelPlanningGame.maps')
 		function fetchAllRoutes(endPoints) {
 			angular.forEach(endPoints, function(from, index) {
 				angular.forEach(endPoints, function(to, index) {
-					if (from !== to && !routingHistory.retrieve(_routeIdentifier(from, to))) {
+					if (from !== to)
 						fetchRoute(from, to);
-					}
 				});
 			});
 		}
 
-		function clearAll() {
-			angular.forEach(routingHistory.retrieveAll(), function(route, id) {
-				new Route(currentProvider, route._routes, route._drawn).clear();
-			});
-		}
-
 		return {
-			providers: providers
-			, use: chooseRouteProvider
-			, prefetch: fetchAllRoutes
-			, fetchRoute: fetchRoute
-			, getRoute: getRoute
-			, clearAll: clearAll
+			// Route fetch functions
+			prefetch: fetchAllRoutes
+			, fetch: fetchRoute
+			, get: getRoute
+
+			// Route draw function
+			, draw: drawRoute
 		};
 	});
 
@@ -801,9 +798,6 @@ angular.module('travelPlanningGame.maps')
 						});
 					});
 
-					// Set route provider
-					mapRouter.use(mapRouter.providers.google);
-
 					// When geocoding is complete, prefetch all routes
 					stateTracker.new("geocodingState").$on("complete", function() {
 						mapRouter.prefetch($scope.locations);
@@ -848,16 +842,21 @@ angular.module('travelPlanningGame.maps')
 					var deferred = $q.defer();
 
 					mapGeocoder.toCoords(location.address)
-						.then(function(coords) {
-							// Add the coords into the location
-							location.coords = angular.copy(coords);
-							$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
+						.then(
+							function success(coords) {
+								// Add the coords into the location
+								location.coords = angular.copy(coords);
+								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
 
-							// Show landmark label
-							$scope.showLabel(location, null, $scope.map);
+								// Show landmark label
+								$scope.showLabel(location, null, $scope.map);
 
-							deferred.resolve();
-						});
+								deferred.resolve();
+							}
+							, function error() {
+								deferred.resolve();
+							}
+						);
 
 					return deferred.promise;
 				}
@@ -873,7 +872,10 @@ angular.module('travelPlanningGame.maps')
 						focalPoint = $scope.current;
 
 					if (focalPoint && focalPoint.coords) {
-						$scope.map.panTo(angulargmUtils.objToLatLng(focalPoint.coords));
+						$scope.map.panTo(angulargmUtils.objToLatLng({
+							lat: focalPoint.coords.lat
+							, lng: focalPoint.coords.lng - 0.02
+						}));
 					} else {
 						// Auto center and zoom the map
 						$scope.map.fitBounds($scope.bounds);
@@ -914,9 +916,8 @@ angular.module('travelPlanningGame.maps')
 
 					// Draw route
 					if($scope.current) {
-						mapRouter.clearAll();
-						mapRouter.fetchRoute($scope.current, $scope.selected).then(function(route) {
-							route.draw($scope.map);
+						mapRouter.fetch($scope.current, $scope.selected).then(function(route) {
+							mapRouter.draw(route, $scope.map);
 						});
 					}
 
@@ -963,7 +964,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Standard marker
 					var defaultMarker = {
-						url: '../../images/marker-grey.png'
+						url: '../../images/markers/marker-grey.png'
 						, size: new google.maps.Size(30, 30)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(15, 15)
@@ -971,7 +972,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Selected location marker
 					var selectedMarker = {
-						url: '../../images/marker-orange.png'
+						url: '../../images/markers/marker-orange.png'
 						, size: new google.maps.Size(66, 66)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(33, 33)
@@ -979,7 +980,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Current location marker
 					var currentMarker = {
-						url: '../../images/marker-green.png'
+						url: '../../images/markers/marker-green.png'
 						, size: new google.maps.Size(104, 104)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(52, 52)
@@ -1132,6 +1133,8 @@ angular.module("travelPlanningGame.app")
 		// Game turns //
 		/////////////////
 
+		$scope.turnState = stateTracker.new("turnState");
+
 		function initPlay() {
 			$scope.alertMessage =
 				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
@@ -1168,9 +1171,9 @@ angular.module("travelPlanningGame.app")
 			// Add travel costs
 			var travelCost = 0;
 			if($scope.current.location) {
-				var travelRoute = mapRouter.getRoute($scope.current.location, $scope.locations.selected);
+				var travelRoute = mapRouter.get($scope.current.location, $scope.locations.selected);
 				if(travelRoute)
-					travelCost = travelRoute.getCost();
+					travelCost = travelRoute.cost;
 			}
 
 			expectedCosts.set(resources.categories.VISITING, resources.types.MONEY,
@@ -1207,8 +1210,7 @@ angular.module("travelPlanningGame.app")
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 					resources.categories.DISCOVERY);
 
-			// open the side bar
-			$scope.isInTurn = true;
+			$scope.turnState.activate();
 		};
 
 		$scope.game.canShop = function(giveReason) {
@@ -1227,6 +1229,8 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.game.endTurn = function() {
+			$scope.turnState.complete();
+
 			// Is this EOD? Charge for lodging
 			if (timer.isEOD())
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
@@ -1242,9 +1246,6 @@ angular.module("travelPlanningGame.app")
 
 			// Next turn this day
 			timer.next();
-
-			// Close the side bar
-			$scope.isInTurn = false;
 
 			// Un-set as current location [FIXME]
 			$scope.locations.selected = null;
@@ -1332,127 +1333,62 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
   'use strict';
   $templateCache.put('templates/landmark-card.tpl.html',
     '<!-- Landmark card -->\n' +
-    '<div class="landmark-card" ng-class="{flipped : isFlipped}">\n' +
+    '<div class="landmark-card panel panel-primary">\n' +
     '\n' +
-    '	<!-- Front face -->\n' +
-    '	<div class="panel panel-primary landmark-card-face landmark-card-face-front">\n' +
+    '	<!-- Landmark name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
     '\n' +
-    '		<!-- Landmark name and controls -->\n' +
-    '		<div class="panel-header panel-heading">\n' +
+    '		<!-- Controls -->\n' +
+    '		<i class="fa close fa-times fa-fw"\n' +
+    '			state-tracker="landmarkCardState"\n' +
+    '			ng-click="landmarkCardState.complete()"></i>\n' +
+    '		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->\n' +
     '\n' +
-    '			<!-- Controls -->\n' +
-    '			<i class="fa close fa-times fa-fw" ng-click="landmark = null"></i>\n' +
-    '			<i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i>\n' +
-    '\n' +
-    '			<h3>{{ landmark.name }}</h3>\n' +
-    '		</div>\n' +
-    '		<!-- end name and controls -->\n' +
-    '\n' +
-    '		<!-- Image and quick stats -->\n' +
-    '		<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '			<div class="col-xs-offset-9">\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>LODGING</small>\n' +
-    '					<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					<small>PER DAY</small>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>VISITING</small>\n' +
-    '					<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<h3>{{ landmark.souvenirs }} <i class="fa fa-shopping-cart"></i>\n' +
-    '					</h3>\n' +
-    '					<small>FOR {{ landmark.souvenirCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</small>\n' +
-    '				</div>\n' +
-    '			</div>\n' +
-    '		</div>\n' +
-    '		<!-- end image and stats -->\n' +
-    '\n' +
-    '		<!-- Features, flavour text and options -->\n' +
-    '		<ul class="list-group">\n' +
-    '			<li class="list-group-item list-item" ng-repeat="bonus in landmark.bonuses">\n' +
-    '				<span class="pull-right text-primary" ng-show="bonus.type">{{ bonus.type | uppercase }}</span>\n' +
-    '				<i class="fa" ng-class="bonus.icon"></i> {{ bonus.flavour }}\n' +
-    '				<em class="text-muted" ng-show="bonus.implication">\n' +
-    '					<small>({{ bonus.implication }})</small>\n' +
-    '				</em>\n' +
-    '			</li>\n' +
-    '		</ul>\n' +
-    '		<!-- end features -->\n' +
-    '\n' +
-    '		<!-- One time bonus -->\n' +
-    '		<div class="panel-footer text-center">\n' +
-    '			One-time visiting bonus:\n' +
-    '			<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
-    '			</strong>\n' +
-    '		</div>\n' +
-    '		<!-- end bonus -->\n' +
-    '\n' +
+    '		<h3>{{ landmark.name }}</h3>\n' +
     '	</div>\n' +
-    '	<!-- end front face -->\n' +
+    '	<!-- end name and controls -->\n' +
     '\n' +
-    '	<!-- Back face -->\n' +
-    '	<div class="panel panel-primary landmark-card-face landmark-card-face-back">\n' +
-    '\n' +
-    '		<!-- Landmark name and controls -->\n' +
-    '		<div class="panel-header panel-heading">\n' +
-    '\n' +
-    '			<!-- Controls -->\n' +
-    '			<i class="fa close fa-times fa-fw" ng-click="landmark = null"></i>\n' +
-    '			<i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i>\n' +
-    '\n' +
-    '			<h3>{{ landmark.name }}</h3>\n' +
-    '		</div>\n' +
-    '		<!-- end name and controls -->\n' +
-    '\n' +
-    '		<!-- Image -->\n' +
-    '		<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '			<div class="col-xs-offset-9 invisible">\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>LODGING</small>\n' +
-    '					<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					<small>PER DAY</small>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>VISITING</small>\n' +
-    '					<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<h3>{{ landmark.souvenirs }} <i class="fa fa-shopping-cart"></i>\n' +
-    '					</h3>\n' +
-    '					<small>FOR {{ landmark.souvenirCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</small>\n' +
-    '				</div>\n' +
+    '	<!-- Image and quick stats -->\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '		<div class="col-xs-offset-9">\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<small>LODGING</small>\n' +
+    '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
+    '				</h3>\n' +
+    '				<small>PER DAY</small>\n' +
+    '			</div>\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<small>VISITING</small>\n' +
+    '				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
+    '				</h3>\n' +
+    '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
+    '			</div>\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<img ng-src="{{ landmark.shopping.image }}" />\n' +
     '			</div>\n' +
     '		</div>\n' +
-    '		<!-- end image -->\n' +
-    '\n' +
-    '		<!-- Features, flavour text and options -->\n' +
-    '		<ul class="list-group">\n' +
-    '			<li class="list-group-item list-item">{{ landmark.description }}</li>\n' +
-    '		</ul>\n' +
-    '		<!-- end features -->\n' +
-    '\n' +
-    '		<!-- One time bonus -->\n' +
-    '		<div class="panel-footer text-center">\n' +
-    '			<div class="invisible">\n' +
-    '				One-time visiting bonus:\n' +
-    '				<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
-    '				</strong>\n' +
-    '			</div>\n' +
-    '		</div>\n' +
-    '		<!-- end bonus -->\n' +
-    '\n' +
     '	</div>\n' +
-    '	<!-- end back face -->\n' +
+    '	<!-- end image and stats -->\n' +
+    '\n' +
+    '	<!-- Features, flavour text and options -->\n' +
+    '	<ul class="list-group">\n' +
+    '		<li class="list-group-item list-item" ng-repeat="bonus in landmark.bonuses">\n' +
+    '			<span class="pull-right text-primary" ng-show="bonus.type">{{ bonus.type | uppercase }}</span>\n' +
+    '			<i class="fa" ng-class="bonus.icon"></i> {{ bonus.flavour }}\n' +
+    '			<em class="text-muted" ng-show="bonus.implication">\n' +
+    '				<small>({{ bonus.implication }})</small>\n' +
+    '			</em>\n' +
+    '		</li>\n' +
+    '	</ul>\n' +
+    '	<!-- end features -->\n' +
+    '\n' +
+    '	<!-- One time bonus -->\n' +
+    '	<div class="panel-footer text-center">\n' +
+    '		One-time visiting bonus:\n' +
+    '		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
+    '		</strong>\n' +
+    '	</div>\n' +
+    '	<!-- end bonus -->\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +

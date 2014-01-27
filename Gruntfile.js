@@ -44,7 +44,8 @@ module.exports = function(grunt) {
 			, css: {
 				src: [
 					'app/vendor/bootstrap/dist/css/bootstrap.min.css',
-					'app/vendor/font-awesome/css/font-awesome.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
+					'app/vendor/font-awesome/css/font-awesome.min.css',
+					'app/vendor/animate/animate.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
 				]
 				, dest: 'app/dist/all.css'
 			}
@@ -83,7 +84,7 @@ module.exports = function(grunt) {
 					compile: true
 					, includePath: 'app/styles'
 				}
-				, src: 'app/styles/{,*/}*.less'
+				, src: 'app/styles/main.less'
 				, dest: 'app/styles/less-compiled.css'
 			}
 		}

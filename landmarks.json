@@ -1,14 +1,19 @@
 [{
-	"name": "Sentosa"
+	"name": "Casino Sentosa"
 	, "address": "8 Sentosa Gateway, Singapore 098269"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "http://d3n8a8pro7vhmx.cloudfront.net/wearecrown/pages/15/attachments/original/1359687509/crown_casino_fire_show.jpg?1359687509"
-	, "lodgingCost": 200
-	, "visitingCost": 100
-	, "visitingExp": 5
-	, "souvenirs": 5
-	, "souvenirCost": 150
-	, "exp": 20
+	, "image": "app/images/landmarks/casino_sentosa.jpg"
+	, "lodgingCost": 400
+	, "visitingCost": 55
+	, "visitingExp": 20
+	, "shopping": {
+		"name": "Singapore Sling"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "app/images/items/anz_icon_singapore_sling.png"
+		, "souvenirs": 5
+		, "cost": 45
+	}
+	, "exp": 12
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"
@@ -24,16 +29,21 @@
 		, "type": "optional"
 	}]
 }, {
-	"name": "Pulau Ubin"
+	"name": "Ubin Island"
 	, "address": "Pulau Ubin, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "http://d3n8a8pro7vhmx.cloudfront.net/wearecrown/pages/15/attachments/original/1359687509/crown_casino_fire_show.jpg?1359687509"
-	, "lodgingCost": 200
-	, "visitingCost": 100
-	, "visitingExp": 5
-	, "souvenirs": 5
-	, "souvenirCost": 150
-	, "exp": 20
+	, "image": "app/images/landmarks/ubin_island.jpg"
+	, "lodgingCost": 150
+	, "visitingCost": 30
+	, "visitingExp": 10
+	, "shopping": {
+		"name": "Sambal Stingray"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "app/images/items/anz_icon_stingray.png"
+		, "souvenirs": 3
+		, "cost": 25
+	}
+	, "exp": 15
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"
@@ -52,13 +62,18 @@
 	"name": "Marina Bay"
 	, "address": "Marina Bay, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "http://d3n8a8pro7vhmx.cloudfront.net/wearecrown/pages/15/attachments/original/1359687509/crown_casino_fire_show.jpg?1359687509"
-	, "lodgingCost": 200
-	, "visitingCost": 100
-	, "visitingExp": 5
-	, "souvenirs": 5
-	, "souvenirCost": 150
-	, "exp": 20
+	, "image": "app/images/landmarks/marina_bay.jpg"
+	, "lodgingCost": 250
+	, "visitingCost": 45
+	, "visitingExp": 15
+	, "shopping": {
+		"name": "Golden Orchid Brooch"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "app/images/items/anz_icon_golden_orchid.png"
+		, "souvenirs": 15
+		, "cost": 80
+	}
+	, "exp": 5
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"
@@ -77,13 +92,18 @@
 	"name": "Bukit Batok Nature Park"
 	, "address": "Bukit Batok Nature Park, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "http://d3n8a8pro7vhmx.cloudfront.net/wearecrown/pages/15/attachments/original/1359687509/crown_casino_fire_show.jpg?1359687509"
-	, "lodgingCost": 200
-	, "visitingCost": 100
+	, "image": "app/images/landmarks/bukit_batok.jpg"
+	, "lodgingCost": 100
+	, "visitingCost": 20
 	, "visitingExp": 5
-	, "souvenirs": 5
-	, "souvenirCost": 150
-	, "exp": 20
+	, "shopping": {
+		"name": "Merlion Doll"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "app/images/items/anz_icon_merlion_plush.png"
+		, "souvenirs": 7
+		, "cost": 50
+	}
+	, "exp": 15
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"
@@ -99,16 +119,21 @@
 		, "type": "optional"
 	}]
 }, {
-	"name": "Mandai Lake"
-	, "address": "80 Mandai Lake Rd, Singapore 729826"
+	"name": "Telok Ayer Market"
+	, "address": "Telok Ayer Market, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "http://d3n8a8pro7vhmx.cloudfront.net/wearecrown/pages/15/attachments/original/1359687509/crown_casino_fire_show.jpg?1359687509"
-	, "lodgingCost": 200
-	, "visitingCost": 100
+	, "image": "app/images/landmarks/telok_ayer.jpg"
+	, "lodgingCost": 250
+	, "visitingCost": 20
 	, "visitingExp": 5
-	, "souvenirs": 5
-	, "souvenirCost": 150
-	, "exp": 20
+	, "shopping": {
+		"name": "Kueh Tutu"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "app/images/items/anz_icon_kueh_tutu.png"
+		, "souvenirs": 3
+		, "cost": 25
+	}
+	, "exp": 10
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"

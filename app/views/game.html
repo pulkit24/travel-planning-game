@@ -73,7 +73,7 @@
 	<!-- end game board -->
 
 	<!-- Alerts container -->
-	<div widget-alert="alertMessage" chevron="down" class="layer"
+	<div widget-alert="alertMessage" chevron="down" class="layer animated"
 		state-tracker="alert"
 		state-choices="[
 			{state: 'idle', set: 'reset', check: 'isIdle'}
@@ -81,29 +81,42 @@
 			, {state: 'dismissed', set: 'dismiss', check: 'isDismissed'}
 			, {state: 'off', set: 'off', check: 'isOff'}
 		]"
-		state-class="['alert-below', 'alert-visible', 'alert-above', 'alert-hidden']"
-		state-transition="{dismissed: {off: 2000}, off: {idle: 500}}"></div>
+		state-class="['hide', 'bounceInUp', 'bounceOutUp', 'hide']"
+		state-transition="{dismissed: {off: 1000}, off: {idle: 500}}"></div>
 
 	<!-- Selected landmark card -->
-	<div landmark-card landmark="locations.selected" ng-show="locations.selected && map.options.selectable == 'location'" class="layer"></div>
+	<div landmark-card landmark="locations.selected" class="layer animated"
+		ng-show="locations.selected && map.options.selectable == 'location'"
+		state-tracker="landmarkCardState"
+		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
+		state-activate="landmarkCardLocationID != locations.selected.id"
+		state-on-active="landmarkCardLocationID = locations.selected.id"
+		state-transition="{complete: {idle: 1000}}"></div>
 	<!-- end landmark card -->
 
 	<!-- Sidebar for turn options -->
-	<div class="layer sidebar turn-sidebar" ng-if="isInTurn">
-		<!-- Shopping option -->
-		<div class="turn-option">
-			<img src="http://placehold.it/100x100" />Singaporean Pineapple
-			<button type="button" class="btn btn-default" ng-click="shop.shop()" ng-disabled="!game.canShop()">
-				{{ whyCantI(game.canShop) || "Buy" }}
-			</button>
-		</div>
-		<!-- end shopping option -->
+	<div class="layer sidebar turn-sidebar animated"
+		state-tracker="turnState"
+		state-class="['hide', 'bounceInUp', 'bounceOutDown', 'hide']"
+		state-transition="{complete: {idle: 1000}, failed: {idle: 1000}}">
 
-		<!-- Optional features -->
-		<div class="turn-option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
-			<h4>Optional</h4>
-			{{ bonus.flavour }}
-			<button type="button" class="btn btn-default">Play</button>
+		<div ng-if="turnState.isActive()">
+			<!-- Shopping option -->
+			<div class="turn-option">
+				<img ng-src="{{ current.location.shopping.image }}" /> {{ current.location.shopping.name }}
+				<button type="button" class="btn btn-default" ng-click="shop.shop()" ng-disabled="!game.canShop()">
+					{{ whyCantI(game.canShop) || "Buy" }}
+				</button>
+			</div>
+			<!-- end shopping option -->
+
+			<!-- Optional features -->
+			<div class="turn-option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
+				<h4>Optional</h4>
+				{{ bonus.flavour }}
+				<button type="button" class="btn btn-default">Play</button>
+			</div>
+			<!-- end optional features -->
 		</div>
 	</div>
 	<!-- end turn sidebar -->
@@ -128,7 +141,7 @@
 	<!-- end start button -->
 
 	<!-- Start turn button -->
-	<div class="layer play-button" ng-if="!isInTurn && current.location">
+	<div class="layer play-button" ng-if="!turnState.isActive() && current.location">
 		<button type="button" class="btn btn-lg btn-warning" ng-click="game.startTurn()" ng-disabled="!game.canPlay()">
 			{{ whyCantI(game.canPlay) || "Go!" }}
 		</button>
@@ -136,7 +149,7 @@
 	<!-- end start button -->
 
 	<!-- End turn button -->
-	<div class="layer play-button" ng-if="isInTurn && current.location">
+	<div class="layer play-button" ng-if="turnState.isActive() && current.location">
 		<button type="button" class="btn btn-lg btn-default" ng-click="game.endTurn()">
 			End Turn
 		</button>
@@ -150,5 +163,3 @@
 <div ng-if="current.state.isStats()">
 	<h1>Game over!</h1>
 </div>
-
-<button class="layer" ng-click="test()">Test</button>

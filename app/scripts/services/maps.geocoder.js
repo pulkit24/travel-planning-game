@@ -19,9 +19,12 @@ angular.module('travelPlanningGame.maps')
 			geocoder.geocode({
 				address: address
 			}, function(results) {
-				deferred.resolve(angulargmUtils.latLngToObj(
-					results[0].geometry.location
-				));
+				if(results && results[0] && results[0].geometry && results[0].geometry.location)
+					deferred.resolve(angulargmUtils.latLngToObj(
+						results[0].geometry.location
+					));
+				else
+					deferred.reject();
 			});
 
 			return deferred.promise;
@@ -36,7 +39,10 @@ angular.module('travelPlanningGame.maps')
 			geocoder.geocode({
 				latLng: coords
 			}, function(results) {
-				deferred.resolve(results[0].formatted_address);
+				if(results && results[0] && results[0].formatted_address)
+					deferred.resolve(results[0].formatted_address);
+				else
+					deferred.reject();
 			});
 
 			return deferred.promise;

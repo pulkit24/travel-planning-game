@@ -4,127 +4,62 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
   'use strict';
   $templateCache.put('templates/landmark-card.tpl.html',
     '<!-- Landmark card -->\n' +
-    '<div class="landmark-card" ng-class="{flipped : isFlipped}">\n' +
+    '<div class="landmark-card panel panel-primary">\n' +
     '\n' +
-    '	<!-- Front face -->\n' +
-    '	<div class="panel panel-primary landmark-card-face landmark-card-face-front">\n' +
+    '	<!-- Landmark name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
     '\n' +
-    '		<!-- Landmark name and controls -->\n' +
-    '		<div class="panel-header panel-heading">\n' +
+    '		<!-- Controls -->\n' +
+    '		<i class="fa close fa-times fa-fw"\n' +
+    '			state-tracker="landmarkCardState"\n' +
+    '			ng-click="landmarkCardState.complete()"></i>\n' +
+    '		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->\n' +
     '\n' +
-    '			<!-- Controls -->\n' +
-    '			<i class="fa close fa-times fa-fw" ng-click="landmark = null"></i>\n' +
-    '			<i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i>\n' +
-    '\n' +
-    '			<h3>{{ landmark.name }}</h3>\n' +
-    '		</div>\n' +
-    '		<!-- end name and controls -->\n' +
-    '\n' +
-    '		<!-- Image and quick stats -->\n' +
-    '		<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '			<div class="col-xs-offset-9">\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>LODGING</small>\n' +
-    '					<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					<small>PER DAY</small>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>VISITING</small>\n' +
-    '					<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<h3>{{ landmark.souvenirs }} <i class="fa fa-shopping-cart"></i>\n' +
-    '					</h3>\n' +
-    '					<small>FOR {{ landmark.souvenirCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</small>\n' +
-    '				</div>\n' +
-    '			</div>\n' +
-    '		</div>\n' +
-    '		<!-- end image and stats -->\n' +
-    '\n' +
-    '		<!-- Features, flavour text and options -->\n' +
-    '		<ul class="list-group">\n' +
-    '			<li class="list-group-item list-item" ng-repeat="bonus in landmark.bonuses">\n' +
-    '				<span class="pull-right text-primary" ng-show="bonus.type">{{ bonus.type | uppercase }}</span>\n' +
-    '				<i class="fa" ng-class="bonus.icon"></i> {{ bonus.flavour }}\n' +
-    '				<em class="text-muted" ng-show="bonus.implication">\n' +
-    '					<small>({{ bonus.implication }})</small>\n' +
-    '				</em>\n' +
-    '			</li>\n' +
-    '		</ul>\n' +
-    '		<!-- end features -->\n' +
-    '\n' +
-    '		<!-- One time bonus -->\n' +
-    '		<div class="panel-footer text-center">\n' +
-    '			One-time visiting bonus:\n' +
-    '			<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
-    '			</strong>\n' +
-    '		</div>\n' +
-    '		<!-- end bonus -->\n' +
-    '\n' +
+    '		<h3>{{ landmark.name }}</h3>\n' +
     '	</div>\n' +
-    '	<!-- end front face -->\n' +
+    '	<!-- end name and controls -->\n' +
     '\n' +
-    '	<!-- Back face -->\n' +
-    '	<div class="panel panel-primary landmark-card-face landmark-card-face-back">\n' +
-    '\n' +
-    '		<!-- Landmark name and controls -->\n' +
-    '		<div class="panel-header panel-heading">\n' +
-    '\n' +
-    '			<!-- Controls -->\n' +
-    '			<i class="fa close fa-times fa-fw" ng-click="landmark = null"></i>\n' +
-    '			<i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i>\n' +
-    '\n' +
-    '			<h3>{{ landmark.name }}</h3>\n' +
-    '		</div>\n' +
-    '		<!-- end name and controls -->\n' +
-    '\n' +
-    '		<!-- Image -->\n' +
-    '		<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '			<div class="col-xs-offset-9 invisible">\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>LODGING</small>\n' +
-    '					<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					<small>PER DAY</small>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<small>VISITING</small>\n' +
-    '					<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</h3>\n' +
-    '					+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
-    '				</div>\n' +
-    '				<div class="thumbnail resource text-center">\n' +
-    '					<h3>{{ landmark.souvenirs }} <i class="fa fa-shopping-cart"></i>\n' +
-    '					</h3>\n' +
-    '					<small>FOR {{ landmark.souvenirCost }} <i class="fa fa-dollar"></i>\n' +
-    '					</small>\n' +
-    '				</div>\n' +
+    '	<!-- Image and quick stats -->\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '		<div class="col-xs-offset-9">\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<small>LODGING</small>\n' +
+    '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
+    '				</h3>\n' +
+    '				<small>PER DAY</small>\n' +
+    '			</div>\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<small>VISITING</small>\n' +
+    '				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
+    '				</h3>\n' +
+    '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
+    '			</div>\n' +
+    '			<div class="thumbnail resource text-center">\n' +
+    '				<img ng-src="{{ landmark.shopping.image }}" />\n' +
     '			</div>\n' +
     '		</div>\n' +
-    '		<!-- end image -->\n' +
-    '\n' +
-    '		<!-- Features, flavour text and options -->\n' +
-    '		<ul class="list-group">\n' +
-    '			<li class="list-group-item list-item">{{ landmark.description }}</li>\n' +
-    '		</ul>\n' +
-    '		<!-- end features -->\n' +
-    '\n' +
-    '		<!-- One time bonus -->\n' +
-    '		<div class="panel-footer text-center">\n' +
-    '			<div class="invisible">\n' +
-    '				One-time visiting bonus:\n' +
-    '				<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
-    '				</strong>\n' +
-    '			</div>\n' +
-    '		</div>\n' +
-    '		<!-- end bonus -->\n' +
-    '\n' +
     '	</div>\n' +
-    '	<!-- end back face -->\n' +
+    '	<!-- end image and stats -->\n' +
+    '\n' +
+    '	<!-- Features, flavour text and options -->\n' +
+    '	<ul class="list-group">\n' +
+    '		<li class="list-group-item list-item" ng-repeat="bonus in landmark.bonuses">\n' +
+    '			<span class="pull-right text-primary" ng-show="bonus.type">{{ bonus.type | uppercase }}</span>\n' +
+    '			<i class="fa" ng-class="bonus.icon"></i> {{ bonus.flavour }}\n' +
+    '			<em class="text-muted" ng-show="bonus.implication">\n' +
+    '				<small>({{ bonus.implication }})</small>\n' +
+    '			</em>\n' +
+    '		</li>\n' +
+    '	</ul>\n' +
+    '	<!-- end features -->\n' +
+    '\n' +
+    '	<!-- One time bonus -->\n' +
+    '	<div class="panel-footer text-center">\n' +
+    '		One-time visiting bonus:\n' +
+    '		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
+    '		</strong>\n' +
+    '	</div>\n' +
+    '	<!-- end bonus -->\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +

@@ -69,8 +69,8 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.set(resources.categories.VISITING, resources.types.MONEY, -1 * landmark.visitingCost);
 			resourceTracker.set(resources.categories.LODGING, resources.types.MONEY, -1 * landmark.lodgingCost);
 			resourceTracker.set(resources.categories.VISITING, resources.types.XP, landmark.visitingExp);
-			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.souvenirs);
-			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.souvenirCost);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.shopping.souvenirs);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.shopping.cost);
 			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
 
 			return resourceTracker;

@@ -1,0 +1,40 @@
+[landmark-card] {
+	top: 15%;
+	left: 5%;
+	width: 400px;
+	/*height: 490px;*/
+	zoom: 0.85;
+
+    animation-duration: 0.5s;
+}
+.landmark-card {
+	box-shadow: 0 0 15px 2px black;
+	border-radius: @panel-border-radius;
+	h1, h2, h3, h4, h5, h6 {
+		margin:0;
+		padding:0;
+	}
+	.panel-body {
+		background-position: center center;
+		background-size: cover;
+		background-repeat: no-repeat;
+	}
+	.thumbnail {
+		margin: 1px;
+		border: none;
+	}
+	.resource {
+		&:first-child {
+			background-color: lightblue;
+		}
+		&:first-child+& {
+			background-color: lemonchiffon;
+		}
+		&:last-child {
+			background-color: lightsalmon;
+		}
+		.close {
+			color: white;
+		}
+	}
+}

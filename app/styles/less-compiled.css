@@ -44,12 +44,12 @@ body {
   background-color: #FFEDD4;
 }
 
-.turn-sidebar {
+.sidebar.turn-sidebar {
   top: 0;
   padding-top: 187.5px;
 }
 
-.turn-sidebar .turn-option {
+.sidebar.turn-sidebar .turn-option {
   height: 187.5px;
   padding: 10px;
   margin-bottom: 2px;
@@ -96,6 +96,8 @@ a.accordion-toggle {
   vertical-align: middle;
   background-color: white;
 }
+
+/* Other styles */
 
 /*Resource indicator buttons*/
 
@@ -183,106 +185,8 @@ a.accordion-toggle {
 
 /* Alert */
 
-/* Variables */
-
-/* Styles */
-
-body {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background-color: #777;
-}
-
-.game-container {
-  position: relative;
-  width: 800px;
-  height: 600px;
-  margin: 0 auto;
-  overflow: hidden;
-  border: 1px solid #eee;
-}
-
-.layer {
-  position: absolute;
-}
-
-.play-button {
-  right: 0;
-  bottom: 0;
-  width: 30%;
-}
-
-.play-button .btn {
-  width: 100%;
-}
-
-.back-button {
-  bottom: 0;
-  left: 0;
-}
-
-.sidebar {
-  top: 75px;
-  right: 0;
-  width: 30%;
-  height: 100%;
-  background-color: #FFEDD4;
-}
-
-.turn-sidebar {
-  top: 0;
-  padding-top: 187.5px;
-}
-
-.turn-sidebar .turn-option {
-  height: 187.5px;
-  padding: 10px;
-  margin-bottom: 2px;
-  background-color: #92CED1;
-}
-
-a.accordion-toggle {
-  display: block;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.menu-top-bar {
-  width: 100%;
-  height: 75px;
-  color: white;
-  background-color: #395363;
-}
-
-.menu-top-bar h1 {
-  padding: 0;
-  margin: 0;
-  line-height: 75px;
-  white-space: nowrap;
-  animation: flight-schedule-marquee 4s linear infinite;
-}
-
-@keyframes flight-schedule-marquee {
-  from {
-    margin-left: 800px;
-  }
-  to {
-    margin-left: -400px;
-  }
-}
-
-/* Loading screen */
-
-.loading-screen {
-  width: 100%;
-  height: 100%;
-  margin: auto auto;
-  text-align: center;
-  vertical-align: middle;
-  background-color: white;
-}
-
 [widget-alert] {
+  top: 75px;
   width: 100%;
   text-align: center;
   background-color: #fc9526;
@@ -301,22 +205,6 @@ a.accordion-toggle {
   margin-top: 5px;
 }
 
-[widget-alert].alert-below {
-  top: 100%;
-}
-
-[widget-alert].alert-visible {
-  top: 75px;
-}
-
-[widget-alert].alert-above {
-  animation: alert-dismiss 2s ease infinite;
-}
-
-[widget-alert].alert-hidden {
-  display: none;
-}
-
 [widget-alert] .chevron {
   position: absolute;
   top: 100%;
@@ -332,14 +220,54 @@ a.accordion-toggle {
   border-top-width: 20px;
 }
 
-@keyframes alert-dismiss {
-  0% {
-    top: 75px;
-  }
-  15% {
-    top: 90px;
-  }
-  100% {
-    top: -100%;
-  }
+[landmark-card] {
+  top: 15%;
+  left: 5%;
+  width: 400px;
+  /*height: 490px;*/
+
+  zoom: 0.85;
+  animation-duration: 0.5s;
+}
+
+.landmark-card {
+  border-radius: 4px;
+  box-shadow: 0 0 15px 2px black;
+}
+
+.landmark-card h1,
+.landmark-card h2,
+.landmark-card h3,
+.landmark-card h4,
+.landmark-card h5,
+.landmark-card h6 {
+  padding: 0;
+  margin: 0;
+}
+
+.landmark-card .panel-body {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.landmark-card .thumbnail {
+  margin: 1px;
+  border: none;
+}
+
+.landmark-card .resource:first-child {
+  background-color: lightblue;
+}
+
+.landmark-card .resource:first-child + .landmark-card .resource {
+  background-color: lemonchiffon;
+}
+
+.landmark-card .resource:last-child {
+  background-color: lightsalmon;
+}
+
+.landmark-card .resource .close {
+  color: white;
 }

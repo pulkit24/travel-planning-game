@@ -1,9 +1,5 @@
-/* Variables */
- @game-width: 800px;
- @game-height: ((@game-width * 3) / 4);
- @hud-top-height: 75px;
- @sidebar-width: 30%;
- @menu-bar-colour: #395363;
+@import '../vendor/bootstrap/less/variables.less';
+@import 'variables.less';
 
 /* Styles */
  body {
@@ -40,15 +36,15 @@
 	width: @sidebar-width;
 	height: 100%;
 	background-color: #FFEDD4;
-}
-.turn-sidebar {
-	top: 0;
-	padding-top: (@game-height / 3.2);
-	.turn-option {
-		margin-bottom: 2px;
-		height: (@game-height / 3.2);
-		background-color: #92CED1;
-		padding: 10px;
+	&.turn-sidebar {
+		top: 0;
+		padding-top: (@game-height / 3.2);
+		.turn-option {
+			margin-bottom: 2px;
+			padding: 10px;
+			height: (@game-height / 3.2);
+			background-color: #92CED1;
+		}
 	}
 }
 a.accordion-toggle {
@@ -62,10 +58,10 @@ a.accordion-toggle {
 	background-color: @menu-bar-colour;
 	color: white;
 	h1 {
-		line-height: @hud-top-height;
-		white-space: nowrap;
 		margin: 0;
 		padding: 0;
+		white-space: nowrap;
+		line-height: @hud-top-height;
 		animation: flight-schedule-marquee 4s linear infinite;
 	}
 }
@@ -77,13 +73,15 @@ a.accordion-toggle {
 		margin-left: (-1 * @game-width) / 2;
 	}
 }
-
 /* Loading screen */
-.loading-screen {
+ .loading-screen {
+	margin: auto auto;
 	width: 100%;
 	height: 100%;
 	background-color: white;
 	vertical-align: middle;
 	text-align: center;
-	margin: auto auto;
 }
+/* Other styles */
+ @import 'widgets.less';
+ @import 'landmark-card.less';

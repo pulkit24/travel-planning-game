@@ -19,8 +19,10 @@ describe('Service: landmarks', function() {
 			, 'visitingCost': '100'
 			, 'lodgingCost': '500'
 			, 'visitingExp': '10'
-			, 'souvenirs': '10'
-			, 'souvenirCost': '299'
+			, 'shopping': {
+				'souvenirs': '10'
+				, 'cost': '299'
+			}
 			, 'exp': '15'
 		}]);
 
