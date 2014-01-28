@@ -129,8 +129,8 @@ angular.module("travelPlanningGame.app")
 	.factory("landmarks", function($http, $q, resources) {
 
 		// Source files
-		var source_landmarks = "../../landmarks.json";
-		var source_cities = "../../cities.json";
+		var source_landmarks = "../landmarks.json";
+		var source_cities = "../cities.json";
 
 		// List of landmarks and cities
 		var landmarks = null;
