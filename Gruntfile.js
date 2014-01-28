@@ -30,7 +30,7 @@ module.exports = function(grunt) {
 					'app/vendor/angular-sanitize/angular-sanitize.min.js',
 					'app/vendor/angular-underscore/angular-underscore.js',
 					'app/vendor/AngularGM/angular-gm.min.js',
-					'app/vendor/angular-rome2rio/angular-rome2rio.js',
+					'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
 					'app/vendor/state-tracker/state-tracker.min.js'
 				]
 				, dest: 'app/dist/all.vendor.js'

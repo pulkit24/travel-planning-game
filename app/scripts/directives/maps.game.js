@@ -213,7 +213,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Standard marker
 					var defaultMarker = {
-						url: '../../images/markers/marker-grey.png'
+						url: 'app/images/markers/marker-grey.png'
 						, size: new google.maps.Size(30, 30)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(15, 15)
@@ -221,7 +221,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Selected location marker
 					var selectedMarker = {
-						url: '../../images/markers/marker-orange.png'
+						url: 'app/images/markers/marker-orange.png'
 						, size: new google.maps.Size(66, 66)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(33, 33)
@@ -229,7 +229,7 @@ angular.module('travelPlanningGame.maps')
 
 					// Current location marker
 					var currentMarker = {
-						url: '../../images/markers/marker-green.png'
+						url: 'app/images/markers/marker-green.png'
 						, size: new google.maps.Size(104, 104)
 						, origin: new google.maps.Point(0, 0)
 						, anchor: new google.maps.Point(52, 52)
