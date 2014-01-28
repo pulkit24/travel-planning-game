@@ -2,14 +2,14 @@
 	"name": "Casino Sentosa"
 	, "address": "8 Sentosa Gateway, Singapore 098269"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "app/images/landmarks/casino_sentosa.jpg"
+	, "image": "images/landmarks/casino_sentosa.jpg"
 	, "lodgingCost": 400
 	, "visitingCost": 55
 	, "visitingExp": 20
 	, "shopping": {
 		"name": "Singapore Sling"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "app/images/items/anz_icon_singapore_sling.png"
+		, "image": "images/items/anz_icon_singapore_sling.png"
 		, "souvenirs": 5
 		, "cost": 45
 	}
@@ -32,14 +32,14 @@
 	"name": "Ubin Island"
 	, "address": "Pulau Ubin, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "app/images/landmarks/ubin_island.jpg"
+	, "image": "images/landmarks/ubin_island.jpg"
 	, "lodgingCost": 150
 	, "visitingCost": 30
 	, "visitingExp": 10
 	, "shopping": {
 		"name": "Sambal Stingray"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "app/images/items/anz_icon_stingray.png"
+		, "image": "images/items/anz_icon_stingray.png"
 		, "souvenirs": 3
 		, "cost": 25
 	}
@@ -62,14 +62,14 @@
 	"name": "Marina Bay"
 	, "address": "Marina Bay, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "app/images/landmarks/marina_bay.jpg"
+	, "image": "images/landmarks/marina_bay.jpg"
 	, "lodgingCost": 250
 	, "visitingCost": 45
 	, "visitingExp": 15
 	, "shopping": {
 		"name": "Golden Orchid Brooch"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "app/images/items/anz_icon_golden_orchid.png"
+		, "image": "images/items/anz_icon_golden_orchid.png"
 		, "souvenirs": 15
 		, "cost": 80
 	}
@@ -92,14 +92,14 @@
 	"name": "Bukit Batok Nature Park"
 	, "address": "Bukit Batok Nature Park, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "app/images/landmarks/bukit_batok.jpg"
+	, "image": "images/landmarks/bukit_batok.jpg"
 	, "lodgingCost": 100
 	, "visitingCost": 20
 	, "visitingExp": 5
 	, "shopping": {
 		"name": "Merlion Doll"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "app/images/items/anz_icon_merlion_plush.png"
+		, "image": "images/items/anz_icon_merlion_plush.png"
 		, "souvenirs": 7
 		, "cost": 50
 	}
@@ -122,14 +122,14 @@
 	"name": "Telok Ayer Market"
 	, "address": "Telok Ayer Market, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
-	, "image": "app/images/landmarks/telok_ayer.jpg"
+	, "image": "images/landmarks/telok_ayer.jpg"
 	, "lodgingCost": 250
 	, "visitingCost": 20
 	, "visitingExp": 5
 	, "shopping": {
 		"name": "Kueh Tutu"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "app/images/items/anz_icon_kueh_tutu.png"
+		, "image": "images/items/anz_icon_kueh_tutu.png"
 		, "souvenirs": 3
 		, "cost": 25
 	}
