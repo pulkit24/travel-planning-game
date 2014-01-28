@@ -20,16 +20,16 @@ module.exports = function(grunt) {
 			}
 			, jsVendor: {
 				src: [
-					'app/vendor/jquery/jquery.min.js', 'app/vendor/es5-shim/es5-shim.min.js',
-					'app/vendor/json3/lib/json3.min.js', 'app/vendor/angular/angular.min.js',
-					'app/vendor/underscore/underscore-min.js',
-					'app/vendor/angular-bootstrap/ui-bootstrap-tpls.js',
-					'app/vendor/angular-cookies/angular-cookies.min.js',
-					'app/vendor/angular-resource/angular-resource.min.js',
-					'app/vendor/angular-route/angular-route.min.js',
-					'app/vendor/angular-sanitize/angular-sanitize.min.js',
-					'app/vendor/angular-underscore/angular-underscore.js',
-					'app/vendor/AngularGM/angular-gm.min.js',
+					'app/vendor/bower_components/jquery/jquery.min.js', 'app/vendor/bower_components/es5-shim/es5-shim.min.js',
+					'app/vendor/bower_components/json3/lib/json3.min.js', 'app/vendor/bower_components/angular/angular.min.js',
+					'app/vendor/bower_components/underscore/underscore-min.js',
+					'app/vendor/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+					'app/vendor/bower_components/angular-cookies/angular-cookies.min.js',
+					'app/vendor/bower_components/angular-resource/angular-resource.min.js',
+					'app/vendor/bower_components/angular-route/angular-route.min.js',
+					'app/vendor/bower_components/angular-sanitize/angular-sanitize.min.js',
+					'app/vendor/bower_components/angular-underscore/angular-underscore.js',
+					'app/vendor/bower_components/AngularGM/angular-gm.min.js',
 					'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
 					'app/vendor/state-tracker/state-tracker.min.js'
 				]
@@ -43,8 +43,8 @@ module.exports = function(grunt) {
 			}
 			, css: {
 				src: [
-					'app/vendor/bootstrap/dist/css/bootstrap.min.css',
-					'app/vendor/font-awesome/css/font-awesome.min.css',
+					'app/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css',
+					'app/vendor/bower_components/font-awesome/css/font-awesome.min.css',
 					'app/vendor/animate/animate.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
 				]
 				, dest: 'app/dist/all.css'

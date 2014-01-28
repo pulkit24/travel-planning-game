@@ -14,7 +14,7 @@ describe('Service: landmarks', function() {
 	}));
 
 	it('should have some landmarks', inject(function() {
-		$httpBackend.expectGET('landmarks.json').respond([{
+		$httpBackend.expectGET('../landmarks.json').respond([{
 			'name': 'Landmark 1'
 			, 'visitingCost': '100'
 			, 'lodgingCost': '500'

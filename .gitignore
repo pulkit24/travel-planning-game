@@ -1,5 +1,5 @@
 node_modules
 .tmp
 .sass-cache
-app/vendor
+app/vendor/bower_components
 *.sublime-*
