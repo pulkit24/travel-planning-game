@@ -17,7 +17,7 @@ angular.module('travelPlanningGame.maps')
 				, rome2rio.toPosition(to.coords.lat, to.coords.lng)
 			)
 				.then(function(routes) {
-					deferred.resolve(routes.cost);
+					deferred.resolve(rome2rio.getCost(routes));
 				});
 
 			return deferred.promise;

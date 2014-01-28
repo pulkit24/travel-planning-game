@@ -60,7 +60,7 @@
 	}]
 }, {
 	"name": "Marina Bay"
-	, "address": "Marina Bay, Singapore"
+	, "address": "10 Bayfront Ave, Singapore 018956"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
 	, "image": "images/landmarks/marina_bay.jpg"
 	, "lodgingCost": 250
@@ -120,7 +120,7 @@
 	}]
 }, {
 	"name": "Telok Ayer Market"
-	, "address": "Telok Ayer Market, Singapore"
+	, "address": "18 Raffles Quay, Singapore 048582"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
 	, "image": "images/landmarks/telok_ayer.jpg"
 	, "lodgingCost": 250

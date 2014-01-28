@@ -1,5 +1,5 @@
 @import 'app/vendor/bower_components/bootstrap/less/variables.less';
-@import 'variables.less';
+ @import 'variables.less';
 
 /* Styles */
  body {
@@ -31,19 +31,59 @@
 	left: 0;
 }
 .sidebar {
+	.hud-shadow();
 	top: @hud-top-height;
 	right: 0;
 	width: @sidebar-width;
 	height: 100%;
 	background-color: #FFEDD4;
-	&.turn-sidebar {
+	h2 {
+		padding: 0 10px;
+	}
+	&.turn-options {
 		top: 0;
-		padding-top: (@game-height / 3.2);
-		.turn-option {
-			margin-bottom: 2px;
-			padding: 10px;
-			height: (@game-height / 3.2);
-			background-color: #92CED1;
+		h3 {
+			background-color: @menu-bar-colour;
+			color: white;
+			text-align: center;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+		.option {
+			margin: 0;
+			padding: 0;
+			background-color: white;
+			.souvenir {
+				float: left;
+				text-align: center;
+				&.picture {
+					padding: 0 3% 0;
+					width: 35%;
+					img {
+						vertical-align: bottom;
+					}
+				}
+				&.info {
+					width: 59%;
+					h4 {
+						margin: 0;
+					}
+					.cost, .gains {
+						width: 49%;
+						font-size: 1.6em;
+					}
+					.cost {
+						color: @widget-money-colour;
+					}
+					.gains {
+						color: @widget-souvenir-colour;
+					}
+				}
+			}
+			.action {
+				padding: 10px;
+				text-align: center;
+			}
 		}
 	}
 }

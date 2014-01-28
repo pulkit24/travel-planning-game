@@ -1,4 +1,8 @@
-<div class="widget-day-counter">
-	<h1>Day</h1>
-	<h1>{{ now.day | number }}<small>/ {{ limits.days }}</h1>
+<div class="widget-day-counter animated rotateInDownRight" ng-if="now.day">
+	<div class="content">
+		<h1>Day</h1>
+		<h1>{{ now.day | number }}
+			<small>/ {{ limits.days }}</small>
+		</h1>
+	</div>
 </div>

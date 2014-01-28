@@ -1,3 +1,14 @@
+<!-- Game board -->
+<div class="layer">
+	<div game-map
+		ng-if="!map.state.isUnavailable()"
+		options="map.options"
+		current="current.location"
+		selected="locations.selected">
+	</div>
+</div>
+<!-- end game board -->
+
 <!-- Menu page stuff -->
 <div ng-if="current.state.isMenu()">
 
@@ -14,8 +25,8 @@
 						<label for="menu-budget">Money</label>
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							<input type="number" id="menu-budget" class="form-control" ng-model="settings.budget" min="100" step="100"
-							required />
+							<input type="number"id="menu-budget"class="form-control"ng-model="settings.budget"min="100"step="100"
+							required/>
 						</div>
 					</div>
 					<!-- end of budget -->
@@ -62,16 +73,6 @@
 <!-- Play page -->
 <div ng-if="current.state.isPlaying()">
 
-	<!-- Game board -->
-	<div class="layer">
-		<div game-map
-			ng-if="!map.state.isUnavailable()"
-			options="map.options"
-			current="current.location"
-			selected="locations.selected"></div>
-	</div>
-	<!-- end game board -->
-
 	<!-- Alerts container -->
 	<div widget-alert="alertMessage" chevron="down" class="layer animated"
 		state-tracker="alert"
@@ -82,7 +83,9 @@
 			, {state: 'off', set: 'off', check: 'isOff'}
 		]"
 		state-class="['hide', 'bounceInUp', 'bounceOutUp', 'hide']"
-		state-transition="{dismissed: {off: 1000}, off: {idle: 500}}"></div>
+		state-transition="{dismissed: {off: 1000}, off: {idle: 500}}">
+	</div>
+	<!-- end alerts -->
 
 	<!-- Selected landmark card -->
 	<div landmark-card landmark="locations.selected" class="layer animated"
@@ -91,35 +94,9 @@
 		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
 		state-activate="landmarkCardLocationID != locations.selected.id"
 		state-on-active="landmarkCardLocationID = locations.selected.id"
-		state-transition="{complete: {idle: 1000}}"></div>
-	<!-- end landmark card -->
-
-	<!-- Sidebar for turn options -->
-	<div class="layer sidebar turn-sidebar animated"
-		state-tracker="turnState"
-		state-class="['hide', 'bounceInUp', 'bounceOutDown', 'hide']"
-		state-transition="{complete: {idle: 1000}, failed: {idle: 1000}}">
-
-		<div ng-if="turnState.isActive()">
-			<!-- Shopping option -->
-			<div class="turn-option">
-				<img ng-src="{{ current.location.shopping.image }}" /> {{ current.location.shopping.name }}
-				<button type="button" class="btn btn-default" ng-click="shop.shop()" ng-disabled="!game.canShop()">
-					{{ whyCantI(game.canShop) || "Buy" }}
-				</button>
-			</div>
-			<!-- end shopping option -->
-
-			<!-- Optional features -->
-			<div class="turn-option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
-				<h4>Optional</h4>
-				{{ bonus.flavour }}
-				<button type="button" class="btn btn-default">Play</button>
-			</div>
-			<!-- end optional features -->
-		</div>
+		state-transition="{complete: {idle: 1000}}">
 	</div>
-	<!-- end turn sidebar -->
+	<!-- end landmark card -->
 
 	<!-- Resource indicators -->
 	<div class="layer">
@@ -129,11 +106,68 @@
 	</div>
 	<!-- Time indicators -->
 	<div widget-day-counter day="getDay()" class="layer"></div>
+	<!-- end indicators -->
+
+	<!-- Sidebar for turn options -->
+	<div class="layer sidebar turn-options animated"
+		state-tracker="turnState"
+		state-class="['hide', 'bounceInUp', 'bounceOutDown', 'hide']"
+		state-transition="{complete: {idle: 1000}, failed: {idle: 1000}}">
+
+		<!-- Only show when currently in a turn -->
+		<div ng-if="turnState.isActive()">
+
+			<h2>What would you like to do here?</h2>
+
+			<!-- Shopping option -->
+			<div class="option">
+
+				<h3>Shopping</h3>
+
+				<div class="souvenir picture">
+					<img class="img-responsive" ng-src="{{ current.location.shopping.image }}" width="128" height="128" />
+				</div>
+				<div class="souvenir info">
+					<h4> {{ current.location.shopping.name }}</h4>
+					<div class="souvenir cost">
+						<i class="fa fa-dollar"></i>
+						{{ current.location.shopping.cost }}
+					</div>
+					<div class="souvenir gains">
+						<i class="fa fa-shopping-cart"></i>
+						{{ current.location.shopping.souvenirs }}
+					</div>
+				</div>
+				<div class="clearfix"></div>
+
+				<div class="action">
+					<button type="button" class="btn btn-default" ng-click="game.shop()" ng-disabled="!game.canShop()">
+						{{ whyCantI(game.canShop) || "Buy this item!" }}
+					</button>
+				</div>
+			</div>
+			<!-- end shopping option -->
+
+			<!-- Optional features -->
+			<div class="option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
+				<h4>Optional</h4>
+				{{ bonus.flavour }}
+				<button type="button" class="btn btn-default">Play</button>
+			</div>
+			<!-- end optional features -->
+		</div>
+		<!-- end things to show in current turn -->
+
+	</div>
+	<!-- end turn sidebar -->
 
 	<!-- Start game button -->
 	<div class="layer play-button" ng-if="!current.location">
-		<button type="button" class="btn btn-lg btn-warning" ng-click="game.setStartPoint()"
-		 ng-disabled="!locations.selected">
+		<button type="button"
+			class="btn btn-lg btn-warning animated"
+			ng-click="game.setStartPoint()"
+		 	ng-disabled="!locations.selected"
+		 	ng-class="locations.selected ? 'bounce' : 'fadeIn'">
 			<span ng-if="!locations.selected">Select your start point.</span>
 			<span ng-if="locations.selected">Let's begin!</span>
 		</button>
@@ -142,7 +176,11 @@
 
 	<!-- Start turn button -->
 	<div class="layer play-button" ng-if="!turnState.isActive() && current.location">
-		<button type="button" class="btn btn-lg btn-warning" ng-click="game.startTurn()" ng-disabled="!game.canPlay()">
+		<button type="button"
+			class="btn btn-lg btn-warning animated"
+			ng-click="game.startTurn()"
+			ng-disabled="!game.canPlay()"
+			ng-class="game.canPlay() ? 'bounce' : 'fadeIn'">
 			{{ whyCantI(game.canPlay) || "Go!" }}
 		</button>
 	</div>
@@ -150,7 +188,9 @@
 
 	<!-- End turn button -->
 	<div class="layer play-button" ng-if="turnState.isActive() && current.location">
-		<button type="button" class="btn btn-lg btn-default" ng-click="game.endTurn()">
+		<button type="button"
+			class="btn btn-lg btn-default"
+			ng-click="game.endTurn()">
 			End Turn
 		</button>
 	</div>

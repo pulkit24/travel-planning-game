@@ -24,7 +24,7 @@ angular.module("travelPlanningGame.app")
 							landmark.resources = createResourceTracker(landmark);
 
 							// Assign an id
-							landmark.id = index;
+							landmark.id = "landmark" + index;
 						});
 						deferred.resolve(landmarks);
 					})
@@ -48,6 +48,14 @@ angular.module("travelPlanningGame.app")
 					.success(function(data) {
 						// Fulfill promise on success
 						cities = data;
+						// Process each city
+						angular.forEach(cities, function(city, index) {
+							// Prepare a resource tracker
+							city.resources = resources.new();
+
+							// Assign an id
+							city.id = "city" + index;
+						});
 						deferred.resolve(cities);
 					})
 					.error(function(data) {

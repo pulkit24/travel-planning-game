@@ -9,16 +9,16 @@ module.exports = function(grunt) {
 			options: {
 				stripBanners: true
 			}
-			, jsLocal: {
+			, localJS: {
 				src: [
 					'app/scripts/components/*.js', 'app/scripts/app.*.js', 'app/scripts/app.js',
 					'app/scripts/filters/*.js',
 					'app/scripts/services/*.js', 'app/scripts/directives/*.js', 'app/scripts/controllers/*.js',
 					'<%= html2js.main.dest %>'
 				]
-				, dest: 'app/dist/all.local.js'
+				, dest: 'app/dist/local.js'
 			}
-			, jsVendor: {
+			, vendorJS: {
 				src: [
 					'app/vendor/bower_components/jquery/jquery.min.js', 'app/vendor/bower_components/es5-shim/es5-shim.min.js',
 					'app/vendor/bower_components/json3/lib/json3.min.js', 'app/vendor/bower_components/angular/angular.min.js',
@@ -33,28 +33,28 @@ module.exports = function(grunt) {
 					'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
 					'app/vendor/state-tracker/state-tracker.min.js'
 				]
-				, dest: 'app/dist/all.vendor.js'
+				, dest: 'app/dist/vendor.js'
 			}
-			, js: {
+			, localCSS: {
 				src: [
-					'<%= concat.jsVendor.dest %>', '<%= concat.jsLocal.dest %>'
+					'app/styles/*.css', 'app/styles/**/*.css'
 				]
-				, dest: 'app/dist/all.js'
+				, dest: 'app/dist/local.css'
 			}
-			, css: {
+			, vendorCSS: {
 				src: [
 					'app/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css',
 					'app/vendor/bower_components/font-awesome/css/font-awesome.min.css',
-					'app/vendor/animate/animate.min.css', 'app/styles/*.css', 'app/styles/**/*.css'
+					'app/vendor/animate/animate.min.css'
 				]
-				, dest: 'app/dist/all.css'
+				, dest: 'app/dist/vendor.css'
 			}
 		}
 		, ngmin: {
 			dist: {
 				files: [{
 					expand: true
-					, src: '<%= concat.jsLocal.dest %>'
+					, src: '<%= concat.localJS.dest %>'
 					, dest: ''
 				}]
 			}
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
 			}
 			, dist: {
 				files: {
-					'<%= concat.jsLocal.dest %>': ['<%= concat.jsLocal.dest %>']
+					'<%= concat.localJS.dest %>': ['<%= concat.localJS.dest %>']
 				}
 			}
 		}
@@ -73,9 +73,13 @@ module.exports = function(grunt) {
 			options: {
 				browsers: ['last 2 versions', 'ie 8', 'ie 9']
 			}
-			, css: {
-				src: '<%= concat.css.dest %>'
-				, dest: '<%= concat.css.dest %>'
+			, localCSS: {
+				src: '<%= concat.localCSS.dest %>'
+				, dest: '<%= concat.localCSS.dest %>'
+			}
+			, vendorCSS: {
+				src: '<%= concat.vendorCSS.dest %>'
+				, dest: '<%= concat.vendorCSS.dest %>'
 			}
 		}
 		, recess: {
@@ -91,7 +95,7 @@ module.exports = function(grunt) {
 		, cssmin: {
 			minify: {
 				expand: true
-				, src: '<%= concat.css.dest %>'
+				, src: ['<%= concat.vendorCSS.dest %>', '<%= concat.localCSS.dest %>']
 				, dest: ''
 			}
 		}
@@ -99,12 +103,20 @@ module.exports = function(grunt) {
 			build: {
 				files: [{
 					expand: false
-					, src: '<%= concat.css.dest %>'
-					, dest: 'app/dist/all.min.css'
+					, src: '<%= concat.localCSS.dest %>'
+					, dest: 'app/dist/local.min.css'
 				}, {
 					expand: false
-					, src: '<%= concat.js.dest %>'
-					, dest: 'app/dist/all.min.js'
+					, src: '<%= concat.vendorCSS.dest %>'
+					, dest: 'app/dist/vendor.min.css'
+				}, {
+					expand: false
+					, src: '<%= concat.localJS.dest %>'
+					, dest: 'app/dist/local.min.js'
+				}, {
+					expand: false
+					, src: '<%= concat.vendorJS.dest %>'
+					, dest: 'app/dist/vendor.min.js'
 				}]
 			}
 		}
@@ -162,7 +174,7 @@ module.exports = function(grunt) {
 			js: {
 				files: ['app/scripts/{,*/}*.js']
 				, tasks: [
-					'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'copy:build', 'clean:post',
+					'html2js', 'concat', 'ngmin', 'uglify', 'copy:build', 'clean:post',
 					'targethtml'
 				]
 				, options: {
@@ -172,7 +184,7 @@ module.exports = function(grunt) {
 			, css: {
 				files: ['app/styles/{,*/}*.css', 'app/styles/{,*/}*.less']
 				, tasks: [
-					'concat_byAuthor', 'concat_all', 'autoprefixer', 'cssmin', 'copy:build', 'clean:post',
+					'recess', 'concat', 'autoprefixer', 'cssmin', 'copy:build', 'clean:post',
 					'targethtml'
 				]
 				, options: {
@@ -180,7 +192,7 @@ module.exports = function(grunt) {
 				}
 			}
 			, tpl: {
-				files: ['app/templates/*.html']
+				files: ['app/templates/*.html', 'app/index.src.html']
 				, tasks: '<%= watch.js.tasks %>'
 				, options: {
 					livereload: true
@@ -193,7 +205,8 @@ module.exports = function(grunt) {
 				, files: [
 					'app/{,*/}*.html',
 					'app/styles/{,*/}*.css',
-					'app/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+					'app/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+					'app/dist/*'
 				]
 			}
 			, test: {
@@ -202,10 +215,10 @@ module.exports = function(grunt) {
 			}
 			, dev: {
 				files: [
-					'app/scripts/{,*/}*.js', 'app/styles/{,*/}*.css', 'app/styles/{,*/}*.less', 'app/templates/*.html'
+					'app/scripts/{,*/}*.js', 'app/styles/{,*/}*.css', 'app/styles/{,*/}*.less', 'app/templates/*.html', 'app/index.src.html'
 				]
 				, tasks: [
-					'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build', 'targethtml'
+					'html2js', 'recess', 'concat', 'autoprefixer', 'copy:build', 'targethtml'
 				]
 				, options: {
 					livereload: true
@@ -248,22 +261,15 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-targethtml');
 	grunt.loadNpmTasks('grunt-recess');
 
-	grunt.registerTask('concat_byAuthor', [
-		'concat:jsLocal', 'concat:jsVendor'
-	]);
-	grunt.registerTask('concat_all', [
-		'concat:js', 'recess', 'concat:css'
-	]);
 	grunt.registerTask('test', [
 		'connect:test', 'karma'
 	]);
 	grunt.registerTask('default', [
-		'clean:pre', 'html2js', 'concat_byAuthor', 'ngmin', 'uglify', 'concat_all', 'autoprefixer',
-		'cssmin',
+		'clean:pre', 'html2js', 'recess', 'concat', 'ngmin', 'uglify', 'autoprefixer', 'cssmin',
 		'copy:build', 'clean:post', 'targethtml', 'concurrent:main'
 	]);
 	grunt.registerTask('dev', [
-		'clean:pre', 'html2js', 'concat_byAuthor', 'concat_all', 'autoprefixer', 'copy:build',
+		'clean:pre', 'html2js', 'recess', 'concat', 'autoprefixer', 'copy:build',
 		'targethtml', 'connect:dev', 'watch:dev'
 	]);
 };

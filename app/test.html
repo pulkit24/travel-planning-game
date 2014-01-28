@@ -1,0 +1,112 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+
+
+	<link rel="stylesheet" href="dist/vendor.min.css?20140129010328">
+	<link rel="stylesheet" href="dist/local.min.css?20140129010328">
+
+</head>
+
+<body>
+
+	<style>
+	.sidebar.turn-sidebar {
+		background-color: #fff7de;
+		padding-top: 100px;
+	}
+	.turn-sidebar h2 {
+		margin-top: 0;
+		padding: 10px 10px 0;
+	}
+	.sidebar.turn-sidebar .turn-option {
+		height: auto;
+		margin: 0;
+		background-color: white;
+		padding:0;
+	}
+	.turn-option h3 {
+		margin-top: 0;
+		text-transform: uppercase;
+		font-weight: bold;
+		background-color: blue;
+		text-align: center;
+		color: white;
+		padding: 5px;
+		margin: 0 0 10px 0;
+	}
+	.turn-option h4 {
+		margin: 0;
+	}
+	</style>
+
+	<div class="game-container">
+
+		<div class="layer sidebar turn-sidebar">
+
+			<h2>What would you like to do here?</h2>
+
+			<!-- Shopping option -->
+			<div class="turn-option" widget-resource-indicator>
+				<h3>Shopping</h3>
+				<div class="widget-resource-indicator">
+					<img class="col-xs-5 text-center" src="images/items/anz_icon_golden_orchid.png" />
+					<div class="col-xs-7 text-center">
+						<h4>Golden Orchid</h4>
+						<span class="text-center widget-resource-indicator-MONEY">
+							<i class="fa fa-dollar widget-resource-indicator-icon"></i>
+							<span class="widget-resource-indicator-icon">10</span>
+						</span>
+						<span class="text-center widget-resource-indicator-XP">
+							<i class="fa fa-star widget-resource-indicator-icon"></i>
+							<span class="widget-resource-indicator-icon">10</span>
+						</span>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<button type="button" class="btn btn-default">Buy this item!</button>
+			</div>
+			<!-- end shopping option -->
+
+			<!-- Optional features -->
+			<div class="turn-option">
+				<h4>Optional</h4>
+				Casino gamble svp
+				<button type="button" class="btn btn-default">Play</button>
+			</div>
+			<!-- end optional features -->
+
+
+
+		</div>
+
+		<!-- Start game button -->
+		<div class="layer play-button" ng-if="!current.location">
+			<button type="button" class="btn btn-lg btn-warning animated" ng-click="game.setStartPoint()" ng-disabled="!locations.selected"
+			ng-class="locations.selected ? 'bounce' : 'fadeIn'">
+				<span ng-if="!locations.selected">Select your start point.</span>
+				<span ng-if="locations.selected">Let's begin!</span>
+			</button>
+		</div>
+		<!-- end start button -->
+
+
+	</div>
+
+
+	<script src="dist/vendor.min.js?20140129010328"></script>
+
+</body>
+
+</html>

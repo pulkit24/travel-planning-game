@@ -1,6 +1,6 @@
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
-		stateTracker, mapRouter) {
+		stateTracker, mapRouter, angulargmContainer) {
 
 		/////////////////////////
 		// Current game state //
@@ -30,18 +30,21 @@ angular.module("travelPlanningGame.app")
 		// Game master controls //
 		///////////////////////////
 		$scope.game = {};
+
+		// Initially (before the game starts)
+		mapCities();
+
 		$scope.game.start = function() {
 			// Start the game
 			$scope.current.state.play();
 
+			// Map the landmarks
+			mapLandmarks();
+
 			// Create a resource tracker
 			var resourceTracker = resources.new();
-			resourceTracker.set(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
+			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
 			$scope.resources = resourceTracker;
-
-			// Start the timer
-			timer.config($scope.settings.travelDays, 3);
-			timer.start();
 
 			// Initial activities before the player can play turns
 			initPlay();
@@ -56,7 +59,7 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.getDay = function() {
-			return timer.now().day;
+			return timer.now() ? timer.now().day : null;
 		};
 
 		/////////////////
@@ -71,17 +74,30 @@ angular.module("travelPlanningGame.app")
 			$timeout(function() {
 				stateTracker.get("alert").show();
 			}, 500);
+
+			// Set map options
+			$scope.map.options = $scope.map.playConfig;
+			// Notify map to refresh
+			$scope.map.state.update();
 		}
 
 		// Set the selected location/point as the current start point
 		$scope.game.setStartPoint = function() {
+
+			// Update the map config with the start point
 			$scope.current.location = $scope.locations.selected;
 			$scope.locations.selected = null;
 			$scope.map.options.selectable = "location";
 
+			// Notify the map of the update
+			$scope.map.state.update();
+
+			// Dismiss the alert
 			stateTracker.get("alert").dismiss();
 
-			$scope.map.state.update();
+			// Start the timer
+			timer.config($scope.settings.travelDays, 3);
+			timer.start();
 		};
 
 		// Check conditions for eligibility for another round
@@ -90,35 +106,27 @@ angular.module("travelPlanningGame.app")
 
 			// Landmark selected?
 			if (!$scope.locations.selected)
-				return giveReason ? 'Select a landmark to visit.' : false;
+				return giveReason ? 'Select a landmark to visit' : false;
 
 			// Everything is permitted in sandbox mode (once a landmark is selected)
 			if ($scope.settings.sandboxMode)
 				return giveReason ? null : true;
 
 			// Funds left for visiting/travelling/lodging?
-			var expectedCosts = resources.copy($scope.locations.selected.resources);
-			// Add travel costs
-			var travelCost = 0;
-			if($scope.current.location) {
-				var travelRoute = mapRouter.get($scope.current.location, $scope.locations.selected);
-				if(travelRoute)
-					travelCost = travelRoute.cost;
+			if ($scope.locations.selected.resources) {
+
+				// At a minimum, check for visiting and transport feasibility
+				var categoriesRequired = [resources.categories.VISITING, resources.categories.TRANSPORT];
+
+				// If EOD, funds left for lodging?
+				if (timer.isEOD())
+					categoriesRequired.push(resources.categories.LODGING);
+
+				// Check if we have the funds for this
+				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
+					categoriesRequired))
+					return giveReason ? 'Not enough funds' : false;
 			}
-
-			expectedCosts.set(resources.categories.VISITING, resources.types.MONEY,
-				expectedCosts.get(resources.categories.VISITING, resources.types.MONEY) - travelCost
-			);
-
-			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
-				resources.categories.VISITING))
-				return giveReason ? 'Not enough funds to visit.' : false;
-
-			// If EOD, funds left for lodging?
-			if (timer.isEOD() && !resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations
-				.selected.resources,
-				resources.categories.LODGING))
-				return giveReason ? 'Not enough funds to stay.' : false;
 
 			return giveReason ? null : true;
 		};
@@ -132,22 +140,30 @@ angular.module("travelPlanningGame.app")
 			$scope.map.state.update();
 
 			// Charge for visiting costs and experience
-			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				resources.categories.VISITING);
+			if ($scope.current.location.resources) {
 
-			// One-time xp points for "discovery"
-			if (!history.getInstance("landmarks").find($scope.current.location))
+				// For now, account for visiting and transport feasibility
+				var categoriesRequired = [resources.categories.VISITING, resources.categories.TRANSPORT];
+
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					resources.categories.DISCOVERY);
+					categoriesRequired);
+
+				// One-time xp points for "discovery"
+				if (!history.getInstance("landmarks").find($scope.current.location))
+					resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+						[resources.categories.DISCOVERY]);
+			}
 
 			$scope.turnState.activate();
 		};
 
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
-			if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				resources.categories.SHOPPING))
-				return giveReason ? 'Not enough funds for shopping today.' : false;
+			if ($scope.current.location.resources) {
+				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
+					[resources.categories.SHOPPING]))
+					return giveReason ? 'Not enough funds' : false;
+			}
 
 			return giveReason ? null : true;
 		};
@@ -155,7 +171,7 @@ angular.module("travelPlanningGame.app")
 		$scope.game.shop = function() {
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				resources.categories.SHOPPING);
+				[resources.categories.SHOPPING]);
 		};
 
 		$scope.game.endTurn = function() {
@@ -164,7 +180,7 @@ angular.module("travelPlanningGame.app")
 			// Is this EOD? Charge for lodging
 			if (timer.isEOD())
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					resources.categories.LODGING);
+					[resources.categories.LODGING]);
 
 			// Days left?
 			if (timer.isLast())
@@ -189,25 +205,53 @@ angular.module("travelPlanningGame.app")
 		///////////////
 		// Locations //
 		///////////////
+
 		$scope.locations = {};
-		$scope.locations.cities = ["Singapore"]; // cities
+
+		// Load the cities
+		$scope.locations.cities = null; // cities
 		landmarks.getCities().then(function(data) {
 			$scope.locations.cities = data;
 		});
+
+		// Show the cities on the map
+		function mapCities() {
+			landmarks.getCities().then(function(data) {
+				$scope.locations.cities = data;
+
+				// Current status
+				$scope.current.location = $scope.locations.cities[0];
+
+				// Supply to the map
+				$scope.map.initConfig.locations = $scope.locations.cities;
+				// Notify update
+				$scope.map.state.update();
+			});
+		}
+
+		// Load the landmarks
 		$scope.locations.landmarks = null; // landmarks
 		landmarks.get().then(function(data) {
 			$scope.locations.landmarks = data;
-
-			// Supply to the map
-			$scope.map.options.locations = $scope.locations.landmarks;
-			// Notify update
-			$scope.map.state.update();
 		});
-		$scope.locations.selected = null; // selected landmark for whatever reason
 
-		// Current status
-		$scope.current.location = null;
-		$scope.current.city = $scope.locations.cities[0];
+		// Show the landmarks on the map
+		function mapLandmarks() {
+			landmarks.get().then(function(data) {
+				$scope.locations.landmarks = data;
+
+				// Current status
+				$scope.current.location = null;
+
+				// Supply to the map
+				$scope.map.playConfig.locations = $scope.locations.landmarks;
+				// Notify update
+				$scope.map.state.update();
+			});
+		}
+
+		// Currently selected location (city or landmark)
+		$scope.locations.selected = null; // selected landmark for whatever reason
 
 		/////////////////////
 		// Game settings //
@@ -240,19 +284,26 @@ angular.module("travelPlanningGame.app")
 			, check: "isReady"
 		}], "mapState");
 
-		$scope.map.options = {
-			zoom: 12
+		// Available map configurations
+		$scope.map.playConfig = {
+			zoom: "auto" // number or auto
 			, locations: null
 			, selectable: "all" // all, point, location, none
-			, focusOn: "auto" // auto, selected, current, none
+			, focusOn: "auto" // auto, selected, current
 			, disabled: false
 			, showTransit: false
 		};
 
-		// Test function
-		$scope.test = function() {
-			$scope.locations.selected = null;
-			$scope.map.options.selectable = "location";
-			$scope.map.state.update();
+		$scope.map.initConfig = {
+			zoom: 1 // number or auto
+			, locations: null
+			, selectable: "none" // all, point, location, none
+			, focusOn: "auto" // auto, selected, current
+			, disabled: false
+			, showTransit: false
 		};
+
+		// Currently active map configuration
+		$scope.map.options = $scope.map.initConfig; // use initial configuration
+
 	});

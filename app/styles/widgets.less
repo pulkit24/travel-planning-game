@@ -16,49 +16,62 @@
 			margin-left: -30px;
 			padding: 5px 20px 5px 40px;
 			border-radius: 7px;
-			box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+			.hud-shadow-light();
 			color: white;
 			font-weight: bold;
 			font-size: 18px;
 		}
 	}
-	.widget-resource-indicator(@colour, @textShadowColour, @borderColour, @backgroundColour) {
+	.widget-resource-indicator(@colour, @text-shadow-colour, @border-colour, @background-colour) {
 		.widget-resource-indicator-icon {
 			color: @colour;
-			text-shadow: 2px 2px 5px @textShadowColour;
+			text-shadow: 2px 2px 5px @text-shadow-colour;
 		}
 		.widget-resource-indicator-value {
-			border: 2px solid @borderColour;
-			background-color: @backgroundColour;
+			border: 2px solid @border-colour;
+			background-color: @background-colour;
 		}
 	}
 	.widget-resource-indicator-MONEY {
-		.widget-resource-indicator(#FFB03B, #A76C13, #85774d, #deb850);
+		.widget-resource-indicator(@widget-money-colour
+			, @widget-money-text-shadow-color
+			, @widget-money-border-colour
+			, @widget-money-background-colour);
 	}
 	.widget-resource-indicator-XP {
-		.widget-resource-indicator(#d41200, #6b1c01, #8a300f, #de7350);
+		.widget-resource-indicator(@widget-xp-colour
+			, @widget-xp-text-shadow-color
+			, @widget-xp-border-colour
+			, @widget-xp-background-colour);
 	}
 	.widget-resource-indicator-SOUVENIR {
-		.widget-resource-indicator(#27b3e6, #1f3b4f, #426c8a, #509ede);
+		.widget-resource-indicator(@widget-souvenir-colour
+			, @widget-souvenir-text-shadow-color
+			, @widget-souvenir-border-colour
+			, @widget-souvenir-background-colour);
 	}
 }
 /*Day indicator*/
 [widget-day-counter] {
-	top: -95px;
-	right: -95px;
-	width: 200px;
-	height: 200px;
-	border: 5px solid green;
-	border-radius: 200px;
-	background-color: #F7E5C5;
+	top: (@widget-day-counter-border-size - (@widget-day-counter-size / 2));
+	right: (@widget-day-counter-border-size - (@widget-day-counter-size / 2));
+	width: (@widget-day-counter-size + @widget-day-counter-border-size);
+	height: (@widget-day-counter-size + @widget-day-counter-border-size);
 	.widget-day-counter {
-		position: absolute;
-		bottom: 10px;
-		left: 20px;
-		text-align: right;
-		text-transform: uppercase;
-		h1 {
-			line-height: 20px;
+		width: 100%;
+		height: 100%;
+		border: @widget-day-counter-border-size solid green;
+		border-radius: @widget-day-counter-size;
+		background-color: #F7E5C5;
+		.content {
+			position: absolute;
+			bottom: (10 + @widget-day-counter-border-size);
+			left: (20 + @widget-day-counter-border-size);
+			text-align: right;
+			text-transform: uppercase;
+			h1 {
+				line-height: 20px;
+			}
 		}
 	}
 }
@@ -66,9 +79,9 @@
 [widget-alert] {
 	top: @hud-top-height;
 	width: 100%;
-	background-color: @alert-background-colour;
 	text-align: center;
 	transition: 0.75s;
+	.hud-shadow-light();
 	.widget-alert {
 		display: inline-block;
 		margin: 0 auto;

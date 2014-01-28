@@ -11,7 +11,7 @@ angular.module('travelPlanningGame.maps')
 				, selected: "="
 			}
 			, controller: function($scope, $q, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
-				mapGeocoder, stateTracker) {
+				mapGeocoder, stateTracker, resources) {
 
 				// On load, see if the map data is ready
 				$scope.mapState = stateTracker.get("mapState");
@@ -27,6 +27,8 @@ angular.module('travelPlanningGame.maps')
 				});
 
 				function loadMap() {
+					$scope.clearLabels();
+
 					// Request Google map to kindly use our preset parameters
 					initMap();
 
@@ -38,8 +40,8 @@ angular.module('travelPlanningGame.maps')
 						plotLocation(location).then(function() {
 							$scope.focus();
 
-							// Update the markers being displayed on the map
-							$scope.$broadcast('gmMarkersUpdate');
+							// Refresh the markers being displayed on the map
+							$scope.$broadcast('gmMarkersRedraw');
 
 							// If last, mark geocoding as complete
 							if (index === $scope.locations.length - 1)
@@ -49,6 +51,7 @@ angular.module('travelPlanningGame.maps')
 
 					// When geocoding is complete, prefetch all routes
 					stateTracker.new("geocodingState").$on("complete", function() {
+						stateTracker.new("geocodingState").reset();
 						mapRouter.prefetch($scope.locations);
 					});
 				}
@@ -64,10 +67,9 @@ angular.module('travelPlanningGame.maps')
 					$scope.styles = mapStyles.routeXL;
 
 					// Request Google map to kindly use our preset parameters
-					$scope.map.mapTypeId = $scope.type;
-					$scope.map.zoom = $scope.zoom;
 					$scope.map.setOptions({
 						styles: $scope.styles
+						, mapTypeId: $scope.type
 						, panControl: false
 						, scaleControl: false
 						, mapTypeControl: false
@@ -129,6 +131,10 @@ angular.module('travelPlanningGame.maps')
 						// Auto center and zoom the map
 						$scope.map.fitBounds($scope.bounds);
 					}
+
+					// If zoom is not set to auto
+					if($scope.zoom !== "auto")
+						$scope.map.setZoom($scope.zoom); // the only way the map respects us
 				};
 
 				// Select a point on the map (other than a marker/location)
@@ -138,7 +144,7 @@ angular.module('travelPlanningGame.maps')
 					var point = {
 						id: 'startingPoint'
 						, name: 'I start from here!'
-						, coords: angulargmUtils.latLngToObj(event.latLng)
+						, coords: event.latLng ? angulargmUtils.latLngToObj(event.latLng) : event.coords
 					};
 
 					// Create a single-member collection of points for this selected starting point
@@ -151,8 +157,11 @@ angular.module('travelPlanningGame.maps')
 					// Show label
 					$scope.showLabel(point, null, $scope.map);
 
-					// // Update the markers being displayed on the map
-					$scope.$broadcast('gmMarkersUpdate');
+					// Update the markers being displayed on the map
+					// Note: because this is a new point selected on the map
+					// that erases any previously-selected point, we need
+					// to force redraw instead of just a notify update (which does a shallow object match)
+					$scope.$broadcast('gmMarkersRedraw');
 				};
 
 				// Change location as needed
@@ -163,10 +172,16 @@ angular.module('travelPlanningGame.maps')
 					$scope.selected = location;
 					$scope.focus(); // focus if needed
 
-					// Draw route
+					// Draw route and set the transport cost
 					if($scope.current) {
 						mapRouter.fetch($scope.current, $scope.selected).then(function(route) {
+
+							// Draw
 							mapRouter.draw(route, $scope.map);
+
+							// Set cost
+							if($scope.selected.resources)
+								$scope.selected.resources.set(resources.categories.TRANSPORT, resources.types.MONEY, route.cost);
 						});
 					}
 
@@ -179,6 +194,11 @@ angular.module('travelPlanningGame.maps')
 
 				// Construct an info window for the landmark label
 				$scope.infoWindows = {}; // track all info windows
+				$scope.clearLabels = function() {
+					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
+						infoWindow.close();
+					});
+				};
 				$scope.showLabel = function(location, marker, map) {
 					// Either of map and marker must be provided
 					if (!marker && !map) {

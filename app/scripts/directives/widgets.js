@@ -14,11 +14,20 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
 					'shopping-cart');
 			}
-			, controller: function($scope, $filter, resources) {
+			, controller: function($scope, $filter, resources, stateTracker) {
+				$scope.state = stateTracker.new("resourceIndicatorState_" + $scope.type);
+				$scope.state.$transition("active", "idle", 750);
+
+				$scope.currentValue = 0;
 				$scope.getValue = function() {
 					return $filter("number")($scope.resources.get(resources.categories[$scope.category],
 						resources.types[$scope.type]));
 				};
+
+				$scope.$watch('getValue()', function(newValue, oldValue) {
+					if(newValue && newValue !== oldValue)
+						$scope.state.activate();
+				});
 			}
 		};
 	})
