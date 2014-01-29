@@ -24,6 +24,23 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <div class="layer panel panel-success">
+    	<div class="panel-heading">Map styles</div>
+		<ul class="list-group">
+			<li class="list-group-item list-item">
+				<strong>Select existing:</strong>
+		    	<select class="form-control" ng-model="selectedMapStyles" ng-options="name as name for (name, style) in mapStyles">
+		    		<option value="">(Custom)</option>
+		    	</select>
+		    </li>
+			<li class="list-group-item list-item">
+				<strong>Or, supply your own styles:</strong><br/>
+				<strong class="text-danger" ng-if="!isCustomStyleValid">Invalid styles (syntax error)</strong>
+		    	<textarea class="form-control" rows="15" ng-model="customMapStyles"></textarea>
+			</li>
+		</ul>
+    </div>
+
 	<!-- Add your site or application content here -->
 	<div class="game-container" ng-view=""></div>
 

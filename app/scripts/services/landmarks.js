@@ -21,7 +21,7 @@ angular.module("travelPlanningGame.app")
 						// Process each landmark
 						angular.forEach(landmarks, function(landmark, index) {
 							// Prepare a resource tracker
-							landmark.resources = createResourceTracker(landmark);
+							landmark.resources = fillLandmarkResources(landmark);
 
 							// Assign an id
 							landmark.id = "landmark" + index;
@@ -70,7 +70,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		// Add resource trackers to each landmark
-		function createResourceTracker(landmark) {
+		function fillLandmarkResources(landmark) {
 			var resourceTracker = resources.new();
 
 			// Landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
@@ -80,6 +80,21 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, landmark.shopping.souvenirs);
 			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, -1 * landmark.shopping.cost);
 			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, landmark.exp);
+
+			return resourceTracker;
+		}
+
+		// Add empty resource trackers to each city
+		function fillCityResources(city) {
+			var resourceTracker = resources.new();
+
+			// Similar to landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
+			resourceTracker.set(resources.categories.VISITING, resources.types.MONEY, 0);
+			resourceTracker.set(resources.categories.LODGING, resources.types.MONEY, 0);
+			resourceTracker.set(resources.categories.VISITING, resources.types.XP, 0);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.SOUVENIR, 0);
+			resourceTracker.set(resources.categories.SHOPPING, resources.types.MONEY, 0);
+			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
 			return resourceTracker;
 		}

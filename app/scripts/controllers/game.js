@@ -169,6 +169,9 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.game.shop = function() {
+			// Update shopping state
+			stateTracker.get("shoppingState").purchase();
+
 			// Charge for shopping
 			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 				[resources.categories.SHOPPING]);

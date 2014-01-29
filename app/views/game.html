@@ -63,7 +63,7 @@
 
 	<!-- Selected destination -->
 	<div class="layer menu-top-bar">
-		<h1>Destination: {{ current.city }}</h1>
+		<h1>Destination: {{ current.location.name }}</h1>
 	</div>
 	<!-- end selected destination -->
 
@@ -122,7 +122,7 @@
 			<!-- Shopping option -->
 			<div class="option">
 
-				<h3>Shopping</h3>
+				<h4>Shopping</h4>
 
 				<div class="souvenir picture">
 					<img class="img-responsive" ng-src="{{ current.location.shopping.image }}" width="128" height="128" />
@@ -141,8 +141,19 @@
 				<div class="clearfix"></div>
 
 				<div class="action">
-					<button type="button" class="btn btn-default" ng-click="game.shop()" ng-disabled="!game.canShop()">
-						{{ whyCantI(game.canShop) || "Buy this item!" }}
+					<button type="button"
+						class="btn"
+						ng-click="!shoppingState.isPurchasing() ? game.shop() : null"
+						ng-disabled="!game.canShop()"
+						state-tracker="shoppingState"
+						state-choices="[
+							{state: 'available', set: 'reset', check: 'isAvailable'}
+							, {state: 'purchasing', set: 'purchase', check: 'isPurchasing'}
+							, {state: 'bought', set: 'markBought', check: 'hasBought'}
+						]"
+						state-class="['btn-default', 'animated tada btn-warning', 'btn-warning']"
+						state-transition="{purchasing: {bought: 1000	}}">
+						{{ whyCantI(game.canShop) || shoppingState | stateTracker:"Buy this item!":"Bought it!":"Buy some more" }}
 					</button>
 				</div>
 			</div>

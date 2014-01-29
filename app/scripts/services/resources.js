@@ -12,20 +12,20 @@ angular.module("travelPlanningGame.app")
 		var updateTests = {};
 		// Money after update must not go negative
 		updateTests[types.MONEY] = function(original, delta) {
-			if(!original) original = 0;
-			if(!delta) delta = 0;
+			if (!original) original = 0;
+			if (!delta) delta = 0;
 			return original + delta >= 0;
 		};
 		// XP cannot go negative
 		updateTests[types.XP] = function(original, delta) {
-			if(!original) original = 0;
-			if(!delta) delta = 0;
+			if (!original) original = 0;
+			if (!delta) delta = 0;
 			return original + delta >= 0;
 		};
 		// Souvenirs cannot go negative
 		updateTests[types.SOUVENIR] = function(original, delta) {
-			if(!original) original = 0;
-			if(!delta) delta = 0;
+			if (!original) original = 0;
+			if (!delta) delta = 0;
 			return original + delta >= 0;
 		};
 
@@ -102,6 +102,10 @@ angular.module("travelPlanningGame.app")
 		// Check whether updating the demanding Resource by supplier Resource is possible
 		// More than one supplier category can be provided to check against the sum amount
 		function canDelta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
+
+			if (!supplierResource)
+				return true;
+
 			var possible = true;
 
 			var summedResource = startTracker();
@@ -123,7 +127,8 @@ angular.module("travelPlanningGame.app")
 
 		// Update source Resources by destination Resources on supplied categories only
 		function delta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
-			if (canDelta(demanderResource, demanderCategory, supplierResource, supplierCategories)) {
+			if (supplierResource && canDelta(demanderResource, demanderCategory, supplierResource,
+				supplierCategories)) {
 
 				angular.forEach(supplierCategories, function(supplierCategory, index) {
 					angular.forEach(supplierResource[supplierCategory], function(amount, type) {
@@ -131,6 +136,8 @@ angular.module("travelPlanningGame.app")
 					});
 				});
 			}
+
+			return demanderResource;
 		}
 
 		return {

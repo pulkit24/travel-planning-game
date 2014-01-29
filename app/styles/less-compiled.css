@@ -61,18 +61,19 @@ body {
   top: 0;
 }
 
-.sidebar.turn-options h3 {
+.sidebar.turn-options .option {
+  padding: 0;
+  margin: 0;
+  background-color: white;
+}
+
+.sidebar.turn-options .option > h4 {
+  padding: 3px;
   font-weight: bold;
   color: white;
   text-align: center;
   text-transform: uppercase;
   background-color: #395363;
-}
-
-.sidebar.turn-options .option {
-  padding: 0;
-  margin: 0;
-  background-color: white;
 }
 
 .sidebar.turn-options .option .souvenir {

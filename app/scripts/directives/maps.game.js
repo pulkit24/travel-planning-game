@@ -30,7 +30,7 @@ angular.module('travelPlanningGame.maps')
 					$scope.clearLabels();
 
 					// Request Google map to kindly use our preset parameters
-					initMap();
+					setMapParameters();
 
 					// Get geo coords for all available locations
 					angular.forEach($scope.locations, function(location, index) {
@@ -57,14 +57,20 @@ angular.module('travelPlanningGame.maps')
 				}
 
 				// When the map is ready, apply the params and updates
-				function initMap() {
+				function setMapParameters() {
 					// Initialise all map parameters
 					angular.extend($scope, $scope.config());
 
 					$scope.disabled = $scope.disabled || angular.isUndefined(google);
 					$scope.type = 'roadmap';
 					$scope.bounds = new google.maps.LatLngBounds();
-					$scope.styles = mapStyles.routeXL;
+					$scope.styles = window.selectedMapStyles;
+
+					$scope.$on("event:map:stylesChanged", function() {
+						$scope.map.setOptions({
+							styles: window.selectedMapStyles
+						});
+					});
 
 					// Request Google map to kindly use our preset parameters
 					$scope.map.setOptions({

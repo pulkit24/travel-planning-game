@@ -135,7 +135,7 @@ angular.module('travelPlanningGame.maps')
 		/////////////////////////
 
 		// Record of all previously fetched routes - fetching is expensive!
-		var routingHistory = history.getInstance("mapRouter", function(route) { return route; }, function(route) { return route; });
+		var routingHistory = history.getInstance("mapRouter", angular.identity, angular.identity);
 
 		// Generate a unique, commutable identifier for the route request
 		function _routeIdentifier(locationA, locationB) {
