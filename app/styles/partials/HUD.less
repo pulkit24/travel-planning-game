@@ -1,0 +1,117 @@
+/////////////
+// Top HUD //
+/////////////
+
+.menu-top-bar {
+	width: 100%;
+	height: @size-height-HUD;
+	background-color: @color-title;
+	color: white;
+	h1 {
+		margin: 0;
+		padding: 0;
+		white-space: nowrap;
+		line-height: @size-height-HUD;
+		animation: flight-schedule-marquee 4s linear infinite;
+	}
+}
+
+@keyframes flight-schedule-marquee {
+	from {
+		margin-left: @size-width-game;
+	}
+	to {
+		margin-left: (-1 * @size-width-game) / 2;
+	}
+}
+
+//////////////
+// Buttons  //
+//////////////
+
+.button-next {
+	right: 0;
+	bottom: 0;
+	width: @size-width-sidebar;
+	.btn {
+		width: 100%;
+	}
+}
+
+.button-prev {
+	bottom: 0;
+	left: 0;
+	width: @size-width-sidebar;
+	.btn {
+		width: 100%;
+	}
+}
+
+/////////////
+// Sidebar //
+/////////////
+
+.sidebar {
+	.shadow-box-light();
+	top: @size-height-HUD;
+	right: 0;
+	width: @size-width-sidebar;
+	height: 100%;
+	background-color: @color-light;
+	h2 {
+		padding: 0 10px;
+	}
+	&.turn-options {
+		top: 0;
+		.option {
+			margin: 0;
+			padding: 0;
+			background-color: white;
+			>h4 {
+				background-color: @color-title;
+				color: white;
+				text-align: center;
+				text-transform: uppercase;
+				font-weight: bold;
+				padding: 3px;
+			}
+			.souvenir {
+				float: left;
+				text-align: center;
+				&.picture {
+					padding: 0 3% 0;
+					width: 35%;
+					img {
+						vertical-align: bottom;
+					}
+				}
+				&.info {
+					width: 59%;
+					h4 {
+						margin: 0;
+					}
+					.cost, .gains {
+						width: 49%;
+						font-size: 1.6em;
+					}
+					.cost {
+						color: @color-money;
+					}
+					.gains {
+						color: @color-souvenirs;
+					}
+				}
+			}
+			.action {
+				padding: 10px;
+				text-align: center;
+			}
+		}
+	}
+
+	.accordion-toggle {
+		display: block;
+		text-decoration: none;
+		cursor: pointer;
+	}
+}

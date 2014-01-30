@@ -1,19 +1,59 @@
 /* Variables */
 
-.hud-shadow {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+/* Mixins */
+
+.shadow-box-light {
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.hud-shadow-light {
+.shadow-box-light-down {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-box-light-slanting {
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Styles */
+.shadow-box-heavy {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-box-heavy-down {
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-box-heavy-slanting {
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-light {
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-light-down {
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-light-slanting {
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-heavy {
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-heavy-down {
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-text-heavy-slanting {
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
 
 body {
   padding-top: 20px;
   padding-bottom: 20px;
-  background-color: #777;
+  background-color: #777777;
 }
 
 .game-container {
@@ -22,26 +62,67 @@ body {
   height: 600px;
   margin: 0 auto;
   overflow: hidden;
-  border: 1px solid #eee;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .layer {
   position: absolute;
+  overflow: hidden;
 }
 
-.play-button {
+/* Loading screen */
+
+.loading-screen {
+  width: 100%;
+  height: 100%;
+  margin: auto auto;
+  text-align: center;
+  vertical-align: middle;
+  background-color: white;
+}
+
+.menu-top-bar {
+  width: 100%;
+  height: 75px;
+  color: white;
+  background-color: #4e9689;
+}
+
+.menu-top-bar h1 {
+  padding: 0;
+  margin: 0;
+  line-height: 75px;
+  white-space: nowrap;
+  animation: flight-schedule-marquee 4s linear infinite;
+}
+
+@keyframes flight-schedule-marquee {
+  from {
+    margin-left: 800px;
+  }
+  to {
+    margin-left: -400px;
+  }
+}
+
+.button-next {
   right: 0;
   bottom: 0;
   width: 30%;
 }
 
-.play-button .btn {
+.button-next .btn {
   width: 100%;
 }
 
-.back-button {
+.button-prev {
   bottom: 0;
   left: 0;
+  width: 30%;
+}
+
+.button-prev .btn {
+  width: 100%;
 }
 
 .sidebar {
@@ -49,8 +130,8 @@ body {
   right: 0;
   width: 30%;
   height: 100%;
-  background-color: #FFEDD4;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background-color: #f4fce8;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar h2 {
@@ -73,7 +154,7 @@ body {
   color: white;
   text-align: center;
   text-transform: uppercase;
-  background-color: #395363;
+  background-color: #4e9689;
 }
 
 .sidebar.turn-options .option .souvenir {
@@ -117,50 +198,82 @@ body {
   text-align: center;
 }
 
-a.accordion-toggle {
+.sidebar .accordion-toggle {
   display: block;
   text-decoration: none;
   cursor: pointer;
 }
 
-.menu-top-bar {
-  width: 100%;
-  height: 75px;
-  color: white;
-  background-color: #395363;
-}
-
-.menu-top-bar h1 {
-  padding: 0;
-  margin: 0;
-  line-height: 75px;
-  white-space: nowrap;
-  animation: flight-schedule-marquee 4s linear infinite;
-}
-
-@keyframes flight-schedule-marquee {
-  from {
-    margin-left: 800px;
-  }
-  to {
-    margin-left: -400px;
-  }
-}
-
-/* Loading screen */
-
-.loading-screen {
-  width: 100%;
-  height: 100%;
-  margin: auto auto;
+.loading {
   text-align: center;
-  vertical-align: middle;
-  background-color: white;
+  background-color: #efefef;
 }
 
-/* Other styles */
+.loading h1 {
+  margin: 35% auto auto;
+}
 
-/*Resource indicator buttons*/
+[loading] {
+  display: inline-block;
+}
+
+[loading] .spinner {
+  width: auto;
+  margin: 0 20px 0;
+  text-align: center;
+}
+
+[loading] .spinner > div {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 100%;
+  -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+          animation: bouncedelay 1.4s infinite ease-in-out;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+[loading] .spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+          animation-delay: -0.32s;
+}
+
+[loading] .spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+          animation-delay: -0.16s;
+}
+
+@-webkit-keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0);
+  }
+  40% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  40% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+[game-map] .map-canvas {
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+}
 
 [widget-resource-indicator] {
   display: inline-block;
@@ -175,6 +288,7 @@ a.accordion-toggle {
   position: relative;
   z-index: 20;
   font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   vertical-align: middle;
 }
 
@@ -187,40 +301,35 @@ a.accordion-toggle {
   font-weight: bold;
   color: white;
   border-radius: 7px;
-  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 [widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-icon {
-  color: #ffb03b;
-  text-shadow: 2px 2px 5px #a76c13;
+  color: #ffb84f;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-value {
-  background-color: #deb850;
-  border: 2px solid #85774d;
+  background-color: #eab86d;
+  border: 2px solid #e09527;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-icon {
-  color: #d41200;
-  text-shadow: 2px 2px 5px #6b1c01;
+  color: #d82a19;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-value {
-  background-color: #de7350;
-  border: 2px solid #8a300f;
+  background-color: #c4483d;
+  border: 2px solid #8d1e14;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-icon {
-  color: #27b3e6;
-  text-shadow: 2px 2px 5px #1f3b4f;
+  color: #3dbbe9;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-value {
-  background-color: #509ede;
-  border: 2px solid #426c8a;
+  background-color: #61b2d0;
+  border: 2px solid #3289a8;
 }
-
-/*Day indicator*/
 
 [widget-day-counter] {
   top: -95px;
@@ -255,11 +364,13 @@ a.accordion-toggle {
   top: 75px;
   width: 100%;
   text-align: center;
-  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   transition: 0.75s;
 }
 
 [widget-alert] .widget-alert {
+  position: relative;
+  z-index: 10;
   display: inline-block;
   width: 100%;
   margin: 0 auto;
@@ -273,32 +384,27 @@ a.accordion-toggle {
 
 [widget-alert] .chevron {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  margin-left: -30px;
-  pointer-events: none;
-  border: solid transparent;
-  border-color: transparent;
-  border-top-color: #fc9526;
-  border-width: 30px;
-  border-top-width: 20px;
+  bottom: -8px;
+  z-index: 9;
+  padding: 0;
+  margin: 0;
+  font-size: 75px;
+  line-height: 0;
+  color: #fc9526;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 [landmark-card] {
   top: 15%;
   left: 5%;
   width: 400px;
-  /*height: 490px;*/
-
   zoom: 0.85;
   animation-duration: 0.5s;
 }
 
 .landmark-card {
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .landmark-card h1,
@@ -323,15 +429,15 @@ a.accordion-toggle {
 }
 
 .landmark-card .resource:first-child {
-  background-color: lightblue;
+  background-color: #add8e6;
 }
 
 .landmark-card .resource:first-child + .landmark-card .resource {
-  background-color: lemonchiffon;
+  background-color: #fffacd;
 }
 
 .landmark-card .resource:last-child {
-  background-color: lightsalmon;
+  background-color: #ffa07a;
 }
 
 .landmark-card .resource .close {

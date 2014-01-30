@@ -1,4 +1,4 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/maps.game.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -66,6 +66,17 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '');
 }]);
 
+angular.module('templates/loading.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/loading.tpl.html',
+    '<div class="spinner">\n' +
+    '	<div class="bounce1"></div>\n' +
+    '	<div class="bounce2"></div>\n' +
+    '	<div class="bounce3"></div>\n' +
+    '</div>\n' +
+    '');
+}]);
+
 angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/maps.game.tpl.html',
@@ -105,7 +116,7 @@ angular.module('templates/widgets.alert.tpl.html', []).run(['$templateCache', fu
   'use strict';
   $templateCache.put('templates/widgets.alert.tpl.html',
     '<div class="widget-alert" ng-bind-html="content"></div>\n' +
-    '<div class="chevron" ng-class="chevron" ng-if="chevron"></div>');
+    '<div class="chevron fa fa-caret-down" ng-if="chevron"></div>');
 }]);
 
 angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCache', function($templateCache) {

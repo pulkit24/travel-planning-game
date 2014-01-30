@@ -14,10 +14,10 @@
 
 	<!-- Sidebar for more settings -->
 	<div class="layer sidebar">
-		<accordion close-others="'true'">
+		<div accordion close-others="'true'">
 
 			<!-- Initial configuration -->
-			<accordion-group heading="Budget" is-open="true">
+			<div accordion-group heading="Budget" is-open="true">
 				<form>
 
 					<!-- Budget -->
@@ -40,21 +40,21 @@
 					<!-- end of days -->
 
 				</form>
-			</accordion-group>
+			</div>
 			<!-- end of initial config -->
 
 			<!-- Upgrades -->
-			<accordion-group heading="Upgrades (Locked)">
+			<div accordion-group heading="Upgrades (Locked)">
 				<em>Unlock these awesome upgrades by playing!</em>
-			</accordion-group>
+			</div>
 			<!-- end of upgrades -->
 
-		</accordion>
+		</div>
 	</div>
 	<!-- end settings sidebar -->
 
 	<!-- Start game button -->
-	<div class="layer play-button">
+	<div class="layer button-next">
 		<button type="button" class="btn btn-lg btn-primary" ng-click="game.start()">
 			Start
 		</button>
@@ -143,17 +143,17 @@
 				<div class="action">
 					<button type="button"
 						class="btn"
-						ng-click="!shoppingState.isPurchasing() ? game.shop() : null"
-						ng-disabled="!game.canShop()"
+						ng-click="shoppingState.isAvailable() ? game.shop() : null"
+						ng-disabled="!shoppingState.isAvailable || !game.canShop()"
 						state-tracker="shoppingState"
 						state-choices="[
 							{state: 'available', set: 'reset', check: 'isAvailable'}
 							, {state: 'purchasing', set: 'purchase', check: 'isPurchasing'}
 							, {state: 'bought', set: 'markBought', check: 'hasBought'}
 						]"
-						state-class="['btn-default', 'animated tada btn-warning', 'btn-warning']"
-						state-transition="{purchasing: {bought: 1000	}}">
-						{{ whyCantI(game.canShop) || shoppingState | stateTracker:"Buy this item!":"Bought it!":"Buy some more" }}
+						state-class="['btn-default', 'animated flash btn-warning', 'btn-warning']"
+						state-transition="{purchasing: {bought: 1000}}">
+						{{ whyCantI(game.canShop) || shoppingState | stateTracker:"Buy this item!":"Bought it!":"Bought it!" }}
 					</button>
 				</div>
 			</div>
@@ -173,7 +173,7 @@
 	<!-- end turn sidebar -->
 
 	<!-- Start game button -->
-	<div class="layer play-button" ng-if="!current.location">
+	<div class="layer button-next" ng-if="!current.location">
 		<button type="button"
 			class="btn btn-lg btn-warning animated"
 			ng-click="game.setStartPoint()"
@@ -186,7 +186,7 @@
 	<!-- end start button -->
 
 	<!-- Start turn button -->
-	<div class="layer play-button" ng-if="!turnState.isActive() && current.location">
+	<div class="layer button-next" ng-if="!turnState.isActive() && current.location">
 		<button type="button"
 			class="btn btn-lg btn-warning animated"
 			ng-click="game.startTurn()"
@@ -198,7 +198,7 @@
 	<!-- end start button -->
 
 	<!-- End turn button -->
-	<div class="layer play-button" ng-if="turnState.isActive() && current.location">
+	<div class="layer button-next" ng-if="turnState.isActive() && current.location">
 		<button type="button"
 			class="btn btn-lg btn-default"
 			ng-click="game.endTurn()">

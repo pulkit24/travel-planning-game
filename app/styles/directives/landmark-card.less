@@ -1,38 +1,43 @@
 [landmark-card] {
 	top: 15%;
 	left: 5%;
-	width: 400px;
-	/*height: 490px;*/
-	zoom: 0.85;
-
+	width: @size-width-card;
     animation-duration: 0.5s;
+	zoom: 0.85;
 }
+
 .landmark-card {
-	.hud-shadow();
+	.shadow-box-light();
+
 	border-radius: @panel-border-radius;
 	h1, h2, h3, h4, h5, h6 {
 		margin:0;
 		padding:0;
 	}
+
 	.panel-body {
 		background-position: center center;
 		background-size: cover;
 		background-repeat: no-repeat;
 	}
+
 	.thumbnail {
 		margin: 1px;
 		border: none;
 	}
+
 	.resource {
 		&:first-child {
-			background-color: lightblue;
+			background-color: @color-lodging;
 		}
+
 		&:first-child+& {
-			background-color: lemonchiffon;
+			background-color: @color-visiting;
 		}
 		&:last-child {
-			background-color: lightsalmon;
+			background-color: @color-shopping;
 		}
+
 		.close {
 			color: white;
 		}

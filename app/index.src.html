@@ -24,7 +24,9 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="layer panel panel-success">
+    <!-- Left gutter -->
+    <!-- Map style switcher -->
+    <div class="layer panel panel-success hide">
     	<div class="panel-heading">Map styles</div>
 		<ul class="list-group">
 			<li class="list-group-item list-item">
@@ -41,8 +43,13 @@
 		</ul>
     </div>
 
-	<!-- Add your site or application content here -->
-	<div class="game-container" ng-view=""></div>
+	<!-- Loading/splash screen -->
+	<div class="game-container loading" ng-hide="isReady()">
+		<h1><div xloading></div> Loading...</h1>
+	</div>
+
+    <!-- Game content -->
+	<div class="game-container" ng-view="" ng-show="isReady()"></div>
 
 	<!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -50,6 +57,7 @@
     <![endif]-->
 
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en&libraries=geometry"></script>
+
 	<!--(if target main)><!-->
 	<script src="dist/vendor.min.js?{{date}}"></script>
 	<script src="dist/local.min.js?{{date}}"></script>

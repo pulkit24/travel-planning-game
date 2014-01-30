@@ -1,11 +1,12 @@
 angular.module("travelPlanningGame.app")
 	.controller("BootCtrl", function($scope, mapStyles) {
+
 		$scope.isReady = function() {
-			return angular.isDefined(google);
+			return typeof google !== "undefined";
 		};
 
 		$scope.mapStyles = mapStyles;
-		$scope.selectedMapStyles = "Kevin's Styles";
+		$scope.selectedMapStyles = "routeXL";
 
 		$scope.$watch("selectedMapStyles", function(newValue) {
 			if(newValue) {
