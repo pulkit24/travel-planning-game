@@ -16,7 +16,7 @@
 /////////////
 
 @color-light: #F4FCE8;
-@color-title: #4E9689;
+@color-title: #3F5059;
 @color-alert: #FC9526;
 @color-background: #777;
 
@@ -33,9 +33,12 @@
 @color-visiting: lemonchiffon;
 @color-shopping: lightsalmon;
 
-@color-morning: #7ED0D6;
-@color-afternoon: #C3FF68;
-@color-evening: #4E9689;
+@color-morning: #26AFFC;
+@color-afternoon: #FC9526;
+@color-evening: #3F4774;
+
+@color-success: #50B337;
+@color-failure: #d41200;
 
 /////////////////////////
 // Bootstrap overrides //
@@ -71,11 +74,14 @@
 .shadow-box-light-down { box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5); }
 .shadow-box-light-slanting { box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5); }
 .shadow-box-heavy { box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
-.shadow-box-heavy-down { box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); }
+.shadow-box-heavy-down { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
 .shadow-box-heavy-slanting { box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); }
 .shadow-text-light { text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); }
 .shadow-text-light-down { text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5); }
 .shadow-text-light-slanting { text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5); }
 .shadow-text-heavy { text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
-.shadow-text-heavy-down { text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); }
+.shadow-text-heavy-down { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
 .shadow-text-heavy-slanting { text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); }
+
+.shadow-box-hud { .shadow-box-heavy-down(); }
+.shadow-text-hud { .shadow-text-heavy-down(); }

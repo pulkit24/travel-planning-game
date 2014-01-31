@@ -1,4 +1,4 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -109,6 +109,40 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
     '		</div>\n' +
     '	</div>\n' +
     '</div>\n' +
+    '');
+}]);
+
+angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/random-event-card.tpl.html',
+    '<!-- Event card -->\n' +
+    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">\n' +
+    '\n' +
+    '	<!-- Event name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
+    '		<h3 ng-if="randomEvent.type === \'POSITIVE\'">Hang on, something great happened today!</h3>\n' +
+    '		<h3 ng-if="randomEvent.type === \'NEGATIVE\'">Uh-oh! Something bad happened today!</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end name and controls -->\n' +
+    '\n' +
+    '	<!-- Flavour text -->\n' +
+    '	<div class="panel-body">\n' +
+    '		<h2>{{ randomEvent.description }}</h2>\n' +
+    '	</div>\n' +
+    '	<!-- end text -->\n' +
+    '\n' +
+    '	<!-- Impact -->\n' +
+    '	<div class="panel-footer">\n' +
+    '		<h3>{{ randomEvent.impact }}</h3>\n' +
+    '		<p>\n' +
+    '			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"\n' +
+    '				ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '		</p>\n' +
+    '	</div>\n' +
+    '	<!-- end impact -->\n' +
+    '\n' +
+    '</div>\n' +
+    '<!-- end card -->\n' +
     '');
 }]);
 

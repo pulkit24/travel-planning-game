@@ -5,7 +5,7 @@ angular.module("travelPlanningGame.app")
 		var times = ["morning", "afternoon", "evening", "night"];
 		// Utility to get the display name by number
 		function toTimeOfDay(time) {
-			return times[time] ? times[time] : null;
+			return times[time - 1] ? times[time - 1] : null;
 		}
 
 		// Limits on days and times

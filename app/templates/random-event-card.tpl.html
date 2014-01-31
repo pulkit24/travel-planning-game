@@ -1,0 +1,28 @@
+<!-- Event card -->
+<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">
+
+	<!-- Event name and controls -->
+	<div class="panel-header panel-heading">
+		<h3 ng-if="randomEvent.type === 'POSITIVE'">Hang on, something great happened today!</h3>
+		<h3 ng-if="randomEvent.type === 'NEGATIVE'">Uh-oh! Something bad happened today!</h3>
+	</div>
+	<!-- end name and controls -->
+
+	<!-- Flavour text -->
+	<div class="panel-body">
+		<h2>{{ randomEvent.description }}</h2>
+	</div>
+	<!-- end text -->
+
+	<!-- Impact -->
+	<div class="panel-footer">
+		<h3>{{ randomEvent.impact }}</h3>
+		<p>
+			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"
+				ng-click="randomEventCardState.complete()">Okay</button>
+		</p>
+	</div>
+	<!-- end impact -->
+
+</div>
+<!-- end card -->

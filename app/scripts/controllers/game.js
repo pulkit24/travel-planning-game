@@ -1,6 +1,17 @@
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
-		stateTracker, mapRouter, angulargmContainer) {
+		randomEvents, stateTracker, mapRouter, angulargmContainer) {
+
+		///////////////////////////
+		// Game alert messages //
+		///////////////////////////
+
+		var alertMessages = {};
+		alertMessages.startLocation = "<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
+		alertMessages.greetings = {};
+		alertMessages.greetings.morning = "<h2>Good morning!</h2><p>Where would you like to go today?</p>";
+		alertMessages.greetings.afternoon = "<h2>It's the afternoon!</h2><p>Where would you like to go next?</p>";
+		alertMessages.greetings.evening = "<h2>Good evening!</h2><p>What's your final destination for today?</p>";
 
 		/////////////////////////
 		// Current game state //
@@ -62,6 +73,13 @@ angular.module("travelPlanningGame.app")
 			return timer.now() ? timer.now().day : null;
 		};
 
+		$scope.setTimeOfDay = function() {
+			$scope.displayedTimeOfDay = timer.now() ? timer.toTimeOfDay(timer.now().time) : null;
+		};
+		$scope.getTimeOfDay = function() {
+			return $scope.displayedTimeOfDay;
+		};
+
 		/////////////////
 		// Game turns //
 		/////////////////
@@ -69,8 +87,7 @@ angular.module("travelPlanningGame.app")
 		$scope.turnState = stateTracker.new("turnState");
 
 		function initPlay() {
-			$scope.alertMessage =
-				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
+			$scope.alertMessage = alertMessages.startLocation;
 			$timeout(function() {
 				stateTracker.get("alert").show();
 			}, 500);
@@ -98,6 +115,9 @@ angular.module("travelPlanningGame.app")
 			// Start the timer
 			timer.config($scope.settings.travelDays, 3);
 			timer.start();
+
+			// Show first greeting
+			greet();
 		};
 
 		// Check conditions for eligibility for another round
@@ -133,6 +153,10 @@ angular.module("travelPlanningGame.app")
 
 		// Start this turn
 		$scope.game.startTurn = function() {
+
+			// Dismiss any greeting
+			stateTracker.get("alert").dismiss();
+
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
 			// Restrict further selection to landmarks only
@@ -180,10 +204,16 @@ angular.module("travelPlanningGame.app")
 		$scope.game.endTurn = function() {
 			$scope.turnState.complete();
 
-			// Is this EOD? Charge for lodging
-			if (timer.isEOD())
+			// Is this EOD?
+			if (timer.isEOD()) {
+				// Charge for lodging
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 					[resources.categories.LODGING]);
+			}
+
+			// Make a random event, randomly
+			if(randomEvents.hasOccurred())
+				handleRandomEvent(randomEvents.getEvent());
 
 			// Days left?
 			if (timer.isLast())
@@ -193,17 +223,58 @@ angular.module("travelPlanningGame.app")
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
 
-			// Next turn this day
-			timer.next();
+			// After a tiny gap between turns...
+			$timeout(function(){
 
-			// Un-set as current location [FIXME]
-			$scope.locations.selected = null;
+				// Next turn this day
+				timer.next();
+
+				// Un-set as current location [FIXME]
+				$scope.locations.selected = null;
+
+				// Show greeting alert
+				greet();
+
+			}, 500);
 		};
+
+		// Random event
+		function handleRandomEvent(randomEvent) {
+			if(randomEvent) {
+				$scope.randomEvent = randomEvent;
+
+				// Charge for the impact
+				resources.delta($scope.resources, resources.categories.ALL, randomEvent.resources,
+					[resources.categories.ALL]);
+			}
+		}
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false
 		$scope.whyCantI = function(task) {
 			return task(true);
 		};
+
+		function greet(canGreet) {
+			// Enqueue our intent to show until the current alert has been dismissed
+			if(!canGreet) {
+				$scope.alertUnbinder = stateTracker.get("alert").$on("off", function() {
+					greet(true);
+				});
+			}
+
+			// When we can, show the alert asap
+			else {
+				$scope.setTimeOfDay();
+
+				$scope.alertMessage = alertMessages.greetings[$scope.getTimeOfDay()];
+
+				if(angular.isFunction($scope.alertUnbinder))
+					$scope.alertUnbinder();
+				$scope.alertUnbinder = null;
+
+				stateTracker.get("alert").show();
+			}
+		}
 
 		///////////////
 		// Locations //

@@ -52,15 +52,28 @@
 /////////////
 
 .sidebar {
-	.shadow-box-light();
+
+	.shadow-box-hud();
 	top: @size-height-HUD;
 	right: 0;
 	width: @size-width-sidebar;
 	height: 100%;
 	background-color: @color-light;
-	h2 {
+	h2, p {
 		padding: 0 10px;
 	}
+
+	&.morning {
+		background-color: lighten(@color-morning, 40%);
+	}
+	&.afternoon {
+		background-color: lighten(@color-afternoon, 40%);
+	}
+	&.evening {
+		background-color: lighten(@color-evening, 40%);
+	}
+
+
 	&.turn-options {
 		top: 0;
 		.option {

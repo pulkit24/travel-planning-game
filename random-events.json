@@ -1,0 +1,55 @@
+[{
+	"type": "NEGATIVE"
+	, "description": "Your were mugged!"
+	, "impact": "You lost $100"
+	, "resource": "MONEY"
+	, "amount": -100
+}, {
+	"type": "NEGATIVE"
+	, "description": "A pick-pocket stole your wallet."
+	, "impact": "You lost $100"
+	, "resource": "MONEY"
+	, "amount": -100
+}, {
+	"type": "NEGATIVE"
+	, "description": "You dropped your ticket and got fined for using public transport."
+	, "impact": "You were fined $200"
+	, "resource": "MONEY"
+	, "amount": -200
+}, {
+	"type": "NEGATIVE"
+	, "description": "The taxi overcharged you!"
+	, "impact": "You lost $50"
+	, "resource": "MONEY"
+	, "amount": -50
+}, {
+	"type": "NEGATIVE"
+	, "description": "Pay hotel room damages for what you did last night."
+	, "impact": "You lose $300"
+	, "resource": "MONEY"
+	, "amount": -300
+}, {
+	"type": "POSITIVE"
+	, "description": "You won a mini contest at this location and got some great souvenirs."
+	, "impact": "You received +5 souvenirs"
+	, "resource": "SOUVENIR"
+	, "amount": 5
+}, {
+	"type": "POSITIVE"
+	, "description": "You received a discount at the diner."
+	, "impact": "You saved $50"
+	, "resource": "MONEY"
+	, "amount": 50
+}, {
+	"type": "POSITIVE"
+	, "description": "Your monthly savings interest just came through!"
+	, "impact": "You gain $1,000"
+	, "resource": "MONEY"
+	, "amount": 1000
+}, {
+	"type": "POSITIVE"
+	, "description": "You found an ANZ ATM to withdraw money."
+	, "impact": "You saved $50 in transaction charges"
+	, "resource": "MONEY"
+	, "amount": 50
+}]

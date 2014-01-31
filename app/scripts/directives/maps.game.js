@@ -151,7 +151,28 @@ angular.module('travelPlanningGame.maps')
 						id: 'startingPoint'
 						, name: 'I start from here!'
 						, coords: event.latLng ? angulargmUtils.latLngToObj(event.latLng) : event.coords
+						, description: 'This is where you started your journey from. This could be your starting hotel. Return here whenever you wish to.'
+						// , image: "images/landmarks/casino_sentosa.jpg"
+						, lodgingCost: 0
+						, visitingCost: 0
+						, visitingExp: 0
+						, shopping: {
+							name: ''
+							, description: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.'
+							// , image: images/items/anz_icon_singapore_sling.png
+							, souvenirs: 0
+							, cost: 0
+						}
+						, exp: 0
 					};
+					point.resources = resources.new();
+					// Typical landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
+					point.resources.set(resources.categories.VISITING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.LODGING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.VISITING, resources.types.XP, 0);
+					point.resources.set(resources.categories.SHOPPING, resources.types.SOUVENIR, 0);
+					point.resources.set(resources.categories.SHOPPING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
 					// Create a single-member collection of points for this selected starting point
 					$scope.points = [point];

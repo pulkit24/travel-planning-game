@@ -54,8 +54,8 @@
 	<!-- end settings sidebar -->
 
 	<!-- Start game button -->
-	<div class="layer button-next">
-		<button type="button" class="btn btn-lg btn-primary" ng-click="game.start()">
+	<div class="layer button-next" ng-class="getTimeOfDay()">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.start()">
 			Start
 		</button>
 	</div>
@@ -75,15 +75,15 @@
 
 	<!-- Alerts container -->
 	<div widget-alert="alertMessage" chevron="down" class="layer animated"
+		ng-class="getTimeOfDay()"
 		state-tracker="alert"
 		state-choices="[
-			{state: 'idle', set: 'reset', check: 'isIdle'}
+			{state: 'off', set: 'reset', check: 'isOff'}
 			, {state: 'on', set: 'show', check: 'isOn'}
 			, {state: 'dismissed', set: 'dismiss', check: 'isDismissed'}
-			, {state: 'off', set: 'off', check: 'isOff'}
 		]"
-		state-class="['hide', 'bounceInUp', 'bounceOutUp', 'hide']"
-		state-transition="{dismissed: {off: 1000}, off: {idle: 500}}">
+		state-class="['hide', 'bounceInUp', 'bounceOutUp']"
+		state-transition="{dismissed: {off: 1000}}">
 	</div>
 	<!-- end alerts -->
 
@@ -110,12 +110,17 @@
 
 	<!-- Sidebar for turn options -->
 	<div class="layer sidebar turn-options animated"
+		ng-class="getTimeOfDay()"
 		state-tracker="turnState"
 		state-class="['hide', 'bounceInUp', 'bounceOutDown', 'hide']"
 		state-transition="{complete: {idle: 1000}, failed: {idle: 1000}}">
 
 		<!-- Only show when currently in a turn -->
 		<div ng-if="turnState.isActive()">
+
+			<h2>Welcome to {{ current.location.name }}!</h2>
+
+			<p>{{ current.location.description }}</p>
 
 			<h2>What would you like to do here?</h2>
 
@@ -153,19 +158,19 @@
 						]"
 						state-class="['btn-default', 'animated flash btn-warning', 'btn-warning']"
 						state-transition="{purchasing: {bought: 1000}}">
-						{{ whyCantI(game.canShop) || shoppingState | stateTracker:"Buy this item!":"Bought it!":"Bought it!" }}
+						{{ whyCantI(game.canShop) || (shoppingState | stateTracker:"Buy this item!":"Bought it!":"Bought it!") }}
 					</button>
 				</div>
 			</div>
 			<!-- end shopping option -->
 
 			<!-- Optional features -->
-			<div class="option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
+<!-- 			<div class="option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
 				<h4>Optional</h4>
 				{{ bonus.flavour }}
 				<button type="button" class="btn btn-default">Play</button>
 			</div>
-			<!-- end optional features -->
+ -->			<!-- end optional features -->
 		</div>
 		<!-- end things to show in current turn -->
 
@@ -173,9 +178,9 @@
 	<!-- end turn sidebar -->
 
 	<!-- Start game button -->
-	<div class="layer button-next" ng-if="!current.location">
+	<div class="layer button-next" ng-class="getTimeOfDay()" ng-if="!current.location">
 		<button type="button"
-			class="btn btn-lg btn-warning animated"
+			class="btn btn-lg btn-warning btn-action animated"
 			ng-click="game.setStartPoint()"
 		 	ng-disabled="!locations.selected"
 		 	ng-class="locations.selected ? 'bounce' : 'fadeIn'">
@@ -186,9 +191,9 @@
 	<!-- end start button -->
 
 	<!-- Start turn button -->
-	<div class="layer button-next" ng-if="!turnState.isActive() && current.location">
+	<div class="layer button-next" ng-class="getTimeOfDay()" ng-if="!turnState.isActive() && current.location">
 		<button type="button"
-			class="btn btn-lg btn-warning animated"
+			class="btn btn-lg btn-warning btn-action animated"
 			ng-click="game.startTurn()"
 			ng-disabled="!game.canPlay()"
 			ng-class="game.canPlay() ? 'bounce' : 'fadeIn'">
@@ -198,14 +203,24 @@
 	<!-- end start button -->
 
 	<!-- End turn button -->
-	<div class="layer button-next" ng-if="turnState.isActive() && current.location">
+	<div class="layer button-next" ng-class="getTimeOfDay()" ng-if="turnState.isActive() && current.location">
 		<button type="button"
-			class="btn btn-lg btn-default"
+			class="btn btn-lg btn-info btn-action"
 			ng-click="game.endTurn()">
 			End Turn
 		</button>
 	</div>
 	<!-- end end-turn button -->
+
+	<!-- Random event card -->
+	<div random-event-card random-event="randomEvent" class="layer overlay animated"
+		state-tracker="randomEventCardState"
+		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
+		state-activate="randomEvent"
+		state-on-failed="randomEvent = null"
+		state-transition="{complete: {fail: 1000}, fail: {idle: 500}}">
+	</div>
+	<!-- end landmark card -->
 
 </div>
 <!-- end play page -->

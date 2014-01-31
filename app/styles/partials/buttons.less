@@ -1,8 +1,29 @@
 .btn {
 	&.btn-action {
-
+		.shadow-box-hud();
+		border-color: @color-alert;
+		border-radius: 0;
+		background-color: @color-alert;
+		color: white;
 	}
+
 	&.btn-cancel {
 
+	}
+
+	.morning & {
+		border-color: @color-morning;
+		background-color: @color-morning;
+		color: white;
+	}
+	.afternoon & {
+		border-color: @color-afternoon;
+		background-color: @color-afternoon;
+		color: white;
+	}
+	.evening & {
+		border-color: @color-evening;
+		background-color: @color-evening;
+		color: white;
 	}
 }

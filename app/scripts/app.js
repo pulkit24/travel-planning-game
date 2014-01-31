@@ -19,7 +19,8 @@ angular.module('travelPlanningGame.app', [
 		rome2rioProvider.setCurrency('AUD');
 		rome2rioProvider.setDetailLevel('street_address');
 	})
-	.run(function(landmarks) {
+	.run(function(landmarks, randomEvents) {
 		landmarks.get();
 		landmarks.getCities();
+		randomEvents.load();
 	});

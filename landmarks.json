@@ -1,7 +1,7 @@
 [{
 	"name": "Casino Sentosa"
 	, "address": "8 Sentosa Gateway, Singapore 098269"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/casino_sentosa.jpg"
 	, "lodgingCost": 400
 	, "visitingCost": 55
@@ -31,7 +31,7 @@
 }, {
 	"name": "Ubin Island"
 	, "address": "Pulau Ubin, Singapore"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/ubin_island.jpg"
 	, "lodgingCost": 150
 	, "visitingCost": 30
@@ -61,7 +61,7 @@
 }, {
 	"name": "Marina Bay"
 	, "address": "10 Bayfront Ave, Singapore 018956"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/marina_bay.jpg"
 	, "lodgingCost": 250
 	, "visitingCost": 45
@@ -91,7 +91,7 @@
 }, {
 	"name": "Bukit Batok Nature Park"
 	, "address": "Bukit Batok Nature Park, Singapore"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/bukit_batok.jpg"
 	, "lodgingCost": 100
 	, "visitingCost": 20
@@ -121,7 +121,7 @@
 }, {
 	"name": "Telok Ayer Market"
 	, "address": "18 Raffles Quay, Singapore 048582"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu."
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/telok_ayer.jpg"
 	, "lodgingCost": 250
 	, "visitingCost": 20

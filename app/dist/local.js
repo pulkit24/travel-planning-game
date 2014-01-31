@@ -27,9 +27,10 @@ angular.module('travelPlanningGame.app', [
 		rome2rioProvider.setCurrency('AUD');
 		rome2rioProvider.setDetailLevel('street_address');
 	})
-	.run(function(landmarks) {
+	.run(function(landmarks, randomEvents) {
 		landmarks.get();
 		landmarks.getCities();
+		randomEvents.load();
 	});
 
 angular.module("travelPlanningGame.app")
@@ -729,6 +730,117 @@ angular.module('travelPlanningGame.maps')
 	});
 
 angular.module("travelPlanningGame.app")
+	.factory("randomEvents", function($q, $http, resources) {
+
+		// Source files
+		var source_events = "../random-events.json";
+
+		// List of random events
+		var randomEvents = null;
+
+		var occurredEventIDs = [];
+		var availableEventIDs = [];
+
+		// Total count of events occurred
+		var occurrenceCountTotal = 0;
+
+		// Fetch events
+		function loadEvents() {
+			var deferred = $q.defer();
+
+			if (!randomEvents) {
+				$http.get(source_events)
+					.success(function(data) {
+						// Fulfill promise on success
+						randomEvents = data;
+						// Process each event
+						angular.forEach(randomEvents, function(randomEvent, index) {
+							// Prepare a resource tracker
+							randomEvent.resources = _fillEventResources(randomEvent);
+
+							// Assign an id
+							randomEvent.id = "randomEvent" + index;
+							availableEventIDs.push(index);
+
+							// Track the number of times we've shown it
+							randomEvent.occurrenceCount = 0;
+						});
+						deferred.resolve(randomEvents);
+					})
+					.error(function(data) {
+						// Reject with failure
+						deferred.reject();
+					});
+			} else {
+				deferred.resolve(randomEvents);
+			}
+
+			return deferred.promise;
+		}
+
+		function getRandomEvent() {
+			_fillAvailableEvents();
+
+			// Pick one randomly
+			var index = Math.floor(Math.random() * availableEventIDs.length);
+
+			// The index may not correspond one-to-one with the indices of the available event IDs
+			// because we may have moved them to occurred event IDs
+			// Hence, iterate n = index times to fetch the n-th available ID
+			var randomEventID = null;
+			var cumulativeIndex = 0, matchingAvailableEventsIndex;
+			angular.forEach(availableEventIDs, function(eventID, availableEventsIndex) {
+				cumulativeIndex++;
+				if(cumulativeIndex === index) {
+					randomEventID = eventID;
+					matchingAvailableEventsIndex = availableEventsIndex;
+				}
+			});
+
+			if(randomEventID) {
+				delete availableEventIDs[matchingAvailableEventsIndex];
+				occurredEventIDs.push(randomEventID);
+
+				randomEvents[randomEventID].occurrenceCount++;
+				occurrenceCountTotal++;
+
+				return randomEvents[randomEventID];
+			}
+
+			else
+				return null;
+		}
+
+
+		function _fillAvailableEvents() {
+			if(!availableEventIDs || !availableEventIDs.length)
+				availableEventIDs = angular.copy(occurredEventIDs);
+		}
+
+		// Add resource trackers to each landmark
+		function _fillEventResources(randomEvent) {
+			var resourceTracker = resources.new();
+
+			// Event resource based on impact
+			resourceTracker.set(resources.categories.ALL
+				, resources.types[randomEvent.resource]
+				, randomEvent.amount);
+
+			return resourceTracker;
+		}
+
+		function randomYes() {
+			return Math.random() >= 0.5;
+		}
+
+		return {
+			load: loadEvents
+			, hasOccurred: randomYes
+			, getEvent: getRandomEvent
+		};
+	});
+
+angular.module("travelPlanningGame.app")
 	.factory("resources", function() {
 
 		// Resource types
@@ -887,7 +999,7 @@ angular.module("travelPlanningGame.app")
 		var times = ["morning", "afternoon", "evening", "night"];
 		// Utility to get the display name by number
 		function toTimeOfDay(time) {
-			return times[time] ? times[time] : null;
+			return times[time - 1] ? times[time - 1] : null;
 		}
 
 		// Limits on days and times
@@ -1151,7 +1263,28 @@ angular.module('travelPlanningGame.maps')
 						id: 'startingPoint'
 						, name: 'I start from here!'
 						, coords: event.latLng ? angulargmUtils.latLngToObj(event.latLng) : event.coords
+						, description: 'This is where you started your journey from. This could be your starting hotel. Return here whenever you wish to.'
+						// , image: "images/landmarks/casino_sentosa.jpg"
+						, lodgingCost: 0
+						, visitingCost: 0
+						, visitingExp: 0
+						, shopping: {
+							name: ''
+							, description: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.'
+							// , image: images/items/anz_icon_singapore_sling.png
+							, souvenirs: 0
+							, cost: 0
+						}
+						, exp: 0
 					};
+					point.resources = resources.new();
+					// Typical landmark resources: visitingCost, lodgingCost, visitingExp, souvenirs, souvenirCost, exp
+					point.resources.set(resources.categories.VISITING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.LODGING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.VISITING, resources.types.XP, 0);
+					point.resources.set(resources.categories.SHOPPING, resources.types.SOUVENIR, 0);
+					point.resources.set(resources.categories.SHOPPING, resources.types.MONEY, 0);
+					point.resources.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
 					// Create a single-member collection of points for this selected starting point
 					$scope.points = [point];
@@ -1285,6 +1418,19 @@ angular.module('travelPlanningGame.maps')
 
 'use strict';
 
+angular.module('travelPlanningGame.app')
+	.directive('randomEventCard', function() {
+		return {
+			restrict: 'EA'
+			, scope: {
+				randomEvent: '='
+			}
+			, templateUrl: 'templates/random-event-card.tpl.html'
+		};
+	});
+
+'use strict';
+
 angular.module('travelPlanningGame.widgets')
 	.directive('widgetResourceIndicator', function() {
 		return {
@@ -1397,7 +1543,18 @@ angular.module("travelPlanningGame.app")
 
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
-		stateTracker, mapRouter, angulargmContainer) {
+		randomEvents, stateTracker, mapRouter, angulargmContainer) {
+
+		///////////////////////////
+		// Game alert messages //
+		///////////////////////////
+
+		var alertMessages = {};
+		alertMessages.startLocation = "<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
+		alertMessages.greetings = {};
+		alertMessages.greetings.morning = "<h2>Good morning!</h2><p>Where would you like to go today?</p>";
+		alertMessages.greetings.afternoon = "<h2>It's the afternoon!</h2><p>Where would you like to go next?</p>";
+		alertMessages.greetings.evening = "<h2>Good evening!</h2><p>What's your final destination for today?</p>";
 
 		/////////////////////////
 		// Current game state //
@@ -1459,6 +1616,13 @@ angular.module("travelPlanningGame.app")
 			return timer.now() ? timer.now().day : null;
 		};
 
+		$scope.setTimeOfDay = function() {
+			$scope.displayedTimeOfDay = timer.now() ? timer.toTimeOfDay(timer.now().time) : null;
+		};
+		$scope.getTimeOfDay = function() {
+			return $scope.displayedTimeOfDay;
+		};
+
 		/////////////////
 		// Game turns //
 		/////////////////
@@ -1466,8 +1630,7 @@ angular.module("travelPlanningGame.app")
 		$scope.turnState = stateTracker.new("turnState");
 
 		function initPlay() {
-			$scope.alertMessage =
-				"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
+			$scope.alertMessage = alertMessages.startLocation;
 			$timeout(function() {
 				stateTracker.get("alert").show();
 			}, 500);
@@ -1495,6 +1658,9 @@ angular.module("travelPlanningGame.app")
 			// Start the timer
 			timer.config($scope.settings.travelDays, 3);
 			timer.start();
+
+			// Show first greeting
+			greet();
 		};
 
 		// Check conditions for eligibility for another round
@@ -1530,6 +1696,10 @@ angular.module("travelPlanningGame.app")
 
 		// Start this turn
 		$scope.game.startTurn = function() {
+
+			// Dismiss any greeting
+			stateTracker.get("alert").dismiss();
+
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
 			// Restrict further selection to landmarks only
@@ -1577,10 +1747,16 @@ angular.module("travelPlanningGame.app")
 		$scope.game.endTurn = function() {
 			$scope.turnState.complete();
 
-			// Is this EOD? Charge for lodging
-			if (timer.isEOD())
+			// Is this EOD?
+			if (timer.isEOD()) {
+				// Charge for lodging
 				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
 					[resources.categories.LODGING]);
+			}
+
+			// Make a random event, randomly
+			if(randomEvents.hasOccurred())
+				handleRandomEvent(randomEvents.getEvent());
 
 			// Days left?
 			if (timer.isLast())
@@ -1590,17 +1766,58 @@ angular.module("travelPlanningGame.app")
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
 
-			// Next turn this day
-			timer.next();
+			// After a tiny gap between turns...
+			$timeout(function(){
 
-			// Un-set as current location [FIXME]
-			$scope.locations.selected = null;
+				// Next turn this day
+				timer.next();
+
+				// Un-set as current location [FIXME]
+				$scope.locations.selected = null;
+
+				// Show greeting alert
+				greet();
+
+			}, 500);
 		};
+
+		// Random event
+		function handleRandomEvent(randomEvent) {
+			if(randomEvent) {
+				$scope.randomEvent = randomEvent;
+
+				// Charge for the impact
+				resources.delta($scope.resources, resources.categories.ALL, randomEvent.resources,
+					[resources.categories.ALL]);
+			}
+		}
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false
 		$scope.whyCantI = function(task) {
 			return task(true);
 		};
+
+		function greet(canGreet) {
+			// Enqueue our intent to show until the current alert has been dismissed
+			if(!canGreet) {
+				$scope.alertUnbinder = stateTracker.get("alert").$on("off", function() {
+					greet(true);
+				});
+			}
+
+			// When we can, show the alert asap
+			else {
+				$scope.setTimeOfDay();
+
+				$scope.alertMessage = alertMessages.greetings[$scope.getTimeOfDay()];
+
+				if(angular.isFunction($scope.alertUnbinder))
+					$scope.alertUnbinder();
+				$scope.alertUnbinder = null;
+
+				stateTracker.get("alert").show();
+			}
+		}
 
 		///////////////
 		// Locations //
@@ -1708,7 +1925,7 @@ angular.module("travelPlanningGame.app")
 
 	});
 
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -1819,6 +2036,40 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
     '		</div>\n' +
     '	</div>\n' +
     '</div>\n' +
+    '');
+}]);
+
+angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/random-event-card.tpl.html',
+    '<!-- Event card -->\n' +
+    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">\n' +
+    '\n' +
+    '	<!-- Event name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
+    '		<h3 ng-if="randomEvent.type === \'POSITIVE\'">Hang on, something great happened today!</h3>\n' +
+    '		<h3 ng-if="randomEvent.type === \'NEGATIVE\'">Uh-oh! Something bad happened today!</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end name and controls -->\n' +
+    '\n' +
+    '	<!-- Flavour text -->\n' +
+    '	<div class="panel-body">\n' +
+    '		<h2>{{ randomEvent.description }}</h2>\n' +
+    '	</div>\n' +
+    '	<!-- end text -->\n' +
+    '\n' +
+    '	<!-- Impact -->\n' +
+    '	<div class="panel-footer">\n' +
+    '		<h3>{{ randomEvent.impact }}</h3>\n' +
+    '		<p>\n' +
+    '			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"\n' +
+    '				ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '		</p>\n' +
+    '	</div>\n' +
+    '	<!-- end impact -->\n' +
+    '\n' +
+    '</div>\n' +
+    '<!-- end card -->\n' +
     '');
 }]);
 
