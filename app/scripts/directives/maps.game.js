@@ -208,7 +208,7 @@ angular.module('travelPlanningGame.maps')
 
 							// Set cost
 							if($scope.selected.resources)
-								$scope.selected.resources.set(resources.categories.TRANSPORT, resources.types.MONEY, route.cost);
+								$scope.selected.resources.set(resources.categories.TRANSPORT, resources.types.MONEY, -1 * route.cost);
 						});
 					}
 

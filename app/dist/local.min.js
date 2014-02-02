@@ -27,9 +27,9 @@ angular.module('travelPlanningGame.app', [
 		rome2rioProvider.setCurrency('AUD');
 		rome2rioProvider.setDetailLevel('street_address');
 	})
-	.run(function(landmarks, randomEvents) {
-		landmarks.get();
-		landmarks.getCities();
+	.run(function(locations, randomEvents) {
+		locations.getLandmarks();
+		locations.getCities();
 		randomEvents.load();
 	});
 
@@ -127,7 +127,7 @@ angular.module("travelPlanningGame.app")
 	});
 
 angular.module("travelPlanningGame.app")
-	.factory("landmarks", function($http, $q, resources) {
+	.factory("locations", function($http, $q, resources) {
 
 		// Source files
 		var source_landmarks = "../landmarks.json";
@@ -228,7 +228,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		return {
-			get: loadLandmarks
+			getLandmarks: loadLandmarks
 			, getCities: loadCities
 		};
 	});
@@ -830,7 +830,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() >= 0.5;
+			return Math.random() <= 0.3;
 		}
 
 		return {
@@ -850,30 +850,9 @@ angular.module("travelPlanningGame.app")
 		types.XP = "type_xp";
 		types.SOUVENIR = "type_souvenir";
 
-		// Test conditions for updating these types
-		var updateTests = {};
-		// Money after update must not go negative
-		updateTests[types.MONEY] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-		// XP cannot go negative
-		updateTests[types.XP] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-		// Souvenirs cannot go negative
-		updateTests[types.SOUVENIR] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-
 		// Categories of events representing possible resource applications
 		var categories = {};
-		categories.ALL = "cat_all";
+		categories.ALL = "cat_all"; // special case: equivalent to each of the other categories
 		categories.VISITING = "cat_visiting"; // example, visiting cost
 		categories.TRANSPORT = "cat_transport";
 		categories.LODGING = "cat_lodging";
@@ -883,6 +862,7 @@ angular.module("travelPlanningGame.app")
 
 		// Track resources for the caller
 		var Resources = function() {
+
 			// Get the value of a resource
 			// Safer alternative to manually access the object properties
 			this.get = function getResource(category, type) {
@@ -892,6 +872,7 @@ angular.module("travelPlanningGame.app")
 					return 0;
 			};
 
+			// Initialize a track for a particular category and type
 			this._init = function initTrack(category, type) {
 				// Create if no prevalent track
 				if (!this[category])
@@ -910,17 +891,16 @@ angular.module("travelPlanningGame.app")
 			};
 
 			// Ability to update the value of any resource
-			// Checks are made to validate the update
-			// Set skipTests to true to avoid resource validations, eg. during resource initialization
+			// Checks for validation unless specified to skip
 			this.update = function updateResource(category, type, amount, skipTests) {
 				this._init(category, type);
 
-				// Test whether the update is possible
-				if (skipTests || (!updateTests[type] || updateTests[type](this[category][type], amount)))
+				if(skipTests || (this[category][type] + amount > 0))
 					this[category][type] += amount;
 
 				return this;
 			};
+
 			// Convenience functions for adding and subtracting amounts
 			this.add = this.update;
 			this.subtract = function subtractResource(category, type, amount, skipTests) {
@@ -941,52 +921,67 @@ angular.module("travelPlanningGame.app")
 			return trackerCopy;
 		}
 
-		// Check whether updating the demanding Resource by supplier Resource is possible
-		// More than one supplier category can be provided to check against the sum amount
-		function canDelta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
+		// Check whether updating the target resource by the source resource is possible
+		// on supplied categories (if any)
+		function canAddResource(targetResource, sourceResource, categoriesToConsider) {
 
-			if (!supplierResource)
-				return true;
-
+			// Final answer
 			var possible = true;
 
-			var summedResource = startTracker();
+			// Can we legally add the resource?
+			if (sourceResource) {
 
-			// Consider each category
-			angular.forEach(supplierCategories, function(supplierCategory, index) {
-				angular.forEach(supplierResource[supplierCategory], function(amount, type) {
-					summedResource.add(categories.ALL, type, amount, true); // coalesce all into ALL, skipping validation tests
-				});
-			});
+				// Yes. Do we have a limitation on categories to consider?
+				if(!categoriesToConsider)
+					categoriesToConsider = categories; // No, consider all categories
 
-			angular.forEach(summedResource[categories.ALL], function(amount, type) {
-				if (updateTests[type] && !updateTests[type](demanderResource[demanderCategory][type], amount))
-					possible = false;
-			});
+				// Check if we can add resources from each category
+				angular.forEach(categoriesToConsider, function(category, index) {
+					angular.forEach(sourceResource[category], function(amount, type) {
 
-			return possible;
-		}
-
-		// Update source Resources by destination Resources on supplied categories only
-		function delta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
-			if (supplierResource && canDelta(demanderResource, demanderCategory, supplierResource,
-				supplierCategories)) {
-
-				angular.forEach(supplierCategories, function(supplierCategory, index) {
-					angular.forEach(supplierResource[supplierCategory], function(amount, type) {
-						demanderResource.update(demanderCategory, type, amount);
+						// Does the target resource have an ALL category?
+						if(targetResource[categories.ALL])
+							possible = possible && (targetResource.get(categories.ALL, type) + amount > 0); // yes, can we update that as a catch-all?
+						else
+							possible = possible && (targetResource.get(category, type) + amount > 0); // no, can we update the corresponding category?
 					});
 				});
 			}
 
-			return demanderResource;
+			return possible;
+		}
+
+		// Update target resources by source resources on supplied categories (if any)
+		function addResource(targetResource, sourceResource, categoriesToConsider) {
+
+			// Can we legally add the resource?
+			if (sourceResource && canAddResource(targetResource, sourceResource, categoriesToConsider)) {
+
+				// Yes. Do we have a limitation on categories to consider?
+				if(!categoriesToConsider)
+					categoriesToConsider = categories; // No, consider all categories
+
+				// Add resources from each category
+				angular.forEach(categoriesToConsider, function(category, index) {
+					angular.forEach(sourceResource[category], function(amount, type) {
+
+						// Does the target resource have an ALL category?
+						if(targetResource[categories.ALL])
+							targetResource.update(categories.ALL, type, amount); // yes, update that as a catch-all
+						else
+							targetResource.update(category, type, amount); // no, update the corresponding category
+					});
+				});
+			}
+
+			return targetResource;
 		}
 
 		return {
 			new: startTracker
 			, copy: duplicateTracker
-			, canDelta: canDelta
-			, delta: delta
+			, canMerge: canAddResource
+			, merge: addResource
 			, types: types
 			, categories: categories
 		};
@@ -1320,7 +1315,7 @@ angular.module('travelPlanningGame.maps')
 
 							// Set cost
 							if($scope.selected.resources)
-								$scope.selected.resources.set(resources.categories.TRANSPORT, resources.types.MONEY, route.cost);
+								$scope.selected.resources.set(resources.categories.TRANSPORT, resources.types.MONEY, -1 * route.cost);
 						});
 					}
 
@@ -1542,7 +1537,7 @@ angular.module("travelPlanningGame.app")
 	});
 
 angular.module("travelPlanningGame.app")
-	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
+	.controller('GameCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
 		randomEvents, stateTracker, mapRouter, angulargmContainer) {
 
 		///////////////////////////
@@ -1576,7 +1571,7 @@ angular.module("travelPlanningGame.app")
 			, check: "isPlaying"
 		}, {
 			state: "stats"
-			, set: "stats"
+			, set: "end"
 			, check: "isStats"
 		}], "gameState");
 
@@ -1605,7 +1600,7 @@ angular.module("travelPlanningGame.app")
 		};
 		$scope.game.end = function() {
 			// End the game
-			$scope.current.state.stats();
+			$scope.current.state.end();
 		};
 		$scope.game.menu = function() {
 			// Back to the menu
@@ -1686,8 +1681,7 @@ angular.module("travelPlanningGame.app")
 					categoriesRequired.push(resources.categories.LODGING);
 
 				// Check if we have the funds for this
-				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
-					categoriesRequired))
+				if (!resources.canMerge($scope.resources, $scope.locations.selected.resources, categoriesRequired))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -1712,13 +1706,11 @@ angular.module("travelPlanningGame.app")
 				// For now, account for visiting and transport feasibility
 				var categoriesRequired = [resources.categories.VISITING, resources.categories.TRANSPORT];
 
-				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					categoriesRequired);
+				resources.merge($scope.resources, $scope.current.location.resources, categoriesRequired);
 
 				// One-time xp points for "discovery"
 				if (!history.getInstance("landmarks").find($scope.current.location))
-					resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-						[resources.categories.DISCOVERY]);
+					resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.DISCOVERY]);
 			}
 
 			$scope.turnState.activate();
@@ -1727,8 +1719,7 @@ angular.module("travelPlanningGame.app")
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
 			if ($scope.current.location.resources) {
-				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					[resources.categories.SHOPPING]))
+				if (!resources.canMerge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -1740,8 +1731,7 @@ angular.module("travelPlanningGame.app")
 			stateTracker.get("shoppingState").purchase();
 
 			// Charge for shopping
-			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				[resources.categories.SHOPPING]);
+			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
 		};
 
 		$scope.game.endTurn = function() {
@@ -1750,8 +1740,7 @@ angular.module("travelPlanningGame.app")
 			// Is this EOD?
 			if (timer.isEOD()) {
 				// Charge for lodging
-				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					[resources.categories.LODGING]);
+				resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.LODGING]);
 			}
 
 			// Make a random event, randomly
@@ -1787,8 +1776,7 @@ angular.module("travelPlanningGame.app")
 				$scope.randomEvent = randomEvent;
 
 				// Charge for the impact
-				resources.delta($scope.resources, resources.categories.ALL, randomEvent.resources,
-					[resources.categories.ALL]);
+				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 			}
 		}
 
@@ -1827,13 +1815,13 @@ angular.module("travelPlanningGame.app")
 
 		// Load the cities
 		$scope.locations.cities = null; // cities
-		landmarks.getCities().then(function(data) {
+		locations.getCities().then(function(data) {
 			$scope.locations.cities = data;
 		});
 
 		// Show the cities on the map
 		function mapCities() {
-			landmarks.getCities().then(function(data) {
+			locations.getCities().then(function(data) {
 				$scope.locations.cities = data;
 
 				// Current status
@@ -1848,13 +1836,13 @@ angular.module("travelPlanningGame.app")
 
 		// Load the landmarks
 		$scope.locations.landmarks = null; // landmarks
-		landmarks.get().then(function(data) {
+		locations.getLandmarks().then(function(data) {
 			$scope.locations.landmarks = data;
 		});
 
 		// Show the landmarks on the map
 		function mapLandmarks() {
-			landmarks.get().then(function(data) {
+			locations.getLandmarks().then(function(data) {
 				$scope.locations.landmarks = data;
 
 				// Current status

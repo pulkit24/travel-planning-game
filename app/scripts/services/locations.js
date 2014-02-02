@@ -1,5 +1,5 @@
 angular.module("travelPlanningGame.app")
-	.factory("landmarks", function($http, $q, resources) {
+	.factory("locations", function($http, $q, resources) {
 
 		// Source files
 		var source_landmarks = "../landmarks.json";
@@ -100,7 +100,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		return {
-			get: loadLandmarks
+			getLandmarks: loadLandmarks
 			, getCities: loadCities
 		};
 	});

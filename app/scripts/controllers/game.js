@@ -1,5 +1,5 @@
 angular.module("travelPlanningGame.app")
-	.controller('GameCtrl', function($scope, $timeout, $q, timer, landmarks, resources, history,
+	.controller('GameCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
 		randomEvents, stateTracker, mapRouter, angulargmContainer) {
 
 		///////////////////////////
@@ -33,7 +33,7 @@ angular.module("travelPlanningGame.app")
 			, check: "isPlaying"
 		}, {
 			state: "stats"
-			, set: "stats"
+			, set: "end"
 			, check: "isStats"
 		}], "gameState");
 
@@ -62,7 +62,7 @@ angular.module("travelPlanningGame.app")
 		};
 		$scope.game.end = function() {
 			// End the game
-			$scope.current.state.stats();
+			$scope.current.state.end();
 		};
 		$scope.game.menu = function() {
 			// Back to the menu
@@ -143,8 +143,7 @@ angular.module("travelPlanningGame.app")
 					categoriesRequired.push(resources.categories.LODGING);
 
 				// Check if we have the funds for this
-				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.locations.selected.resources,
-					categoriesRequired))
+				if (!resources.canMerge($scope.resources, $scope.locations.selected.resources, categoriesRequired))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -169,13 +168,11 @@ angular.module("travelPlanningGame.app")
 				// For now, account for visiting and transport feasibility
 				var categoriesRequired = [resources.categories.VISITING, resources.categories.TRANSPORT];
 
-				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					categoriesRequired);
+				resources.merge($scope.resources, $scope.current.location.resources, categoriesRequired);
 
 				// One-time xp points for "discovery"
 				if (!history.getInstance("landmarks").find($scope.current.location))
-					resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-						[resources.categories.DISCOVERY]);
+					resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.DISCOVERY]);
 			}
 
 			$scope.turnState.activate();
@@ -184,8 +181,7 @@ angular.module("travelPlanningGame.app")
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
 			if ($scope.current.location.resources) {
-				if (!resources.canDelta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					[resources.categories.SHOPPING]))
+				if (!resources.canMerge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -197,8 +193,7 @@ angular.module("travelPlanningGame.app")
 			stateTracker.get("shoppingState").purchase();
 
 			// Charge for shopping
-			resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-				[resources.categories.SHOPPING]);
+			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
 		};
 
 		$scope.game.endTurn = function() {
@@ -207,8 +202,7 @@ angular.module("travelPlanningGame.app")
 			// Is this EOD?
 			if (timer.isEOD()) {
 				// Charge for lodging
-				resources.delta($scope.resources, resources.categories.ALL, $scope.current.location.resources,
-					[resources.categories.LODGING]);
+				resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.LODGING]);
 			}
 
 			// Make a random event, randomly
@@ -244,8 +238,7 @@ angular.module("travelPlanningGame.app")
 				$scope.randomEvent = randomEvent;
 
 				// Charge for the impact
-				resources.delta($scope.resources, resources.categories.ALL, randomEvent.resources,
-					[resources.categories.ALL]);
+				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 			}
 		}
 
@@ -284,13 +277,13 @@ angular.module("travelPlanningGame.app")
 
 		// Load the cities
 		$scope.locations.cities = null; // cities
-		landmarks.getCities().then(function(data) {
+		locations.getCities().then(function(data) {
 			$scope.locations.cities = data;
 		});
 
 		// Show the cities on the map
 		function mapCities() {
-			landmarks.getCities().then(function(data) {
+			locations.getCities().then(function(data) {
 				$scope.locations.cities = data;
 
 				// Current status
@@ -305,13 +298,13 @@ angular.module("travelPlanningGame.app")
 
 		// Load the landmarks
 		$scope.locations.landmarks = null; // landmarks
-		landmarks.get().then(function(data) {
+		locations.getLandmarks().then(function(data) {
 			$scope.locations.landmarks = data;
 		});
 
 		// Show the landmarks on the map
 		function mapLandmarks() {
-			landmarks.get().then(function(data) {
+			locations.getLandmarks().then(function(data) {
 				$scope.locations.landmarks = data;
 
 				// Current status

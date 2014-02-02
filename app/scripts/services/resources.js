@@ -8,30 +8,9 @@ angular.module("travelPlanningGame.app")
 		types.XP = "type_xp";
 		types.SOUVENIR = "type_souvenir";
 
-		// Test conditions for updating these types
-		var updateTests = {};
-		// Money after update must not go negative
-		updateTests[types.MONEY] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-		// XP cannot go negative
-		updateTests[types.XP] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-		// Souvenirs cannot go negative
-		updateTests[types.SOUVENIR] = function(original, delta) {
-			if (!original) original = 0;
-			if (!delta) delta = 0;
-			return original + delta >= 0;
-		};
-
 		// Categories of events representing possible resource applications
 		var categories = {};
-		categories.ALL = "cat_all";
+		categories.ALL = "cat_all"; // special case: equivalent to each of the other categories
 		categories.VISITING = "cat_visiting"; // example, visiting cost
 		categories.TRANSPORT = "cat_transport";
 		categories.LODGING = "cat_lodging";
@@ -41,6 +20,7 @@ angular.module("travelPlanningGame.app")
 
 		// Track resources for the caller
 		var Resources = function() {
+
 			// Get the value of a resource
 			// Safer alternative to manually access the object properties
 			this.get = function getResource(category, type) {
@@ -50,6 +30,7 @@ angular.module("travelPlanningGame.app")
 					return 0;
 			};
 
+			// Initialize a track for a particular category and type
 			this._init = function initTrack(category, type) {
 				// Create if no prevalent track
 				if (!this[category])
@@ -68,17 +49,16 @@ angular.module("travelPlanningGame.app")
 			};
 
 			// Ability to update the value of any resource
-			// Checks are made to validate the update
-			// Set skipTests to true to avoid resource validations, eg. during resource initialization
+			// Checks for validation unless specified to skip
 			this.update = function updateResource(category, type, amount, skipTests) {
 				this._init(category, type);
 
-				// Test whether the update is possible
-				if (skipTests || (!updateTests[type] || updateTests[type](this[category][type], amount)))
+				if(skipTests || (this[category][type] + amount > 0))
 					this[category][type] += amount;
 
 				return this;
 			};
+
 			// Convenience functions for adding and subtracting amounts
 			this.add = this.update;
 			this.subtract = function subtractResource(category, type, amount, skipTests) {
@@ -99,52 +79,67 @@ angular.module("travelPlanningGame.app")
 			return trackerCopy;
 		}
 
-		// Check whether updating the demanding Resource by supplier Resource is possible
-		// More than one supplier category can be provided to check against the sum amount
-		function canDelta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
+		// Check whether updating the target resource by the source resource is possible
+		// on supplied categories (if any)
+		function canAddResource(targetResource, sourceResource, categoriesToConsider) {
 
-			if (!supplierResource)
-				return true;
-
+			// Final answer
 			var possible = true;
 
-			var summedResource = startTracker();
+			// Can we legally add the resource?
+			if (sourceResource) {
 
-			// Consider each category
-			angular.forEach(supplierCategories, function(supplierCategory, index) {
-				angular.forEach(supplierResource[supplierCategory], function(amount, type) {
-					summedResource.add(categories.ALL, type, amount, true); // coalesce all into ALL, skipping validation tests
-				});
-			});
+				// Yes. Do we have a limitation on categories to consider?
+				if(!categoriesToConsider)
+					categoriesToConsider = categories; // No, consider all categories
 
-			angular.forEach(summedResource[categories.ALL], function(amount, type) {
-				if (updateTests[type] && !updateTests[type](demanderResource[demanderCategory][type], amount))
-					possible = false;
-			});
+				// Check if we can add resources from each category
+				angular.forEach(categoriesToConsider, function(category, index) {
+					angular.forEach(sourceResource[category], function(amount, type) {
 
-			return possible;
-		}
-
-		// Update source Resources by destination Resources on supplied categories only
-		function delta(demanderResource, demanderCategory, supplierResource, supplierCategories) {
-			if (supplierResource && canDelta(demanderResource, demanderCategory, supplierResource,
-				supplierCategories)) {
-
-				angular.forEach(supplierCategories, function(supplierCategory, index) {
-					angular.forEach(supplierResource[supplierCategory], function(amount, type) {
-						demanderResource.update(demanderCategory, type, amount);
+						// Does the target resource have an ALL category?
+						if(targetResource[categories.ALL])
+							possible = possible && (targetResource.get(categories.ALL, type) + amount > 0); // yes, can we update that as a catch-all?
+						else
+							possible = possible && (targetResource.get(category, type) + amount > 0); // no, can we update the corresponding category?
 					});
 				});
 			}
 
-			return demanderResource;
+			return possible;
+		}
+
+		// Update target resources by source resources on supplied categories (if any)
+		function addResource(targetResource, sourceResource, categoriesToConsider) {
+
+			// Can we legally add the resource?
+			if (sourceResource && canAddResource(targetResource, sourceResource, categoriesToConsider)) {
+
+				// Yes. Do we have a limitation on categories to consider?
+				if(!categoriesToConsider)
+					categoriesToConsider = categories; // No, consider all categories
+
+				// Add resources from each category
+				angular.forEach(categoriesToConsider, function(category, index) {
+					angular.forEach(sourceResource[category], function(amount, type) {
+
+						// Does the target resource have an ALL category?
+						if(targetResource[categories.ALL])
+							targetResource.update(categories.ALL, type, amount); // yes, update that as a catch-all
+						else
+							targetResource.update(category, type, amount); // no, update the corresponding category
+					});
+				});
+			}
+
+			return targetResource;
 		}
 
 		return {
 			new: startTracker
 			, copy: duplicateTracker
-			, canDelta: canDelta
-			, delta: delta
+			, canMerge: canAddResource
+			, merge: addResource
 			, types: types
 			, categories: categories
 		};

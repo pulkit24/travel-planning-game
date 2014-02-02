@@ -213,19 +213,27 @@
 	<!-- end end-turn button -->
 
 	<!-- Random event card -->
-	<div random-event-card random-event="randomEvent" class="layer overlay animated"
-		state-tracker="randomEventCardState"
-		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
-		state-activate="randomEvent"
-		state-on-failed="randomEvent = null"
-		state-transition="{complete: {fail: 1000}, fail: {idle: 500}}">
+	<div ng-show="randomEvent">
+		<div random-event-card random-event="randomEvent" class="layer overlay animated"
+			state-tracker="randomEventCardState"
+			state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
+			state-activate="randomEvent"
+			state-on-failed="randomEvent = null"
+			state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">
+		</div>
 	</div>
 	<!-- end landmark card -->
 
 </div>
 <!-- end play page -->
 
-<!-- Stats page -->
+<!-- Stats page at the end -->
 <div ng-if="current.state.isStats()">
-	<h1>Game over!</h1>
+
+	<div class="layer overlay stat-screen">
+
+
+
+	</div>
+
 </div>
