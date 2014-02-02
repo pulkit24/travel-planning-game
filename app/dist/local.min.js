@@ -860,6 +860,11 @@ angular.module("travelPlanningGame.app")
 		categories.DISCOVERY = "cat_discovery"; // i.e. one-time events
 		// add other categories dynamically as needed
 
+		// Operations possible for filters to be applied on resources
+		var operations = {};
+		operations.ADD = "op_add";
+		operations.MULTIPLY = "op_multiply";
+
 		// Track resources for the caller
 		var Resources = function() {
 
@@ -906,6 +911,49 @@ angular.module("travelPlanningGame.app")
 			this.subtract = function subtractResource(category, type, amount, skipTests) {
 				return this.update(category, type, -1 * amount, skipTests);
 			};
+
+			// Add filters
+			this._filters = [];
+			this.addFilter = function addFilter(category, type, amount, operation, times) {
+				var newFilter = new Filter(category, type, amount, operation, times);
+				this._filters.push(newFilter);
+			};
+
+			this.filter = function applyFilters(category, type, amount){
+				for(var i = 0, len = this._filters.length; i < len; i++)
+					amount = this._filters[i].apply(category, type, amount);
+
+				return amount;
+			};
+		};
+
+		// Filters - attached to each resource
+		// Use to filter updates to a resource (example 50% discount)
+		var Filter = function(filterCategory, filterType, filterAmount, filterOperation, filterTimes) {
+			this.category = filterCategory;
+			this.type = filterType;
+			this.modifier = filterAmount;
+			this.operation = filterOperation;
+			this.times = filterTimes;
+
+			this.apply = function applyFilter(category, type, amount) {
+				if(this.times !== 0)
+					if(this.category === category && this.type === type)
+						amount = this.modify(amount);
+
+				this.times--;
+
+				return amount;
+			};
+
+			this.modify = function performOperation(amount) {
+				if(this.operation === operations.ADD)
+					return parseInt(amount + this.modifier, 10);
+				else if(this.operation === operations.MULTIPLY)
+					return parseInt(amount * this.modifier, 10);
+				else
+					return amount;
+			};
 		};
 
 		// Create a new Resource tracker
@@ -939,6 +987,9 @@ angular.module("travelPlanningGame.app")
 				angular.forEach(categoriesToConsider, function(category, index) {
 					angular.forEach(sourceResource[category], function(amount, type) {
 
+						// Apply any filters to the amount
+						amount = targetResource.filter(category, type, amount);
+
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
 							possible = possible && (targetResource.get(categories.ALL, type) + amount > 0); // yes, can we update that as a catch-all?
@@ -965,6 +1016,9 @@ angular.module("travelPlanningGame.app")
 				angular.forEach(categoriesToConsider, function(category, index) {
 					angular.forEach(sourceResource[category], function(amount, type) {
 
+						// Apply any filters to the amount
+						amount = targetResource.filter(category, type, amount);
+
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
 							targetResource.update(categories.ALL, type, amount); // yes, update that as a catch-all
@@ -984,6 +1038,7 @@ angular.module("travelPlanningGame.app")
 			, merge: addResource
 			, types: types
 			, categories: categories
+			, operations: operations
 		};
 	});
 
