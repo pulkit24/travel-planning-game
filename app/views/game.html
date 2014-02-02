@@ -214,15 +214,15 @@
 
 	<!-- Random event card -->
 	<div ng-show="randomEvent">
-		<div random-event-card random-event="randomEvent" class="layer overlay animated"
-			state-tracker="randomEventCardState"
-			state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
-			state-activate="randomEvent"
-			state-on-failed="randomEvent = null"
-			state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">
-		</div>
+		<div random-event-card random-event="randomEvent" class="layer overlay"></div>
 	</div>
-	<!-- end landmark card -->
+	<!-- end event card -->
+
+	<!-- Upgrade unlocked event card -->
+	<div ng-show="upgradeUnlocked">
+		<div random-event-card random-event="upgradeUnlocked" class="layer overlay"</div>
+	</div>
+	<!-- end upgrade card -->
 
 </div>
 <!-- end play page -->

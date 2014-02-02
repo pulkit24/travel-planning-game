@@ -1,5 +1,10 @@
 <!-- Event card -->
-<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">
+<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }} animated"
+	state-tracker="randomEventCardState"
+	state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
+	state-activate="randomEvent"
+	state-on-failed="randomEvent = null"
+	state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">
 
 	<!-- Event name and controls -->
 	<div class="panel-header panel-heading">
@@ -18,8 +23,7 @@
 	<div class="panel-footer">
 		<h3>{{ randomEvent.impact }}</h3>
 		<p>
-			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"
-				ng-click="randomEventCardState.complete()">Okay</button>
+			<button type="button" class="btn btn-default" ng-click="randomEventCardState.complete()">Okay</button>
 		</p>
 	</div>
 	<!-- end impact -->

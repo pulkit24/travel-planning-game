@@ -919,9 +919,9 @@ angular.module("travelPlanningGame.app")
 				this._filters.push(newFilter);
 			};
 
-			this.filter = function applyFilters(category, type, amount){
+			this.filter = function applyFilters(category, type, amount, isTest){
 				for(var i = 0, len = this._filters.length; i < len; i++)
-					amount = this._filters[i].apply(category, type, amount);
+					amount = this._filters[i].apply(category, type, amount, isTest);
 
 				return amount;
 			};
@@ -936,12 +936,14 @@ angular.module("travelPlanningGame.app")
 			this.operation = filterOperation;
 			this.times = filterTimes;
 
-			this.apply = function applyFilter(category, type, amount) {
-				if(this.times !== 0)
-					if(this.category === category && this.type === type)
+			this.apply = function applyFilter(category, type, amount, isTest) {
+				if(this.times !== 0) {
+					if(this.category === category && this.type === type) {
 						amount = this.modify(amount);
-
-				this.times--;
+						if(!isTest)
+							this.times--;
+					}
+				}
 
 				return amount;
 			};
@@ -988,7 +990,7 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount);
+						amount = targetResource.filter(category, type, amount, true);
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
@@ -1648,6 +1650,7 @@ angular.module("travelPlanningGame.app")
 			// Create a resource tracker
 			var resourceTracker = resources.new();
 			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
+			resourceTracker.addFilter(resources.categories.VISITING, resources.types.MONEY, 0.5, resources.operations.MULTIPLY, 1);
 			$scope.resources = resourceTracker;
 
 			// Initial activities before the player can play turns
@@ -1785,8 +1788,13 @@ angular.module("travelPlanningGame.app")
 			// Update shopping state
 			stateTracker.get("shoppingState").purchase();
 
+			$scope.current.
+
 			// Charge for shopping
 			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
+
+			// Record in history
+			history.getInstance("shopping").record(timer.toTimestamp(), resources);
 		};
 
 		$scope.game.endTurn = function() {
@@ -1802,13 +1810,13 @@ angular.module("travelPlanningGame.app")
 			if(randomEvents.hasOccurred())
 				handleRandomEvent(randomEvents.getEvent());
 
-			// Days left?
-			if (timer.isLast())
-				$scope.game.end(); // end game
-
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
+
+			// Days left?
+			if (timer.isLast())
+				$scope.game.end(); // end game
 
 			// After a tiny gap between turns...
 			$timeout(function(){
@@ -1832,6 +1840,8 @@ angular.module("travelPlanningGame.app")
 
 				// Charge for the impact
 				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+
+				// If there's an upgrade unlocked?
 			}
 		}
 
@@ -2086,7 +2096,12 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
   'use strict';
   $templateCache.put('templates/random-event-card.tpl.html',
     '<!-- Event card -->\n' +
-    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">\n' +
+    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }} animated"\n' +
+    '	state-tracker="randomEventCardState"\n' +
+    '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
+    '	state-activate="randomEvent"\n' +
+    '	state-on-failed="randomEvent = null"\n' +
+    '	state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">\n' +
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
@@ -2105,8 +2120,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	<div class="panel-footer">\n' +
     '		<h3>{{ randomEvent.impact }}</h3>\n' +
     '		<p>\n' +
-    '			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"\n' +
-    '				ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '			<button type="button" class="btn btn-default" ng-click="randomEventCardState.complete()">Okay</button>\n' +
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +

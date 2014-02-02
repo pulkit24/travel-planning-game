@@ -1,0 +1,11 @@
+[{
+	"name": "Credit Card"
+	, "description": "With the ANZ Travel Card..."
+	, "image": "images/landmarks/chinatown.jpg"
+	, "bonus": {
+		"category": "ALL"
+		, "resource": "MONEY"
+		, "amount": 0
+		, "operation": "MULTIPLY"
+	}
+}]

@@ -55,6 +55,7 @@ angular.module("travelPlanningGame.app")
 			// Create a resource tracker
 			var resourceTracker = resources.new();
 			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
+			resourceTracker.addFilter(resources.categories.VISITING, resources.types.MONEY, 0.5, resources.operations.MULTIPLY, 1);
 			$scope.resources = resourceTracker;
 
 			// Initial activities before the player can play turns
@@ -192,8 +193,13 @@ angular.module("travelPlanningGame.app")
 			// Update shopping state
 			stateTracker.get("shoppingState").purchase();
 
+			$scope.current.
+
 			// Charge for shopping
 			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
+
+			// Record in history
+			history.getInstance("shopping").record(timer.toTimestamp(), resources);
 		};
 
 		$scope.game.endTurn = function() {
@@ -209,13 +215,13 @@ angular.module("travelPlanningGame.app")
 			if(randomEvents.hasOccurred())
 				handleRandomEvent(randomEvents.getEvent());
 
-			// Days left?
-			if (timer.isLast())
-				$scope.game.end(); // end game
-
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
+
+			// Days left?
+			if (timer.isLast())
+				$scope.game.end(); // end game
 
 			// After a tiny gap between turns...
 			$timeout(function(){
@@ -239,6 +245,8 @@ angular.module("travelPlanningGame.app")
 
 				// Charge for the impact
 				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+
+				// If there's an upgrade unlocked?
 			}
 		}
 

@@ -116,7 +116,12 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
   'use strict';
   $templateCache.put('templates/random-event-card.tpl.html',
     '<!-- Event card -->\n' +
-    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }}">\n' +
+    '<div class="random-event-card panel panel-default random-event-{{ randomEvent.type }} animated"\n' +
+    '	state-tracker="randomEventCardState"\n' +
+    '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
+    '	state-activate="randomEvent"\n' +
+    '	state-on-failed="randomEvent = null"\n' +
+    '	state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">\n' +
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
@@ -135,8 +140,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	<div class="panel-footer">\n' +
     '		<h3>{{ randomEvent.impact }}</h3>\n' +
     '		<p>\n' +
-    '			<button type="button" class="btn btn-default" state-tracker="randomEventCardState"\n' +
-    '				ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '			<button type="button" class="btn btn-default" ng-click="randomEventCardState.complete()">Okay</button>\n' +
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +

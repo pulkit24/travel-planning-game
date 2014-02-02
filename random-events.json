@@ -4,6 +4,7 @@
 	, "impact": "You lost $100"
 	, "resource": "MONEY"
 	, "amount": -100
+	, "unlocks": "Credit Card"
 }, {
 	"type": "NEGATIVE"
 	, "description": "A pick-pocket stole your wallet."

@@ -77,9 +77,9 @@ angular.module("travelPlanningGame.app")
 				this._filters.push(newFilter);
 			};
 
-			this.filter = function applyFilters(category, type, amount){
+			this.filter = function applyFilters(category, type, amount, isTest){
 				for(var i = 0, len = this._filters.length; i < len; i++)
-					amount = this._filters[i].apply(category, type, amount);
+					amount = this._filters[i].apply(category, type, amount, isTest);
 
 				return amount;
 			};
@@ -94,12 +94,14 @@ angular.module("travelPlanningGame.app")
 			this.operation = filterOperation;
 			this.times = filterTimes;
 
-			this.apply = function applyFilter(category, type, amount) {
-				if(this.times !== 0)
-					if(this.category === category && this.type === type)
+			this.apply = function applyFilter(category, type, amount, isTest) {
+				if(this.times !== 0) {
+					if(this.category === category && this.type === type) {
 						amount = this.modify(amount);
-
-				this.times--;
+						if(!isTest)
+							this.times--;
+					}
+				}
 
 				return amount;
 			};
@@ -146,7 +148,7 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount);
+						amount = targetResource.filter(category, type, amount, true);
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
