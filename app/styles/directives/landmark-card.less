@@ -2,44 +2,66 @@
 	top: 15%;
 	left: 5%;
 	width: @size-width-card;
-    animation-duration: 0.5s;
+	animation-duration: 0.5s;
 	zoom: 0.85;
-}
 
-.landmark-card {
-	.shadow-box-hud();
-
-	border-radius: @panel-border-radius;
-	h1, h2, h3, h4, h5, h6 {
-		margin:0;
-		padding:0;
+	&.morning {
+		.panel {
+			border-color: darken(shade(@color-morning, 10%), 10%);
+		}
+		.panel-heading {
+			background-color: darken(shade(@color-morning, 10%), 10%);
+			border-color: darken(shade(@color-morning, 10%), 10%);
+		}
+	}
+	&.afternoon {
+		.panel {
+			border-color: darken(shade(@color-afternoon, 10%), 10%);
+		}
+		.panel-heading {
+			background-color: darken(shade(@color-afternoon, 10%), 10%);
+			border-color: darken(shade(@color-afternoon, 10%), 10%);
+		}
+	}
+	&.evening {
+		.panel {
+			border-color: darken(shade(@color-evening, 10%), 10%);
+		}
+		.panel-heading {
+			background-color: darken(shade(@color-evening, 10%), 10%);
+			border-color: darken(shade(@color-evening, 10%), 10%);
+		}
 	}
 
-	.panel-body {
-		background-position: center center;
-		background-size: cover;
-		background-repeat: no-repeat;
-	}
-
-	.thumbnail {
-		margin: 1px;
-		border: none;
-	}
-
-	.resource {
-		&:first-child {
-			background-color: @color-lodging;
+	.landmark-card {
+		.shadow-box-hud();
+		border-radius: @panel-border-radius;
+		h1, h2, h3, h4, h5, h6 {
+			margin:0;
+			padding:0;
 		}
-
-		&:first-child+& {
-			background-color: @color-visiting;
+		.panel-body {
+			background-position: center center;
+			background-size: cover;
+			background-repeat: no-repeat;
 		}
-		&:last-child {
-			background-color: @color-shopping;
+		.thumbnail {
+			margin: 1px;
+			border: none;
 		}
-
-		.close {
-			color: white;
+		.resource {
+			&:first-child {
+				background-color: @color-lodging;
+			}
+			&:first-child+& {
+				background-color: @color-visiting;
+			}
+			&:last-child {
+				background-color: @color-shopping;
+			}
+			.close {
+				color: white;
+			}
 		}
 	}
 }

@@ -5,7 +5,7 @@
 .menu-top-bar {
 	width: 100%;
 	height: @size-height-HUD;
-	background-color: @color-title;
+	background-color: darken(shade(@color-morning, 10%), 10%);
 	color: white;
 	h1 {
 		margin: 0;
@@ -65,13 +65,23 @@
 
 	&.morning {
 		background-color: lighten(@color-morning, 40%);
+		&.turn-options .option > h4 {
+			background-color: darken(shade(@color-morning, 10%), 10%)
+		}
 	}
 	&.afternoon {
 		background-color: lighten(@color-afternoon, 40%);
+		&.turn-options .option > h4 {
+			background-color: darken(shade(@color-afternoon, 10%), 10%)
+		}
 	}
 	&.evening {
 		background-color: lighten(@color-evening, 40%);
+		&.turn-options .option > h4 {
+			background-color: darken(shade(@color-evening, 10%), 10%)
+		}
 	}
+
 
 
 	&.turn-options {
@@ -81,7 +91,7 @@
 			padding: 0;
 			background-color: white;
 			>h4 {
-				background-color: @color-title;
+				// background-color: @color-title;
 				color: white;
 				text-align: center;
 				text-transform: uppercase;

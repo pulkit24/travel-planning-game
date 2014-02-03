@@ -67,6 +67,14 @@
 	</div>
 	<!-- end selected destination -->
 
+	<!-- Loading/splash screen -->
+	<div class="layer overlay loading"
+		state-tracker="menuLoadingState"
+		state-transition="{idle: {complete: 2000}}"
+		state-class="['', '', 'hide']">
+		<h1><div loading></div> Loading...</h1>
+	</div>
+
 </div>
 <!-- end menu page -->
 
@@ -89,6 +97,7 @@
 
 	<!-- Selected landmark card -->
 	<div landmark-card landmark="locations.selected" class="layer animated"
+		ng-class="getTimeOfDay()"
 		ng-show="locations.selected && map.options.selectable == 'location'"
 		state-tracker="landmarkCardState"
 		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
@@ -220,9 +229,17 @@
 
 	<!-- Upgrade unlocked event card -->
 	<div ng-show="upgradeUnlocked">
-		<div random-event-card random-event="upgradeUnlocked" class="layer overlay"</div>
+		<div random-event-card random-event="upgradeUnlocked" class="layer overlay"></div>
 	</div>
 	<!-- end upgrade card -->
+
+	<!-- Loading/splash screen -->
+	<div class="layer overlay loading"
+		state-tracker="playLoadingState"
+		state-transition="{idle: {complete: 2000}}"
+		state-class="['', '', 'hide']">
+		<h1><div loading></div> Loading...</h1>
+	</div>
 
 </div>
 <!-- end play page -->

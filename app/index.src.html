@@ -43,13 +43,8 @@
 		</ul>
     </div>
 
-	<!-- Loading/splash screen -->
-	<div class="game-container loading" ng-hide="isReady()">
-		<h1><div xloading></div> Loading...</h1>
-	</div>
-
     <!-- Game content -->
-	<div class="game-container" ng-view="" ng-show="isReady()"></div>
+	<div class="game-container" ng-view=""></div>
 
 	<!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>

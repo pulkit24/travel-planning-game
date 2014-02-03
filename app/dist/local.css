@@ -81,6 +81,12 @@ body {
   background-color: rgba(0, 0, 0, 0.9);
 }
 
+.close,
+.close:hover {
+  color: white;
+  text-shadow: none;
+}
+
 /* Loading screen */
 
 .loading-screen {
@@ -96,7 +102,7 @@ body {
   width: 100%;
   height: 75px;
   color: white;
-  background-color: #3f5059;
+  background-color: #1880ba;
 }
 
 .menu-top-bar h1 {
@@ -164,12 +170,24 @@ body {
   background-color: #eff9ff;
 }
 
+.sidebar.morning.turn-options .option > h4 {
+  background-color: #1880ba;
+}
+
 .sidebar.afternoon {
   background-color: #fff7ef;
 }
 
+.sidebar.afternoon.turn-options .option > h4 {
+  background-color: #ba6c18;
+}
+
 .sidebar.evening {
   background-color: #adb2d2;
+}
+
+.sidebar.evening.turn-options .option > h4 {
+  background-color: #272c47;
 }
 
 .sidebar.turn-options {
@@ -188,7 +206,6 @@ body {
   color: white;
   text-align: center;
   text-transform: uppercase;
-  background-color: #3f5059;
 }
 
 .sidebar.turn-options .option .souvenir {
@@ -490,45 +507,72 @@ body {
   animation-duration: 0.5s;
 }
 
-.landmark-card {
+[landmark-card].morning .panel {
+  border-color: #1880ba;
+}
+
+[landmark-card].morning .panel-heading {
+  background-color: #1880ba;
+  border-color: #1880ba;
+}
+
+[landmark-card].afternoon .panel {
+  border-color: #ba6c18;
+}
+
+[landmark-card].afternoon .panel-heading {
+  background-color: #ba6c18;
+  border-color: #ba6c18;
+}
+
+[landmark-card].evening .panel {
+  border-color: #272c47;
+}
+
+[landmark-card].evening .panel-heading {
+  background-color: #272c47;
+  border-color: #272c47;
+}
+
+[landmark-card] .landmark-card {
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.landmark-card h1,
-.landmark-card h2,
-.landmark-card h3,
-.landmark-card h4,
-.landmark-card h5,
-.landmark-card h6 {
+[landmark-card] .landmark-card h1,
+[landmark-card] .landmark-card h2,
+[landmark-card] .landmark-card h3,
+[landmark-card] .landmark-card h4,
+[landmark-card] .landmark-card h5,
+[landmark-card] .landmark-card h6 {
   padding: 0;
   margin: 0;
 }
 
-.landmark-card .panel-body {
+[landmark-card] .landmark-card .panel-body {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.landmark-card .thumbnail {
+[landmark-card] .landmark-card .thumbnail {
   margin: 1px;
   border: none;
 }
 
-.landmark-card .resource:first-child {
+[landmark-card] .landmark-card .resource:first-child {
   background-color: #add8e6;
 }
 
-.landmark-card .resource:first-child + .landmark-card .resource {
+[landmark-card] .landmark-card .resource:first-child + [landmark-card] .landmark-card .resource {
   background-color: #fffacd;
 }
 
-.landmark-card .resource:last-child {
+[landmark-card] .landmark-card .resource:last-child {
   background-color: #ffa07a;
 }
 
-.landmark-card .resource .close {
+[landmark-card] .landmark-card .resource .close {
   color: white;
 }
 
