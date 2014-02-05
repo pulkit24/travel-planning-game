@@ -56,7 +56,7 @@ angular.module("travelPlanningGame.app")
 			// The index may not correspond one-to-one with the indices of the available event IDs
 			// because we may have moved them to occurred event IDs
 			// Hence, iterate n = index times to fetch the n-th available ID
-			var randomEventID = null;
+			var randomEventID;
 			var cumulativeIndex = 0, matchingAvailableEventsIndex;
 			angular.forEach(availableEventIDs, function(eventID, availableEventsIndex) {
 				cumulativeIndex++;
@@ -66,7 +66,7 @@ angular.module("travelPlanningGame.app")
 				}
 			});
 
-			if(randomEventID) {
+			if(angular.isDefined(randomEventID)) {
 				delete availableEventIDs[matchingAvailableEventsIndex];
 				occurredEventIDs.push(randomEventID);
 
@@ -99,7 +99,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
 		}
 
 		return {

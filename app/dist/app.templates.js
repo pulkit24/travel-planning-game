@@ -1,4 +1,4 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -121,7 +121,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
     '	state-activate="randomEvent"\n' +
     '	state-on-failed="randomEvent = null"\n' +
-    '	state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">\n' +
+    '	state-transition="{complete: {failed: 500}, failed: {idle: 500}}">\n' +
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
@@ -140,10 +140,59 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	<div class="panel-footer">\n' +
     '		<h3>{{ randomEvent.impact }}</h3>\n' +
     '		<p>\n' +
-    '			<button type="button" class="btn btn-default" ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '			<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +
+    '\n' +
+    '</div>\n' +
+    '<!-- end card -->\n' +
+    '');
+}]);
+
+angular.module('templates/upgrade-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/upgrade-card.tpl.html',
+    '<!-- Event card -->\n' +
+    '<div class="upgrade-card panel panel-default animated"\n' +
+    '	state-tracker="upgradeCardState"\n' +
+    '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
+    '	state-activate="upgrade"\n' +
+    '	state-on-failed="upgrade = null"\n' +
+    '	state-transition="{complete: {failed: 500}, failed: {idle: 500}}">\n' +
+    '\n' +
+    '	<!-- Event name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
+    '		<h3>\n' +
+    '			<span class="upgrade-card-label">Unlocked!</span>\n' +
+    '			{{ upgrade.name }}\n' +
+    '		</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end name and controls -->\n' +
+    '\n' +
+    '	<!-- Image and flavour text -->\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + upgrade.image + \')\'}">\n' +
+    '		<h3>{{ upgrade.description }}</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end image and text -->\n' +
+    '\n' +
+    '	<!-- Features/impacts -->\n' +
+    '	<ul class="list-group">\n' +
+    '		<li class="list-group-item list-item" ng-repeat="impact in upgrade.impacts">\n' +
+    '			<i class="fa" ng-class="impact.icon"></i> {{ impact.flavour }}\n' +
+    '			<em class="text-muted" ng-show="impact.implication">\n' +
+    '				<small>({{ impact.implication }})</small>\n' +
+    '			</em>\n' +
+    '		</li>\n' +
+    '	</ul>\n' +
+    '	<!-- end features -->\n' +
+    '\n' +
+    '	<!-- One time bonus -->\n' +
+    '	<div class="panel-footer">\n' +
+    '		<a ng-href="{{ upgrade.link }}" class="btn btn-link" target="_blank">Learn more</a>\n' +
+    '		<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
+    '	</div>\n' +
+    '	<!-- end bonus -->\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +
@@ -178,7 +227,11 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '	ng-class="\'widget-resource-indicator-\' + type"\n' +
     '	state-tracker="resourceIndicatorState_{{ type }}"\n' +
     '	state-class="[\'\', \'animated tada\', \'\', \'\']">\n' +
-    '	<i class="widget-resource-indicator-icon fa fa-fw fa-3x" ng-class="\'fa-\' + icon"></i>\n' +
+    '	<i ng-switch on="type" class="widget-resource-indicator-icon">\n' +
+    '		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
+    '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
     '</div>\n' +
     '');

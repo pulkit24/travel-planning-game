@@ -1,0 +1,43 @@
+<!-- Event card -->
+<div class="upgrade-card panel panel-default animated"
+	state-tracker="upgradeCardState"
+	state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
+	state-activate="upgrade"
+	state-on-failed="upgrade = null"
+	state-transition="{complete: {failed: 500}, failed: {idle: 500}}">
+
+	<!-- Event name and controls -->
+	<div class="panel-header panel-heading">
+		<h3>
+			<span class="upgrade-card-label">Unlocked!</span>
+			{{ upgrade.name }}
+		</h3>
+	</div>
+	<!-- end name and controls -->
+
+	<!-- Image and flavour text -->
+	<div class="panel-body" ng-style="{'background-image': 'url(' + upgrade.image + ')'}">
+		<h3>{{ upgrade.description }}</h3>
+	</div>
+	<!-- end image and text -->
+
+	<!-- Features/impacts -->
+	<ul class="list-group">
+		<li class="list-group-item list-item" ng-repeat="impact in upgrade.impacts">
+			<i class="fa" ng-class="impact.icon"></i> {{ impact.flavour }}
+			<em class="text-muted" ng-show="impact.implication">
+				<small>({{ impact.implication }})</small>
+			</em>
+		</li>
+	</ul>
+	<!-- end features -->
+
+	<!-- One time bonus -->
+	<div class="panel-footer">
+		<a ng-href="{{ upgrade.link }}" class="btn btn-link" target="_blank">Learn more</a>
+		<button type="button" class="btn btn-default" ng-click="close()">Okay</button>
+	</div>
+	<!-- end bonus -->
+
+</div>
+<!-- end card -->

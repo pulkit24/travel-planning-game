@@ -4,53 +4,79 @@
 	, "impact": "You lost $100"
 	, "resource": "MONEY"
 	, "amount": -100
-	, "unlocks": "Credit Card"
+	, "unlocks": "tc"
+	, "counteredBy": ["tc", "ti"]
 }, {
 	"type": "NEGATIVE"
 	, "description": "A pick-pocket stole your wallet."
 	, "impact": "You lost $100"
 	, "resource": "MONEY"
 	, "amount": -100
+	, "unlocks": "tc"
+	, "counteredBy": ["tc", "ti"]
 }, {
 	"type": "NEGATIVE"
 	, "description": "You dropped your ticket and got fined for using public transport."
 	, "impact": "You were fined $200"
 	, "resource": "MONEY"
 	, "amount": -200
+	, "unlocks": "tc"
 }, {
 	"type": "NEGATIVE"
 	, "description": "The taxi overcharged you!"
 	, "impact": "You lost $50"
 	, "resource": "MONEY"
 	, "amount": -50
+	, "unlocks": "tc"
+}, {
+	"type": "NEGATIVE"
+	, "description": "You fell ill and incurred medical charges."
+	, "impact": "You lose $200"
+	, "resource": "MONEY"
+	, "amount": -200
+	, "unlocks": "ti"
+	, "counteredBy": ["cc", "ti"]
+}, {
+	"type": "NEGATIVE"
+	, "description": "Your luggage was misplaced or stolen. You don't know. It's just disappeared!"
+	, "impact": "You lose $500"
+	, "resource": "MONEY"
+	, "amount": -500
+	, "unlocks": "ti"
+	, "counteredBy": ["ti"]
 }, {
 	"type": "NEGATIVE"
 	, "description": "Pay hotel room damages for what you did last night."
 	, "impact": "You lose $300"
 	, "resource": "MONEY"
 	, "amount": -300
+	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You won a mini contest at this location and got some great souvenirs."
 	, "impact": "You received +5 souvenirs"
 	, "resource": "SOUVENIR"
 	, "amount": 5
+	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You received a discount at the diner."
 	, "impact": "You saved $50"
 	, "resource": "MONEY"
 	, "amount": 50
+	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "Your monthly savings interest just came through!"
-	, "impact": "You gain $1,000"
+	, "impact": "You gain $100"
 	, "resource": "MONEY"
-	, "amount": 1000
+	, "amount": 100
+	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You found an ANZ ATM to withdraw money."
 	, "impact": "You saved $50 in transaction charges"
 	, "resource": "MONEY"
 	, "amount": 50
+	, "unlocks": "tc"
 }]

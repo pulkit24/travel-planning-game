@@ -27,10 +27,11 @@ angular.module('travelPlanningGame.app', [
 		rome2rioProvider.setCurrency('AUD');
 		rome2rioProvider.setDetailLevel('street_address');
 	})
-	.run(function(locations, randomEvents) {
+	.run(function(locations, randomEvents, upgrades) {
 		locations.getLandmarks();
 		locations.getCities();
 		randomEvents.load();
+		upgrades.load();
 	});
 
 angular.module("travelPlanningGame.app")
@@ -787,7 +788,7 @@ angular.module("travelPlanningGame.app")
 			// The index may not correspond one-to-one with the indices of the available event IDs
 			// because we may have moved them to occurred event IDs
 			// Hence, iterate n = index times to fetch the n-th available ID
-			var randomEventID = null;
+			var randomEventID;
 			var cumulativeIndex = 0, matchingAvailableEventsIndex;
 			angular.forEach(availableEventIDs, function(eventID, availableEventsIndex) {
 				cumulativeIndex++;
@@ -797,7 +798,7 @@ angular.module("travelPlanningGame.app")
 				}
 			});
 
-			if(randomEventID) {
+			if(angular.isDefined(randomEventID)) {
 				delete availableEventIDs[matchingAvailableEventsIndex];
 				occurredEventIDs.push(randomEventID);
 
@@ -830,7 +831,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
 		}
 
 		return {
@@ -925,6 +926,9 @@ angular.module("travelPlanningGame.app")
 
 				return amount;
 			};
+			this.getFilters = function getAllFilters() {
+				return this._filters;
+			};
 		};
 
 		// Filters - attached to each resource
@@ -990,7 +994,9 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount, true);
+						if(category !== categories.ALL)
+							amount = targetResource.filter(category, type, amount, true); // specific category filter, if any
+						amount = targetResource.filter(categories.ALL, type, amount, true); // generic catch-all filter, if any
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
@@ -1019,7 +1025,9 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount);
+						if(category !== categories.ALL)
+							amount = targetResource.filter(category, type, amount); // specific category filter, if any
+						amount = targetResource.filter(categories.ALL, type, amount); // generic catch-all filter, if any
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
@@ -1027,6 +1035,11 @@ angular.module("travelPlanningGame.app")
 						else
 							targetResource.update(category, type, amount); // no, update the corresponding category
 					});
+				});
+
+				// Copy the filters too, if available
+				angular.forEach(sourceResource.getFilters(), function(filter, index) {
+					targetResource.addFilter(filter.category, filter.type, filter.modifier, filter.operation, filter.times);
 				});
 			}
 
@@ -1135,6 +1148,92 @@ angular.module("travelPlanningGame.app")
 			, toTimestamp: getTimestamp
 			, fromTimestamp: fromTimestamp
 			, toTimeOfDay: toTimeOfDay
+		};
+	});
+
+angular.module("travelPlanningGame.app")
+	.factory("upgrades", function($q, $http, resources) {
+
+		// Source files
+		var source_upgrades = "../upgrades.json";
+
+		// List of upgrades
+		var upgrades = null;
+
+		// Fetch upgrades
+		function loadUpgrades() {
+			var deferred = $q.defer();
+
+			if (!upgrades) {
+				$http.get(source_upgrades)
+					.success(function(data) {
+						// Fulfill promise on success
+						upgrades = data;
+						// Process each event
+						angular.forEach(upgrades, function(upgrade, index) {
+							// Prepare a resource tracker with the filter
+							upgrade.resources = _createResourceFilter(upgrade);
+
+							// Mark as currently locked
+							upgrade.isUnlocked = false;
+						});
+						deferred.resolve(upgrades);
+					})
+					.error(function(data) {
+						// Reject with failure
+						deferred.reject();
+					});
+			}
+			else {
+				deferred.resolve(upgrades);
+			}
+
+			return deferred.promise;
+		}
+
+		function getUpgrades() {
+			return upgrades;
+		}
+
+		function getByName(name) {
+			for(var i = 0, len = upgrades.length; i < len; i++)
+				if(upgrades[i].name === name)
+					return upgrades[i];
+
+			return null;
+		}
+
+		function getByID(id) {
+			for(var i = 0, len = upgrades.length; i < len; i++)
+				if(upgrades[i].id === id)
+					return upgrades[i];
+
+			return null;
+		}
+
+		// Add resource tracker with the filter
+		function _createResourceFilter(upgrade) {
+			var resourceTracker = resources.new();
+
+			if(upgrade.resource)
+				resourceTracker.set(resources.categories.ALL
+					, resources.types[upgrade.resource.type]
+					, upgrade.resource.amount);
+
+			if(upgrade.bonus)
+				resourceTracker.addFilter(resources.categories[upgrade.bonus.category]
+					, resources.types[upgrade.bonus.type]
+					, upgrade.bonus.amount
+					, resources.operations[upgrade.bonus.operation]
+					, -1);
+
+			return resourceTracker;
+		}
+
+		return {
+			load: loadUpgrades
+			, getUpgrades: getUpgrades
+			, get: getByID
 		};
 	});
 
@@ -1478,6 +1577,29 @@ angular.module('travelPlanningGame.app')
 				randomEvent: '='
 			}
 			, templateUrl: 'templates/random-event-card.tpl.html'
+			, controller: function($scope) {
+				$scope.close = function() {
+					$scope.$emit("tpg:event:eventCard:close");
+				};
+			}
+		};
+	});
+
+'use strict';
+
+angular.module('travelPlanningGame.app')
+	.directive('upgradeCard', function() {
+		return {
+			restrict: 'EA'
+			, scope: {
+				upgrade: '='
+			}
+			, templateUrl: 'templates/upgrade-card.tpl.html'
+			, controller: function($scope) {
+				$scope.close = function() {
+					$scope.$emit("tpg:event:upgradeCard:close");
+				};
+			}
 		};
 	});
 
@@ -1595,7 +1717,7 @@ angular.module("travelPlanningGame.app")
 
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
-		randomEvents, stateTracker, mapRouter, angulargmContainer) {
+		randomEvents, upgrades, stateTracker, mapRouter, angulargmContainer) {
 
 		///////////////////////////
 		// Game alert messages //
@@ -1650,7 +1772,6 @@ angular.module("travelPlanningGame.app")
 			// Create a resource tracker
 			var resourceTracker = resources.new();
 			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
-			resourceTracker.addFilter(resources.categories.VISITING, resources.types.MONEY, 0.5, resources.operations.MULTIPLY, 1);
 			$scope.resources = resourceTracker;
 
 			// Initial activities before the player can play turns
@@ -1809,6 +1930,11 @@ angular.module("travelPlanningGame.app")
 			// Make a random event, randomly
 			if(randomEvents.hasOccurred())
 				handleRandomEvent(randomEvents.getEvent());
+			else
+				closingActivities();
+		};
+
+		function closingActivities() {
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
@@ -1831,18 +1957,74 @@ angular.module("travelPlanningGame.app")
 				greet();
 
 			}, 500);
-		};
+		}
 
 		// Random event
 		function handleRandomEvent(randomEvent) {
-			if(randomEvent) {
-				$scope.randomEvent = randomEvent;
+			showRandomEvent(randomEvent).then(function() {
 
 				// Charge for the impact
-				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+				if(randomEvent) {
 
-				// If there's an upgrade unlocked?
-			}
+					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+
+					showUpgradeUnlocked(upgrades.get(randomEvent.unlocks)).then(function() {
+
+						// Officially unlock the upgrade!
+						var upgrade = upgrades.get(randomEvent.unlocks);
+						if(upgrade) {
+							// Add any resource bonuses
+							resources.merge($scope.resources, upgrade.resources);
+
+							// Mark as unlocked
+							upgrade.isUnlocked = true;
+						}
+
+						$scope.upgradeUnlocked = null;
+						$scope.randomEvent = null;
+						closingActivities();
+
+					});
+
+				} else {
+					$scope.randomEvent = null;
+					closingActivities();
+				}
+			});
+		}
+
+		// Open a random event card
+		function showRandomEvent(randomEvent) {
+			var deferred = $q.defer();
+
+			if(randomEvent) {
+
+				$scope.randomEvent = randomEvent;
+				$scope.$on("tpg:event:eventCard:close", function() {
+					deferred.resolve();
+				});
+
+			} else
+				deferred.resolve();
+
+			return deferred.promise;
+		}
+
+		// Open an upgrade card
+		function showUpgradeUnlocked(upgradeUnlocked) {
+			var deferred = $q.defer();
+
+			if(upgradeUnlocked) {
+
+				$scope.upgradeUnlocked = upgradeUnlocked;
+				$scope.$on("tpg:event:upgradeCard:close", function() {
+					deferred.resolve();
+				});
+
+			} else
+				deferred.resolve();
+
+			return deferred.promise;
 		}
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false
@@ -1978,7 +2160,7 @@ angular.module("travelPlanningGame.app")
 
 	});
 
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -2101,7 +2283,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
     '	state-activate="randomEvent"\n' +
     '	state-on-failed="randomEvent = null"\n' +
-    '	state-transition="{complete: {failed: 1000}, failed: {idle: 500}}">\n' +
+    '	state-transition="{complete: {failed: 500}, failed: {idle: 500}}">\n' +
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
@@ -2120,10 +2302,59 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '	<div class="panel-footer">\n' +
     '		<h3>{{ randomEvent.impact }}</h3>\n' +
     '		<p>\n' +
-    '			<button type="button" class="btn btn-default" ng-click="randomEventCardState.complete()">Okay</button>\n' +
+    '			<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +
+    '\n' +
+    '</div>\n' +
+    '<!-- end card -->\n' +
+    '');
+}]);
+
+angular.module('templates/upgrade-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/upgrade-card.tpl.html',
+    '<!-- Event card -->\n' +
+    '<div class="upgrade-card panel panel-default animated"\n' +
+    '	state-tracker="upgradeCardState"\n' +
+    '	state-class="[\'hide\', \'bounceIn\', \'bounceOut\', \'hide\']"\n' +
+    '	state-activate="upgrade"\n' +
+    '	state-on-failed="upgrade = null"\n' +
+    '	state-transition="{complete: {failed: 500}, failed: {idle: 500}}">\n' +
+    '\n' +
+    '	<!-- Event name and controls -->\n' +
+    '	<div class="panel-header panel-heading">\n' +
+    '		<h3>\n' +
+    '			<span class="upgrade-card-label">Unlocked!</span>\n' +
+    '			{{ upgrade.name }}\n' +
+    '		</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end name and controls -->\n' +
+    '\n' +
+    '	<!-- Image and flavour text -->\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + upgrade.image + \')\'}">\n' +
+    '		<h3>{{ upgrade.description }}</h3>\n' +
+    '	</div>\n' +
+    '	<!-- end image and text -->\n' +
+    '\n' +
+    '	<!-- Features/impacts -->\n' +
+    '	<ul class="list-group">\n' +
+    '		<li class="list-group-item list-item" ng-repeat="impact in upgrade.impacts">\n' +
+    '			<i class="fa" ng-class="impact.icon"></i> {{ impact.flavour }}\n' +
+    '			<em class="text-muted" ng-show="impact.implication">\n' +
+    '				<small>({{ impact.implication }})</small>\n' +
+    '			</em>\n' +
+    '		</li>\n' +
+    '	</ul>\n' +
+    '	<!-- end features -->\n' +
+    '\n' +
+    '	<!-- One time bonus -->\n' +
+    '	<div class="panel-footer">\n' +
+    '		<a ng-href="{{ upgrade.link }}" class="btn btn-link" target="_blank">Learn more</a>\n' +
+    '		<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
+    '	</div>\n' +
+    '	<!-- end bonus -->\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +
@@ -2158,7 +2389,11 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '	ng-class="\'widget-resource-indicator-\' + type"\n' +
     '	state-tracker="resourceIndicatorState_{{ type }}"\n' +
     '	state-class="[\'\', \'animated tada\', \'\', \'\']">\n' +
-    '	<i class="widget-resource-indicator-icon fa fa-fw fa-3x" ng-class="\'fa-\' + icon"></i>\n' +
+    '	<i ng-switch on="type" class="widget-resource-indicator-icon">\n' +
+    '		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
+    '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
     '</div>\n' +
     '');

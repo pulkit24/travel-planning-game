@@ -1,0 +1,64 @@
+[upgrade-card] {
+	text-align: center;
+	animation-duration: 0.5s;
+
+	.upgrade-card {
+		.shadow-box-hud();
+		position: relative;
+		top: 15%;
+		margin: 0 auto;
+		width: (@size-width-card * 1.25);
+		border-color: @color-title;
+		border-radius: @panel-border-radius;
+		animation-duration: 0.5s;
+		zoom: 0.85;
+
+		.panel-heading {
+			border-color: @color-title;
+			background-color: @color-title;
+			color: white;
+		}
+
+		.panel-heading {
+			color: white;
+
+			h1, h2, h3, h4, h5, h6 {
+				margin:0;
+				padding:0;
+				font-weight: bold;
+			}
+
+			.upgrade-card-label {
+				font-weight: normal;
+				opacity: 0.5;
+				-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+				filter: alpha(opacity=50);
+			}
+
+		}
+
+		.panel-body {
+			position: relative;
+			padding: 0;
+			height: 300px;
+			background-position: center center;
+			// background-size: cover;
+			background-repeat: no-repeat;
+
+			h3 {
+				position: absolute;
+				bottom: 0;
+				margin: 0;
+				padding: 20px;
+				width: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				color: white;
+			}
+
+		}
+
+		.list-group {
+			text-align: left;
+		}
+	}
+}

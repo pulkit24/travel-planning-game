@@ -83,6 +83,9 @@ angular.module("travelPlanningGame.app")
 
 				return amount;
 			};
+			this.getFilters = function getAllFilters() {
+				return this._filters;
+			};
 		};
 
 		// Filters - attached to each resource
@@ -148,7 +151,9 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount, true);
+						if(category !== categories.ALL)
+							amount = targetResource.filter(category, type, amount, true); // specific category filter, if any
+						amount = targetResource.filter(categories.ALL, type, amount, true); // generic catch-all filter, if any
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
@@ -177,7 +182,9 @@ angular.module("travelPlanningGame.app")
 					angular.forEach(sourceResource[category], function(amount, type) {
 
 						// Apply any filters to the amount
-						amount = targetResource.filter(category, type, amount);
+						if(category !== categories.ALL)
+							amount = targetResource.filter(category, type, amount); // specific category filter, if any
+						amount = targetResource.filter(categories.ALL, type, amount); // generic catch-all filter, if any
 
 						// Does the target resource have an ALL category?
 						if(targetResource[categories.ALL])
@@ -185,6 +192,11 @@ angular.module("travelPlanningGame.app")
 						else
 							targetResource.update(category, type, amount); // no, update the corresponding category
 					});
+				});
+
+				// Copy the filters too, if available
+				angular.forEach(sourceResource.getFilters(), function(filter, index) {
+					targetResource.addFilter(filter.category, filter.type, filter.modifier, filter.operation, filter.times);
 				});
 			}
 

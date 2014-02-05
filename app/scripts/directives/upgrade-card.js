@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('travelPlanningGame.app')
-	.directive('randomEventCard', function() {
+	.directive('upgradeCard', function() {
 		return {
 			restrict: 'EA'
 			, scope: {
-				randomEvent: '='
+				upgrade: '='
 			}
-			, templateUrl: 'templates/random-event-card.tpl.html'
+			, templateUrl: 'templates/upgrade-card.tpl.html'
 			, controller: function($scope) {
 				$scope.close = function() {
-					$scope.$emit("tpg:event:eventCard:close");
+					$scope.$emit("tpg:event:upgradeCard:close");
 				};
 			}
 		};

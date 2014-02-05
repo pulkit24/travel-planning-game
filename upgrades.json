@@ -1,11 +1,72 @@
 [{
-	"name": "Credit Card"
-	, "description": "With the ANZ Travel Card..."
-	, "image": "images/landmarks/chinatown.jpg"
+	"name": "ANZ Travel Card"
+	, "id": "tc"
+	, "description": "Travel without worry with this pre-paid card!"
+	, "image": "//www.anz.com.au/resources/6/4/6442878046c036c293f59fff59dc78ef/travelcardspotlight_200x126.jpg?MOD=AJPERES&CACHEID=6442878046c036c293f59fff59dc78ef"
+	, "link": "//www.anz.com.au/personal/travel-foreign-exchange/travel-money/travel-card/"
+	, "impacts": [{
+		"flavour": "Security and control over your money"
+		, "implication": "reduce impact of theft and misplacement"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Can be loaded with multiple currencies"
+		, "implication": "additional benefit"
+		, "icon": "fa-star-o"
+	}, {
+		"flavour": "Foreign exchange charges apply only once!"
+		, "implication": "additional benefit"
+		, "icon": "fa-star-o"
+	}]
 	, "bonus": {
 		"category": "ALL"
-		, "resource": "MONEY"
+		, "type": "MONEY"
 		, "amount": 0
 		, "operation": "MULTIPLY"
 	}
+}
+, {
+	"name": "ANZ Platinum"
+	, "id": "cc"
+	, "description": "Medical insurance while you travel, and Platinum concierge services! Find the best food and accommodation options throughout your trip."
+	, "image": "//www.anz.com.au/resources/c/4/c4966f00445d4ec1a156effb15aad448/1/img_PlatLarge.jpg?MOD=AJPERES&CACHEID=c4966f00445d4ec1a156effb15aad448/1"
+	, "link": "//www.anz.com.au/personal/credit-cards/platinum/anz-platinum/"
+	, "impacts": [{
+		"flavour": "Increased spending power"
+		, "implication": "get an additional $1,000"
+		, "icon": "fa-credit-card"
+	}, {
+		"flavour": "Concierge services"
+		, "implication": "25% savings on lodging costs"
+		, "icon": "fa-headphones"
+	}, {
+		"flavour": "Medical insurance"
+		, "implication": "no more medical mishaps"
+		, "icon": "fa-medkit"
+	}]
+	, "resource": {
+		"type": "MONEY"
+		, "amount": "1000"
+	}
+	, "bonus": {
+		"category": "LODGING"
+		, "type": "MONEY"
+		, "amount": 0.25
+		, "operation": "MULTIPLY"
+	}
+}
+, {
+	"name": "Travel Insurance"
+	, "id": "ti"
+	, "description": "Protects you against most things, depending on the policy, example theft, getting sick etc."
+	, "image": "//img812.imageshack.us/img812/4041/j16k.png"
+	, "link": "//www.wealth.anz.com/insurance/travel-insurance"
+	, "impacts": [{
+		"flavour": "Travel insurance"
+		, "implication": "no more worries about property theft/misplacement"
+		, "icon": "fa-medkit"
+	}, {
+		"flavour": "Medical insurance"
+		, "implication": "no more medical mishaps"
+		, "icon": "fa-medkit"
+	}]
 }]

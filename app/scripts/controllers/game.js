@@ -1,6 +1,6 @@
 angular.module("travelPlanningGame.app")
 	.controller('GameCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
-		randomEvents, stateTracker, mapRouter, angulargmContainer) {
+		randomEvents, upgrades, stateTracker, mapRouter, angulargmContainer) {
 
 		///////////////////////////
 		// Game alert messages //
@@ -55,7 +55,6 @@ angular.module("travelPlanningGame.app")
 			// Create a resource tracker
 			var resourceTracker = resources.new();
 			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
-			resourceTracker.addFilter(resources.categories.VISITING, resources.types.MONEY, 0.5, resources.operations.MULTIPLY, 1);
 			$scope.resources = resourceTracker;
 
 			// Initial activities before the player can play turns
@@ -214,6 +213,11 @@ angular.module("travelPlanningGame.app")
 			// Make a random event, randomly
 			if(randomEvents.hasOccurred())
 				handleRandomEvent(randomEvents.getEvent());
+			else
+				closingActivities();
+		};
+
+		function closingActivities() {
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
@@ -236,18 +240,74 @@ angular.module("travelPlanningGame.app")
 				greet();
 
 			}, 500);
-		};
+		}
 
 		// Random event
 		function handleRandomEvent(randomEvent) {
-			if(randomEvent) {
-				$scope.randomEvent = randomEvent;
+			showRandomEvent(randomEvent).then(function() {
 
 				// Charge for the impact
-				resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+				if(randomEvent) {
 
-				// If there's an upgrade unlocked?
-			}
+					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+
+					showUpgradeUnlocked(upgrades.get(randomEvent.unlocks)).then(function() {
+
+						// Officially unlock the upgrade!
+						var upgrade = upgrades.get(randomEvent.unlocks);
+						if(upgrade) {
+							// Add any resource bonuses
+							resources.merge($scope.resources, upgrade.resources);
+
+							// Mark as unlocked
+							upgrade.isUnlocked = true;
+						}
+
+						$scope.upgradeUnlocked = null;
+						$scope.randomEvent = null;
+						closingActivities();
+
+					});
+
+				} else {
+					$scope.randomEvent = null;
+					closingActivities();
+				}
+			});
+		}
+
+		// Open a random event card
+		function showRandomEvent(randomEvent) {
+			var deferred = $q.defer();
+
+			if(randomEvent) {
+
+				$scope.randomEvent = randomEvent;
+				$scope.$on("tpg:event:eventCard:close", function() {
+					deferred.resolve();
+				});
+
+			} else
+				deferred.resolve();
+
+			return deferred.promise;
+		}
+
+		// Open an upgrade card
+		function showUpgradeUnlocked(upgradeUnlocked) {
+			var deferred = $q.defer();
+
+			if(upgradeUnlocked) {
+
+				$scope.upgradeUnlocked = upgradeUnlocked;
+				$scope.$on("tpg:event:upgradeCard:close", function() {
+					deferred.resolve();
+				});
+
+			} else
+				deferred.resolve();
+
+			return deferred.promise;
 		}
 
 		// Generic function to execute a "canI ?" function to supply a reason instead of just true/false

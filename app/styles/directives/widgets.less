@@ -10,16 +10,13 @@
 		.widget-resource-indicator-icon {
 			position: relative;
 			z-index: 20;
-			vertical-align: middle;
-			font-weight: bold;
-			.shadow-text-heavy();
 		}
 		.widget-resource-indicator-value {
 			.shadow-box-hud();
 			position: relative;
 			z-index: 10;
-			margin-left: -30px;
-			padding: 5px 20px 5px 40px;
+			margin-left: -40px;
+			padding: 5px 20px 5px 35px;
 			border-radius: 7px;
 			color: white;
 			font-weight: bold;
@@ -27,9 +24,6 @@
 		}
 	}
 	.widget-resource-indicator(@color) {
-		.widget-resource-indicator-icon {
-			color: tint(@color, 10%);
-		}
 		.widget-resource-indicator-value {
 			border: 2px solid darken(desaturate(@color, 25%), 10%);
 			background-color: tint(desaturate(@color, 25%), 15%);
@@ -53,27 +47,34 @@
 [widget-day-counter] {
 
 	// Size
-	@size: 200px;
-	@size-border: 5px;
+	@size: 150px;
 
-	top: (@size-border - (@size / 2));
-	right: (@size-border - (@size / 2));
-	width: (@size + @size-border);
-	height: (@size + @size-border);
+	top: 0;
+	right: 0;
+	width: @size;
+	height: @size;
+
 	.widget-day-counter {
 		width: 100%;
 		height: 100%;
-		border: @size-border solid green;
-		border-radius: @size;
-		background-color: #F7E5C5;
+		background: transparent url(../../images/icons/anz_icon_clock.png) right top no-repeat;
+		background-size: contain;
+
 		.content {
 			position: absolute;
-			bottom: (10 + @size-border);
-			left: (20 + @size-border);
-			text-align: right;
+			top: 0;
+			right: 10px;
+			color: white;
+			text-align: center;
 			text-transform: uppercase;
 			h1 {
 				line-height: 20px;
+				margin-top: 15px;
+				font-weight: bold;
+				small {
+					color: white;
+					font-weight: normal;
+				}
 			}
 		}
 	}

@@ -10,8 +10,8 @@
 			border-color: darken(shade(@color-morning, 10%), 10%);
 		}
 		.panel-heading {
-			background-color: darken(shade(@color-morning, 10%), 10%);
 			border-color: darken(shade(@color-morning, 10%), 10%);
+			background-color: darken(shade(@color-morning, 10%), 10%);
 		}
 	}
 	&.afternoon {
@@ -19,8 +19,8 @@
 			border-color: darken(shade(@color-afternoon, 10%), 10%);
 		}
 		.panel-heading {
-			background-color: darken(shade(@color-afternoon, 10%), 10%);
 			border-color: darken(shade(@color-afternoon, 10%), 10%);
+			background-color: darken(shade(@color-afternoon, 10%), 10%);
 		}
 	}
 	&.evening {
@@ -28,14 +28,16 @@
 			border-color: darken(shade(@color-evening, 10%), 10%);
 		}
 		.panel-heading {
-			background-color: darken(shade(@color-evening, 10%), 10%);
 			border-color: darken(shade(@color-evening, 10%), 10%);
+			background-color: darken(shade(@color-evening, 10%), 10%);
 		}
 	}
 
 	.landmark-card {
 		.shadow-box-hud();
+		border: none;
 		border-radius: @panel-border-radius;
+		background-color: none;
 		h1, h2, h3, h4, h5, h6 {
 			margin:0;
 			padding:0;
