@@ -54,7 +54,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	<!-- end features -->\n' +
     '\n' +
     '	<!-- One time bonus -->\n' +
-    '	<div class="panel-footer text-center">\n' +
+    '	<div class="panel-footer text-center" ng-class="isVisited() ? \'inactive\' : \'active\'">\n' +
     '		One-time visiting bonus:\n' +
     '		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
     '		</strong>\n' +
@@ -228,9 +228,9 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '	state-tracker="resourceIndicatorState_{{ type }}"\n' +
     '	state-class="[\'\', \'animated tada\', \'\', \'\']">\n' +
     '	<i ng-switch on="type" class="widget-resource-indicator-icon">\n' +
-    '		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
-    '		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
-    '		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="MONEY" src="app/images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="XP" src="app/images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
+    '		<img ng-switch-when="SOUVENIR" src="app/images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
     '</div>\n' +

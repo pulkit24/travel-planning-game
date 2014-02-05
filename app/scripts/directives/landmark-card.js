@@ -9,5 +9,10 @@ angular.module('travelPlanningGame.app')
 				landmark: '='
 			}
 			, templateUrl: 'templates/landmark-card.tpl.html'
+			, controller: function($scope, history) {
+				$scope.isVisited = function() {
+					return history.getInstance("landmarks").find($scope.landmark) !== null;
+				};
+			}
 		};
 	});

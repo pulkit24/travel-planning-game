@@ -4,7 +4,6 @@
 	width: @size-width-card;
 	animation-duration: 0.5s;
 	zoom: 0.85;
-
 	&.morning {
 		.panel {
 			border-color: darken(shade(@color-morning, 10%), 10%);
@@ -32,7 +31,6 @@
 			background-color: darken(shade(@color-evening, 10%), 10%);
 		}
 	}
-
 	.landmark-card {
 		.shadow-box-hud();
 		border: none;
@@ -46,6 +44,16 @@
 			background-position: center center;
 			background-size: cover;
 			background-repeat: no-repeat;
+		}
+		.panel-footer {
+			background-color: #777;
+			&.active {
+				color: orange;
+				animation: landmark-card-text-highlight 2s ease-in-out infinite;
+			}
+			&.inactive {
+				color: #444;
+			}
 		}
 		.thumbnail {
 			margin: 1px;
@@ -63,6 +71,16 @@
 			}
 			.close {
 				color: white;
+			}
+		}
+		@keyframes landmark-card-text-highlight {
+			0%, 100% {
+				color: orange;
+				text-shadow: none;
+			}
+			50% {
+				color: gold;
+				text-shadow: 0 0 5px orange;
 			}
 		}
 	}

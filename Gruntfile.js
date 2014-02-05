@@ -77,10 +77,6 @@ module.exports = function(grunt) {
 				src: '<%= concat.localCSS.dest %>'
 				, dest: '<%= concat.localCSS.dest %>'
 			}
-			, vendorCSS: {
-				src: '<%= concat.vendorCSS.dest %>'
-				, dest: '<%= concat.vendorCSS.dest %>'
-			}
 		}
 		, recess: {
 			dist: {
