@@ -70,7 +70,7 @@
 	<!-- Loading/splash screen -->
 	<div class="layer overlay loading"
 		state-tracker="menuLoadingState"
-		state-transition="{idle: {complete: 2000}}"
+		state-transition="{idle: {complete: 500}}"
 		state-class="['', '', 'hide']">
 		<h1><div loading></div> Loading...</h1>
 	</div>
@@ -95,17 +95,21 @@
 	</div>
 	<!-- end alerts -->
 
+		<!-- ng-show="locations.selected && map.options.selectable == 'location'" -->
 	<!-- Selected landmark card -->
-	<div landmark-card landmark="locations.selected" class="layer animated"
-		ng-class="getTimeOfDay()"
-		ng-show="locations.selected && map.options.selectable == 'location'"
-		state-tracker="landmarkCardState"
-		state-class="['hide', 'bounceIn', 'bounceOut', 'hide']"
-		state-activate="landmarkCardLocationID != locations.selected.id"
-		state-on-active="landmarkCardLocationID = locations.selected.id"
-		state-transition="{complete: {idle: 1000}}">
+	<div landmark-card
+		ng-repeat="landmark in locations.landmarks"
+		landmark="landmark"
+		ng-show="(locations.selected.id === landmark.id) && (map.options.selectable === 'location')"
+		class="layer"
+		ng-class="getTimeOfDay()">
 	</div>
 	<!-- end landmark card -->
+
+	<!-- Landmark view -->
+	<div landmark-view landmark="current.location"
+		ng-if="false && current.location && turnState.isActive()">
+	</div>
 
 	<!-- Resource indicators -->
 	<div class="layer">
@@ -114,30 +118,24 @@
 		<div widget-resource-indicator type="SOUVENIR" category="ALL" resources="resources"></div>
 	</div>
 	<!-- Time indicators -->
-	<div widget-day-counter day="getDay()" class="layer"></div>
+	<div widget-day-counter day="getDay()" class="layer" ng-if="getDay() && !turnState.isActive()"></div>
 	<!-- end indicators -->
 
 	<!-- Sidebar for turn options -->
-	<div class="layer sidebar turn-options animated"
+	<div class="layer sidebar turn-options"
 		ng-class="getTimeOfDay()"
-		state-tracker="turnState"
-		state-class="['hide', 'bounceInUp', 'bounceOutDown', 'hide']"
-		state-transition="{complete: {idle: 1000}, failed: {idle: 1000}}">
+		ng-if="turnState.isActive()">
 
-		<!-- Only show when currently in a turn -->
-		<div ng-if="turnState.isActive()">
+		<h2>
+			<span ng-if="!current.location.isVisited()">Welcome!</span>
+			<span ng-if="current.location.isVisited()">Welcome back!</span>
+			What would you like to do here?
+		</h2>
 
-			<h2>Welcome to {{ current.location.name }}!</h2>
-
-			<p>{{ current.location.description }}</p>
-
-			<h2>What would you like to do here?</h2>
+		<div accordion close-others="'true'">
 
 			<!-- Shopping option -->
-			<div class="option">
-
-				<h4>Shopping</h4>
-
+			<div accordion-group heading="Shopping" is-open="true">
 				<div class="souvenir picture">
 					<img class="img-responsive" ng-src="{{ current.location.shopping.image }}" width="128" height="128" />
 				</div>
@@ -156,7 +154,7 @@
 
 				<div class="action">
 					<button type="button"
-						class="btn"
+						class="btn btn-default"
 						ng-click="shoppingState.isAvailable() ? game.shop() : null"
 						ng-disabled="!shoppingState.isAvailable || !game.canShop()"
 						state-tracker="shoppingState"
@@ -174,12 +172,14 @@
 			<!-- end shopping option -->
 
 			<!-- Optional features -->
-<!-- 			<div class="option" ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
-				<h4>Optional</h4>
-				{{ bonus.flavour }}
-				<button type="button" class="btn btn-default">Play</button>
+			<div accordion-group heading="Activites">
+	 			<div ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
+					{{ bonus.flavour }}
+					<button type="button" class="btn btn-default">Play</button>
+				</div>
 			</div>
- -->			<!-- end optional features -->
+			<!-- end optional features -->
+
 		</div>
 		<!-- end things to show in current turn -->
 

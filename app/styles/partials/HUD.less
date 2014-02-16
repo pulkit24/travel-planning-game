@@ -54,81 +54,97 @@
 .sidebar {
 
 	.shadow-box-hud();
-	top: @size-height-HUD;
 	right: 0;
 	width: @size-width-sidebar;
 	height: 100%;
 	background-color: @color-light;
+
 	h2, p {
 		padding: 0 10px;
 	}
 
+	&.ng-enter {
+		animation: bounceInUp 1s;
+	}
+	&.ng-leave {
+		animation: bounceOutDown 1s;
+	}
+
 	&.morning {
 		background-color: lighten(@color-morning, 40%);
-		&.turn-options .option > h4 {
-			background-color: darken(shade(@color-morning, 10%), 10%)
+		.panel .panel-heading {
+			background-color: darken(shade(@color-morning, 10%), 10%);
 		}
 	}
 	&.afternoon {
 		background-color: lighten(@color-afternoon, 40%);
-		&.turn-options .option > h4 {
-			background-color: darken(shade(@color-afternoon, 10%), 10%)
+		.panel .panel-heading {
+			background-color: darken(shade(@color-afternoon, 10%), 10%);
 		}
 	}
 	&.evening {
 		background-color: lighten(@color-evening, 40%);
-		&.turn-options .option > h4 {
-			background-color: darken(shade(@color-evening, 10%), 10%)
+		.panel .panel-heading {
+			background-color: darken(shade(@color-evening, 10%), 10%);
 		}
 	}
 
-
-
-	&.turn-options {
+	.panel {
 		top: 0;
-		.option {
-			margin: 0;
-			padding: 0;
-			background-color: white;
-			>h4 {
-				// background-color: @color-title;
-				color: white;
-				text-align: center;
-				text-transform: uppercase;
-				font-weight: bold;
-				padding: 3px;
-			}
-			.souvenir {
-				float: left;
-				text-align: center;
-				&.picture {
-					padding: 0 3% 0;
-					width: 35%;
-					img {
-						vertical-align: bottom;
-					}
-				}
-				&.info {
-					width: 59%;
-					h4 {
-						margin: 0;
-					}
-					.cost, .gains {
-						width: 49%;
-						font-size: 1.6em;
-					}
-					.cost {
-						color: @color-money;
-					}
-					.gains {
-						color: @color-souvenirs;
-					}
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-radius: 0;
+		background-color: white;
+
+		.panel-heading {
+			border: none;
+			border-radius: 0;
+			background-color: @color-title;
+			color: white;
+			text-align: center;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+
+		.souvenir {
+			float: left;
+			text-align: center;
+
+			&.picture {
+				padding: 0 3% 0;
+				width: 35%;
+
+				img {
+					vertical-align: bottom;
 				}
 			}
-			.action {
-				padding: 10px;
-				text-align: center;
+
+			&.info {
+				width: 59%;
+
+				h4 {
+					margin: 0;
+				}
+
+				.cost, .gains {
+					width: 49%;
+					font-size: 1.6em;
+				}
+
+				.cost {
+					color: @color-money;
+				}
+
+				.gains {
+					color: @color-souvenirs;
+				}
 			}
+		}
+
+		.action {
+			padding: 10px;
+			text-align: center;
 		}
 	}
 

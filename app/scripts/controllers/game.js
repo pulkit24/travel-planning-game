@@ -88,9 +88,9 @@ angular.module("travelPlanningGame.app")
 
 		function initPlay() {
 			$scope.alertMessage = alertMessages.startLocation;
-			$timeout(function() {
+			stateTracker.new("playLoadingState").$on("complete", function() {
 				stateTracker.get("alert").show();
-			}, 500);
+			});
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;
@@ -115,9 +115,17 @@ angular.module("travelPlanningGame.app")
 			// Start the timer
 			timer.config($scope.settings.travelDays, 3);
 			timer.start();
+			$scope.setTimeOfDay();
 
 			// Show first greeting
-			greet();
+			showAlert(alertMessages.greetings[$scope.getTimeOfDay()]);
+			// greet();
+
+			// Dismiss the alert as soon as the user begins picking landmarks
+			$scope.$watch("locations.selected.id", function(newValue, oldValue) {
+				if(angular.isDefined(newValue) && newValue !== oldValue)
+					dismissAlert();
+			});
 		};
 
 		// Check conditions for eligibility for another round
@@ -154,7 +162,8 @@ angular.module("travelPlanningGame.app")
 		$scope.game.startTurn = function() {
 
 			// Dismiss any greeting
-			stateTracker.get("alert").dismiss();
+			dismissAlert();
+			// stateTracker.get("alert").dismiss();
 
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
@@ -171,7 +180,7 @@ angular.module("travelPlanningGame.app")
 				resources.merge($scope.resources, $scope.current.location.resources, categoriesRequired);
 
 				// One-time xp points for "discovery"
-				if (!history.getInstance("landmarks").find($scope.current.location))
+				if (!$scope.current.location.isVisited())
 					resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.DISCOVERY]);
 			}
 
@@ -192,13 +201,18 @@ angular.module("travelPlanningGame.app")
 			// Update shopping state
 			stateTracker.get("shoppingState").purchase();
 
-			$scope.current.
-
 			// Charge for shopping
 			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
 
 			// Record in history
+			// You just shopped!
 			history.getInstance("shopping").record(timer.toTimestamp(), resources);
+			// What did you buy?
+			history.getInstance("souvenirs").record(timer.toTimestamp(), $scope.current.location.shopping);
+		};
+
+		$scope.hasBought = function() {
+			return history.getInstance("souvenirs").find($scope.current.location.shopping) !== null;
 		};
 
 		$scope.game.endTurn = function() {
@@ -221,7 +235,7 @@ angular.module("travelPlanningGame.app")
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
-			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			// Days left?
 			if (timer.isLast())
@@ -232,12 +246,14 @@ angular.module("travelPlanningGame.app")
 
 				// Next turn this day
 				timer.next();
+				$scope.setTimeOfDay();
 
 				// Un-set as current location [FIXME]
 				$scope.locations.selected = null;
 
 				// Show greeting alert
-				greet();
+				showAlert(alertMessages.greetings[$scope.getTimeOfDay()]);
+				// greet();
 
 			}, 500);
 		}
@@ -314,6 +330,34 @@ angular.module("travelPlanningGame.app")
 		$scope.whyCantI = function(task) {
 			return task(true);
 		};
+
+		function showAlert(message, canGreet) {
+			var alertTracker = stateTracker.get("alert");
+
+			// Enqueue our intent to show until the current alert has been dismissed
+			if(!canGreet) {
+				$scope.alertUnbinder = alertTracker.$on("off", function() {
+					showAlert(message, true);
+				});
+			}
+
+			// When we can, show the alert asap
+			else {
+				$scope.alertMessage = message;
+
+				if(angular.isFunction($scope.alertUnbinder))
+					$scope.alertUnbinder();
+				$scope.alertUnbinder = null;
+
+				alertTracker.show();
+			}
+		}
+		function dismissAlert() {
+			var alertTracker = stateTracker.get("alert");
+
+			if(alertTracker.isOn())
+				alertTracker.dismiss();
+		}
 
 		function greet(canGreet) {
 			// Enqueue our intent to show until the current alert has been dismissed

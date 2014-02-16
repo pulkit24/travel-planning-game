@@ -2,42 +2,91 @@
 	top: 15%;
 	left: 5%;
 	width: @size-width-card;
-	animation-duration: 0.5s;
+	transition: 4s ease-in-out;
 	zoom: 0.85;
 
-	&.morning {
+	// Animations
+	&.ng-hide {
+		display: block !important;
+		top: (@size-height-game + 100);
+		left: @panel-border-radius;
+		transform: rotateY(180deg);
+		// transition: 0.25s ease-in-out;
+		width: (@size-width-card / 2);
+	}
+	&.ng-hide-add .panel-heading {
+		background-color: yellow !important;
+	}
+	&.ng-hide-add-active .panel-heading {
+		background-color: red !important;
+	}
+	&.ng-hide-remove .panel-heading {
+		background-color: green !important;
+	}
+	&.ng-hide-remove-active .panel-heading {
+		background-color: black !important;
+	}
+
+	// Colour theming
+	& {
+		// default
 		.panel {
-			border-color: darken(shade(@color-morning, 10%), 10%);
+			border-color: @color-title;
 		}
 		.panel-heading {
-			border-color: darken(shade(@color-morning, 10%), 10%);
-			background-color: darken(shade(@color-morning, 10%), 10%);
+			border-color: @color-title;
+			background-color: @color-title;
+		}
+		.landmark-card-back {
+			background-color: @color-title;
+		}
+	}
+	&.morning {
+		.panel {
+			border-color: @color-morning;
+		}
+		.panel-heading {
+			border-color: @color-morning;
+			background-color: @color-morning;
+		}
+		.landmark-card-back {
+			background-color: @color-morning;
 		}
 	}
 	&.afternoon {
 		.panel {
-			border-color: darken(shade(@color-afternoon, 10%), 10%);
+			border-color: @color-afternoon;
 		}
 		.panel-heading {
-			border-color: darken(shade(@color-afternoon, 10%), 10%);
-			background-color: darken(shade(@color-afternoon, 10%), 10%);
+			border-color: @color-afternoon;
+			background-color: @color-afternoon;
+		}
+		.landmark-card-back {
+			background-color: @color-afternoon;
 		}
 	}
 	&.evening {
 		.panel {
-			border-color: darken(shade(@color-evening, 10%), 10%);
+			border-color: @color-evening;
 		}
 		.panel-heading {
-			border-color: darken(shade(@color-evening, 10%), 10%);
-			background-color: darken(shade(@color-evening, 10%), 10%);
+			border-color: @color-evening;
+			background-color: @color-evening;
+		}
+		.landmark-card-back {
+			background-color: @color-evening;
 		}
 	}
 
+	// Landmark card contents
 	.landmark-card {
 		.shadow-box-hud();
+		position: relative;
+		overflow: hidden;
 		border: none;
 		border-radius: @panel-border-radius;
 		background-color: none;
+
 		h1, h2, h3, h4, h5, h6 {
 			margin:0;
 			padding:0;

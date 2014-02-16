@@ -14,19 +14,25 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
 					'shopping-cart');
 			}
-			, controller: function($scope, $filter, resources, stateTracker) {
-				$scope.state = stateTracker.new("resourceIndicatorState_" + $scope.type);
-				$scope.state.$transition("active", "idle", 750);
+			, controller: function($scope, $filter, resources) {
 
 				$scope.currentValue = 0;
+
 				$scope.getValue = function() {
-					return $filter("number")($scope.resources.get(resources.categories[$scope.category],
-						resources.types[$scope.type]));
+					return $filter("number")($scope.getRawValue());
+				};
+				$scope.getRawValue = function() {
+					return $scope.resources.get(resources.categories[$scope.category],
+						resources.types[$scope.type]);
 				};
 
-				$scope.$watch('getValue()', function(newValue, oldValue) {
-					if(newValue && newValue !== oldValue)
-						$scope.state.activate();
+				// Floating notices of updated values
+				$scope.updates = [];
+
+				$scope.$watch('getRawValue()', function(newValue, oldValue) {
+					if(angular.isDefined(newValue) && angular.isDefined(oldValue) && newValue !== oldValue) {
+						$scope.updates.push(parseInt(newValue, 10) - parseInt(oldValue, 10));
+					}
 				});
 			}
 		};

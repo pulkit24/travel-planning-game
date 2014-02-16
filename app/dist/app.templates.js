@@ -1,4 +1,4 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -11,16 +11,16 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '\n' +
     '		<!-- Controls -->\n' +
     '		<i class="fa close fa-times fa-fw"\n' +
-    '			state-tracker="landmarkCardState"\n' +
-    '			ng-click="landmarkCardState.complete()"></i>\n' +
+    '			ng-show="landmark"\n' +
+    '			ng-click="landmarkCardState.reset()"></i>\n' +
     '		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->\n' +
     '\n' +
-    '		<h3>{{ landmark.name }}</h3>\n' +
+    '		<h3>{{ landmark.name }} &nbsp;</h3>\n' +
     '	</div>\n' +
     '	<!-- end name and controls -->\n' +
     '\n' +
     '	<!-- Image and quick stats -->\n' +
-    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + getLandmarkImage() + \')\'}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '			<div class="thumbnail resource text-center">\n' +
     '				<small>LODGING</small>\n' +
@@ -35,7 +35,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
     '			</div>\n' +
     '			<div class="thumbnail resource text-center">\n' +
-    '				<img ng-src="{{ landmark.shopping.image }}" />\n' +
+    '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '			</div>\n' +
     '		</div>\n' +
     '	</div>\n' +
@@ -64,6 +64,18 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '</div>\n' +
     '<!-- end card -->\n' +
     '');
+}]);
+
+angular.module('templates/landmark-view.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/landmark-view.tpl.html',
+    '<!-- Landmark view -->\n' +
+    '<div class="landmark-view layer overlay animate fadeIn" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="landmark-view-description layer animated slideInLeft">\n' +
+    '		<h1>{{ landmark.name }}</h1>\n' +
+    '		<p>{{ landmark.description }}</p>\n' +
+    '	</div>\n' +
+    '</div>');
 }]);
 
 angular.module('templates/loading.tpl.html', []).run(['$templateCache', function($templateCache) {
@@ -104,7 +116,7 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
     '		gm-on-click="selectLocation(object, marker)">\n' +
     '	</div>\n' +
     '	<div id="map-infoWindow-markerLabel-sample">\n' +
-    '		<div class="well">\n' +
+    '		<div>\n' +
     '			<strong>{{ location.name }}</strong>\n' +
     '		</div>\n' +
     '	</div>\n' +
@@ -209,7 +221,7 @@ angular.module('templates/widgets.alert.tpl.html', []).run(['$templateCache', fu
 angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.day-counter.tpl.html',
-    '<div class="widget-day-counter animated rotateInDownRight" ng-if="now.day">\n' +
+    '<div class="widget-day-counter">\n' +
     '	<div class="content">\n' +
     '		<h1>Day</h1>\n' +
     '		<h1>{{ now.day | number }}\n' +
@@ -223,16 +235,16 @@ angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCach
 angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.resource-indicator.tpl.html',
-    '<div class="widget-resource-indicator"\n' +
-    '	ng-class="\'widget-resource-indicator-\' + type"\n' +
-    '	state-tracker="resourceIndicatorState_{{ type }}"\n' +
-    '	state-class="[\'\', \'animated tada\', \'\', \'\']">\n' +
+    '<div class="widget-resource-indicator" ng-class="\'widget-resource-indicator-\' + type">\n' +
     '	<i ng-switch on="type" class="widget-resource-indicator-icon">\n' +
     '		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
+    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'sink\'">\n' +
+    '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
+    '	</span>\n' +
     '</div>\n' +
     '');
 }]);

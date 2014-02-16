@@ -10,7 +10,7 @@ angular.module('travelPlanningGame.maps')
 				, current: "="
 				, selected: "="
 			}
-			, controller: function($scope, $q, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
+			, controller: function($scope, $q, $timeout, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
 				mapGeocoder, stateTracker, resources) {
 
 				// On load, see if the map data is ready
@@ -121,26 +121,29 @@ angular.module('travelPlanningGame.maps')
 				// Focus on the focusable location - either selected or current
 				// based on the initial config
 				$scope.focus = function() {
-					var focalPoint = null;
+					$timeout(function() {
 
-					if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
-						focalPoint = $scope.selected;
-					else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
-						focalPoint = $scope.current;
+						var focalPoint = null;
 
-					if (focalPoint && focalPoint.coords) {
-						$scope.map.panTo(angulargmUtils.objToLatLng({
-							lat: focalPoint.coords.lat
-							, lng: focalPoint.coords.lng - 0.02
-						}));
-					} else {
-						// Auto center and zoom the map
-						$scope.map.fitBounds($scope.bounds);
-					}
+						if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
+							focalPoint = $scope.selected;
+						else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
+							focalPoint = $scope.current;
 
-					// If zoom is not set to auto
-					if($scope.zoom !== "auto")
-						$scope.map.setZoom($scope.zoom); // the only way the map respects us
+						if (focalPoint && focalPoint.coords) {
+							$scope.map.panTo(angulargmUtils.objToLatLng({
+								lat: focalPoint.coords.lat
+								, lng: focalPoint.coords.lng - 0.02
+							}));
+						} else {
+							// Auto center and zoom the map
+							$scope.map.fitBounds($scope.bounds);
+						}
+
+						// If zoom is not set to auto
+						if($scope.zoom !== "auto")
+							$scope.map.setZoom($scope.zoom); // the only way the map respects us
+					}, 0);
 				};
 
 				// Select a point on the map (other than a marker/location)
@@ -195,6 +198,15 @@ angular.module('travelPlanningGame.maps')
 				$scope.selectLocation = function(location, marker) {
 					if ($scope.selectable !== "location" && $scope.selectable !== "all") return;
 
+					// If "all" are selectable, then to ensure uniqueness
+					// we must manually erase any stray points on the map
+					if($scope.selectable === "all") {
+						$timeout(function() {
+							$scope.points = [];
+							$scope.clearLabel('startingPoint');
+						}, 0);
+					}
+
 					// Update the location
 					$scope.selected = location;
 					$scope.focus(); // focus if needed
@@ -224,6 +236,12 @@ angular.module('travelPlanningGame.maps')
 				$scope.clearLabels = function() {
 					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
 						infoWindow.close();
+					});
+				};
+				$scope.clearLabel = function(labelLocationID) {
+					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
+						if(labelLocationID === locationID)
+							infoWindow.close();
 					});
 				};
 				$scope.showLabel = function(location, marker, map) {

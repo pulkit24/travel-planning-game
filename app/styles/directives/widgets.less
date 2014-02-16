@@ -22,6 +22,32 @@
 			font-weight: bold;
 			font-size: 18px;
 		}
+		.widget-resource-indicator-update-floater {
+			@floatDistance: 25px;
+			position: absolute;
+			right: 20px;
+			z-index: 11;
+			color: white;
+			font-weight: bold;
+			font-size: 18px;
+
+			&.rise {
+				animation: rise 2s linear;
+				animation-fill-mode: both;
+			}
+			&.sink {
+				animation: sink 2s linear;
+				animation-fill-mode: both;
+			}
+			@keyframes rise {
+				0% { top: 0; opacity: 1; }
+				100% { top: -@floatDistance; opacity: 0; }
+			}
+			@keyframes sink {
+				0% { bottom: 0; opacity: 1; }
+				100% { bottom: -@floatDistance; opacity: 0; }
+			}
+		}
 	}
 	.widget-resource-indicator(@color) {
 		.widget-resource-indicator-value {
@@ -53,6 +79,13 @@
 	right: 0;
 	width: @size;
 	height: @size;
+
+	&.ng-enter {
+		animation: rotateInDownRight 1s;
+	}
+	&.ng-leave {
+		animation: rotateOutUpRight 1s;
+	}
 
 	.widget-day-counter {
 		width: 100%;

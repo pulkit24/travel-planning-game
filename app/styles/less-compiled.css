@@ -58,6 +58,15 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+.glass {
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  background-color: #f2f2f2;
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.050000000000000044);
+}
+
 body {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -145,7 +154,6 @@ body {
 }
 
 .sidebar {
-  top: 75px;
   right: 0;
   width: 30%;
   height: 100%;
@@ -158,11 +166,19 @@ body {
   padding: 0 10px;
 }
 
+.sidebar.ng-enter {
+  animation: bounceInUp 1s;
+}
+
+.sidebar.ng-leave {
+  animation: bounceOutDown 1s;
+}
+
 .sidebar.morning {
   background-color: #eff9ff;
 }
 
-.sidebar.morning.turn-options .option > h4 {
+.sidebar.morning .panel .panel-heading {
   background-color: #1880ba;
 }
 
@@ -170,7 +186,7 @@ body {
   background-color: #fef4e9;
 }
 
-.sidebar.afternoon.turn-options .option > h4 {
+.sidebar.afternoon .panel .panel-heading {
   background-color: #b1681b;
 }
 
@@ -178,65 +194,66 @@ body {
   background-color: #868fbe;
 }
 
-.sidebar.evening.turn-options .option > h4 {
+.sidebar.evening .panel .panel-heading {
   background-color: #141725;
 }
 
-.sidebar.turn-options {
+.sidebar .panel {
   top: 0;
-}
-
-.sidebar.turn-options .option {
   padding: 0;
   margin: 0;
   background-color: white;
+  border: none;
+  border-radius: 0;
 }
 
-.sidebar.turn-options .option > h4 {
-  padding: 3px;
+.sidebar .panel .panel-heading {
   font-weight: bold;
   color: white;
   text-align: center;
   text-transform: uppercase;
+  background-color: #428bca;
+  border: none;
+  border-radius: 0;
 }
 
-.sidebar.turn-options .option .souvenir {
+.sidebar .panel .souvenir {
   float: left;
   text-align: center;
 }
 
-.sidebar.turn-options .option .souvenir.picture {
+.sidebar .panel .souvenir.picture {
   width: 35%;
   padding: 0 3% 0;
 }
 
-.sidebar.turn-options .option .souvenir.picture img {
+.sidebar .panel .souvenir.picture img {
   vertical-align: bottom;
 }
 
-.sidebar.turn-options .option .souvenir.info {
+.sidebar .panel .souvenir.info {
   width: 59%;
 }
 
-.sidebar.turn-options .option .souvenir.info h4 {
+.sidebar .panel .souvenir.info h4 {
   margin: 0;
 }
 
-.sidebar.turn-options .option .souvenir.info .cost,
-.sidebar.turn-options .option .souvenir.info .gains {
+.sidebar .panel .souvenir.info .cost,
+.sidebar .panel .souvenir.info .gains {
   width: 49%;
   font-size: 1.6em;
 }
 
-.sidebar.turn-options .option .souvenir.info .cost {
+.sidebar .panel .souvenir.info .cost {
   color: #ffb03b;
 }
 
-.sidebar.turn-options .option .souvenir.info .gains {
+.sidebar .panel .souvenir.info .gains {
   color: #27b3e6;
 }
 
-.sidebar.turn-options .option .action {
+.sidebar .panel .action {
   padding: 10px;
   text-align: center;
 }
@@ -271,6 +288,64 @@ body {
   color: white;
   background-color: #2a304e;
   border-color: #2a304e;
+}
+
+/* entire container, keeps perspective */
+
+.flip-container {
+  perspective: 1000;
+  transform-style: preserve-3d;
+}
+
+/*  UPDATED! flip the pane when hovered */
+
+.landmark-card-closed .back {
+  transform: rotateY(0deg);
+}
+
+.landmark-card-closed .front {
+  transform: rotateY(180deg);
+}
+
+.flip-container,
+.front,
+.back {
+  width: 400px;
+  height: 480px;
+}
+
+/* flip speed goes here */
+
+.flipper {
+  position: relative;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+}
+
+/* hide back of pane during swap */
+
+.front,
+.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: 0.6s;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/*  UPDATED! front pane, placed above back */
+
+.front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+
+.back {
+  background-color: #1880ba;
+  transform: rotateY(-180deg);
 }
 
 .loading {
@@ -370,6 +445,47 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater {
+  position: absolute;
+  right: 20px;
+  z-index: 11;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater.rise {
+  animation: rise 2s linear;
+  animation-fill-mode: both;
+}
+
+[widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater.sink {
+  animation: sink 2s linear;
+  animation-fill-mode: both;
+}
+
+@keyframes rise {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+  100% {
+    top: -25px;
+    opacity: 0;
+  }
+}
+
+@keyframes sink {
+  0% {
+    bottom: 0;
+    opacity: 1;
+  }
+  100% {
+    bottom: -25px;
+    opacity: 0;
+  }
+}
+
 [widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-value {
   background-color: #eab86d;
   border: 2px solid #e09527;
@@ -390,6 +506,14 @@ body {
   right: 0;
   width: 150px;
   height: 150px;
+}
+
+[widget-day-counter].ng-enter {
+  animation: rotateInDownRight 1s;
+}
+
+[widget-day-counter].ng-leave {
+  animation: rotateOutUpRight 1s;
 }
 
 [widget-day-counter] .widget-day-counter {
@@ -484,37 +608,88 @@ body {
   left: 5%;
   width: 400px;
   zoom: 0.85;
-  animation-duration: 0.5s;
+  transition: 4s ease-in-out;
+}
+
+[landmark-card].ng-hide {
+  top: 700px;
+  left: 4px;
+  display: block !important;
+  width: 200px;
+  transform: rotateY(180deg);
+}
+
+[landmark-card].ng-hide-add .panel-heading {
+  background-color: yellow !important;
+}
+
+[landmark-card].ng-hide-add-active .panel-heading {
+  background-color: red !important;
+}
+
+[landmark-card].ng-hide-remove .panel-heading {
+  background-color: green !important;
+}
+
+[landmark-card].ng-hide-remove-active .panel-heading {
+  background-color: black !important;
+}
+
+[landmark-card] .panel {
+  border-color: #428bca;
+}
+
+[landmark-card] .panel-heading {
+  background-color: #428bca;
+  border-color: #428bca;
+}
+
+[landmark-card] .landmark-card-back {
+  background-color: #428bca;
 }
 
 [landmark-card].morning .panel {
-  border-color: #1880ba;
+  border-color: #26affc;
 }
 
 [landmark-card].morning .panel-heading {
-  background-color: #1880ba;
-  border-color: #1880ba;
+  background-color: #26affc;
+  border-color: #26affc;
+}
+
+[landmark-card].morning .landmark-card-back {
+  background-color: #26affc;
 }
 
 [landmark-card].afternoon .panel {
-  border-color: #b1681b;
+  border-color: #f69125;
 }
 
 [landmark-card].afternoon .panel-heading {
-  background-color: #b1681b;
-  border-color: #b1681b;
+  background-color: #f69125;
+  border-color: #f69125;
+}
+
+[landmark-card].afternoon .landmark-card-back {
+  background-color: #f69125;
 }
 
 [landmark-card].evening .panel {
-  border-color: #141725;
+  border-color: #2a304e;
 }
 
 [landmark-card].evening .panel-heading {
-  background-color: #141725;
-  border-color: #141725;
+  background-color: #2a304e;
+  border-color: #2a304e;
+}
+
+[landmark-card].evening .landmark-card-back {
+  background-color: #2a304e;
 }
 
 [landmark-card] .landmark-card {
+  position: relative;
+  overflow: hidden;
   background-color: none;
   border: none;
   border-radius: 4px;
@@ -675,4 +850,29 @@ body {
 
 [upgrade-card] .upgrade-card .list-group {
   text-align: left;
+}
+
+[landmark-view].ng-enter {
+  animation: fadeIn 1s;
+}
+
+[landmark-view].ng-leave {
+  animation: fadeOut 1s;
+}
+
+[landmark-view] .landmark-view {
+  background-size: cover;
+}
+
+[landmark-view] .landmark-view .landmark-view-description {
+  bottom: 25%;
+  width: 60%;
+  padding: 20px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  background-color: #f2f2f2;
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-left: 0;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.050000000000000044);
 }

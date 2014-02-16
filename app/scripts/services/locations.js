@@ -1,5 +1,5 @@
 angular.module("travelPlanningGame.app")
-	.factory("locations", function($http, $q, resources) {
+	.factory("locations", function($http, $q, resources, history) {
 
 		// Source files
 		var source_landmarks = "../landmarks.json";
@@ -25,6 +25,9 @@ angular.module("travelPlanningGame.app")
 
 							// Assign an id
 							landmark.id = "landmark" + index;
+
+							// Provide a way to check if the landmark has been visited
+							landmark.isVisited = isVisited(landmark, "landmarks");
 						});
 						deferred.resolve(landmarks);
 					})
@@ -55,6 +58,9 @@ angular.module("travelPlanningGame.app")
 
 							// Assign an id
 							city.id = "city" + index;
+
+							// Provide a way to check if the city has been visited
+							city.isVisited = isVisited(city, "cities");
 						});
 						deferred.resolve(cities);
 					})
@@ -97,6 +103,12 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
 			return resourceTracker;
+		}
+
+		function isVisited(location, historyRecord) {
+			return function() {
+				return history.getInstance(historyRecord).find(location) !== null;
+			};
 		}
 
 		return {

@@ -6,16 +6,16 @@
 
 		<!-- Controls -->
 		<i class="fa close fa-times fa-fw"
-			state-tracker="landmarkCardState"
-			ng-click="landmarkCardState.complete()"></i>
+			ng-show="landmark"
+			ng-click="landmarkCardState.reset()"></i>
 		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->
 
-		<h3>{{ landmark.name }}</h3>
+		<h3>{{ landmark.name }} &nbsp;</h3>
 	</div>
 	<!-- end name and controls -->
 
 	<!-- Image and quick stats -->
-	<div class="panel-body" ng-style="{'background-image': 'url(' + landmark.image + ')'}">
+	<div class="panel-body" ng-style="{'background-image': 'url(' + getLandmarkImage() + ')'}">
 		<div class="col-xs-offset-9">
 			<div class="thumbnail resource text-center">
 				<small>LODGING</small>
@@ -30,7 +30,7 @@
 				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>
 			</div>
 			<div class="thumbnail resource text-center">
-				<img ng-src="{{ landmark.shopping.image }}" />
+				<img ng-src="{{ getSouvenirImage() }}" />
 			</div>
 		</div>
 	</div>

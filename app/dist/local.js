@@ -9,7 +9,7 @@ angular.module('travelPlanningGame.widgets', ['AngularGM', 'travelPlanningGame.t
 'use strict';
 
 angular.module('travelPlanningGame.app', [
-	'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'angular-underscore',
+	'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'angular-underscore',
 	'angular-rome2rio', 'state-tracker', 'travelPlanningGame.maps', 'travelPlanningGame.widgets',
 	'travelPlanningGame.templates'
 ])
@@ -128,7 +128,7 @@ angular.module("travelPlanningGame.app")
 	});
 
 angular.module("travelPlanningGame.app")
-	.factory("locations", function($http, $q, resources) {
+	.factory("locations", function($http, $q, resources, history) {
 
 		// Source files
 		var source_landmarks = "../landmarks.json";
@@ -154,6 +154,9 @@ angular.module("travelPlanningGame.app")
 
 							// Assign an id
 							landmark.id = "landmark" + index;
+
+							// Provide a way to check if the landmark has been visited
+							landmark.isVisited = isVisited(landmark, "landmarks");
 						});
 						deferred.resolve(landmarks);
 					})
@@ -184,6 +187,9 @@ angular.module("travelPlanningGame.app")
 
 							// Assign an id
 							city.id = "city" + index;
+
+							// Provide a way to check if the city has been visited
+							city.isVisited = isVisited(city, "cities");
 						});
 						deferred.resolve(cities);
 					})
@@ -226,6 +232,12 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
 			return resourceTracker;
+		}
+
+		function isVisited(location, historyRecord) {
+			return function() {
+				return history.getInstance(historyRecord).find(location) !== null;
+			};
 		}
 
 		return {
@@ -831,7 +843,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return true; //Math.random() <= 0.3;
+			return Math.random() <= 0.3;
 		}
 
 		return {
@@ -1248,6 +1260,42 @@ angular.module('travelPlanningGame.app')
 				landmark: '='
 			}
 			, templateUrl: 'templates/landmark-card.tpl.html'
+			, controller: function($scope, $timeout, history, stateTracker) {
+
+				$scope.isVisited = function() {
+					return history.getInstance("landmarks").find($scope.landmark.id) !== null;
+				};
+
+				$scope.getLandmarkImage = function() {
+					if($scope.landmark && $scope.isVisited())
+						return $scope.landmark.image;
+					else
+						return 'app/images/landmarks/anz_icon_card_unknown.png';
+				};
+
+				$scope.getSouvenirImage = function() {
+					if($scope.landmark && $scope.isVisited())
+						return $scope.landmark.shopping.image;
+					else
+						return 'app/images/landmarks/anz_icon_card_bg_shopping.png';
+				};
+			}
+		};
+	});
+
+'use strict';
+
+angular.module('travelPlanningGame.app')
+	.directive('landmarkView', function() {
+		return {
+			restrict: 'EA'
+			, transclude: true
+			, scope: {
+				landmark: '='
+			}
+			, templateUrl: 'templates/landmark-view.tpl.html'
+			, controller: function($scope) {
+			}
 		};
 	});
 
@@ -1273,7 +1321,7 @@ angular.module('travelPlanningGame.maps')
 				, current: "="
 				, selected: "="
 			}
-			, controller: function($scope, $q, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
+			, controller: function($scope, $q, $timeout, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
 				mapGeocoder, stateTracker, resources) {
 
 				// On load, see if the map data is ready
@@ -1384,26 +1432,29 @@ angular.module('travelPlanningGame.maps')
 				// Focus on the focusable location - either selected or current
 				// based on the initial config
 				$scope.focus = function() {
-					var focalPoint = null;
+					$timeout(function() {
 
-					if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
-						focalPoint = $scope.selected;
-					else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
-						focalPoint = $scope.current;
+						var focalPoint = null;
 
-					if (focalPoint && focalPoint.coords) {
-						$scope.map.panTo(angulargmUtils.objToLatLng({
-							lat: focalPoint.coords.lat
-							, lng: focalPoint.coords.lng - 0.02
-						}));
-					} else {
-						// Auto center and zoom the map
-						$scope.map.fitBounds($scope.bounds);
-					}
+						if ($scope.focusOn === "selected" || ($scope.focusOn === "auto" && $scope.selected))
+							focalPoint = $scope.selected;
+						else if ($scope.focusOn === "current" || ($scope.focusOn === "auto" && !$scope.selected))
+							focalPoint = $scope.current;
 
-					// If zoom is not set to auto
-					if($scope.zoom !== "auto")
-						$scope.map.setZoom($scope.zoom); // the only way the map respects us
+						if (focalPoint && focalPoint.coords) {
+							$scope.map.panTo(angulargmUtils.objToLatLng({
+								lat: focalPoint.coords.lat
+								, lng: focalPoint.coords.lng - 0.02
+							}));
+						} else {
+							// Auto center and zoom the map
+							$scope.map.fitBounds($scope.bounds);
+						}
+
+						// If zoom is not set to auto
+						if($scope.zoom !== "auto")
+							$scope.map.setZoom($scope.zoom); // the only way the map respects us
+					}, 0);
 				};
 
 				// Select a point on the map (other than a marker/location)
@@ -1458,6 +1509,15 @@ angular.module('travelPlanningGame.maps')
 				$scope.selectLocation = function(location, marker) {
 					if ($scope.selectable !== "location" && $scope.selectable !== "all") return;
 
+					// If "all" are selectable, then to ensure uniqueness
+					// we must manually erase any stray points on the map
+					if($scope.selectable === "all") {
+						$timeout(function() {
+							$scope.points = [];
+							$scope.clearLabel('startingPoint');
+						}, 0);
+					}
+
 					// Update the location
 					$scope.selected = location;
 					$scope.focus(); // focus if needed
@@ -1487,6 +1547,12 @@ angular.module('travelPlanningGame.maps')
 				$scope.clearLabels = function() {
 					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
 						infoWindow.close();
+					});
+				};
+				$scope.clearLabel = function(labelLocationID) {
+					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
+						if(labelLocationID === locationID)
+							infoWindow.close();
 					});
 				};
 				$scope.showLabel = function(location, marker, map) {
@@ -1619,19 +1685,25 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
 					'shopping-cart');
 			}
-			, controller: function($scope, $filter, resources, stateTracker) {
-				$scope.state = stateTracker.new("resourceIndicatorState_" + $scope.type);
-				$scope.state.$transition("active", "idle", 750);
+			, controller: function($scope, $filter, resources) {
 
 				$scope.currentValue = 0;
+
 				$scope.getValue = function() {
-					return $filter("number")($scope.resources.get(resources.categories[$scope.category],
-						resources.types[$scope.type]));
+					return $filter("number")($scope.getRawValue());
+				};
+				$scope.getRawValue = function() {
+					return $scope.resources.get(resources.categories[$scope.category],
+						resources.types[$scope.type]);
 				};
 
-				$scope.$watch('getValue()', function(newValue, oldValue) {
-					if(newValue && newValue !== oldValue)
-						$scope.state.activate();
+				// Floating notices of updated values
+				$scope.updates = [];
+
+				$scope.$watch('getRawValue()', function(newValue, oldValue) {
+					if(angular.isDefined(newValue) && angular.isDefined(oldValue) && newValue !== oldValue) {
+						$scope.updates.push(parseInt(newValue, 10) - parseInt(oldValue, 10));
+					}
 				});
 			}
 		};
@@ -1805,9 +1877,9 @@ angular.module("travelPlanningGame.app")
 
 		function initPlay() {
 			$scope.alertMessage = alertMessages.startLocation;
-			$timeout(function() {
+			stateTracker.new("playLoadingState").$on("complete", function() {
 				stateTracker.get("alert").show();
-			}, 500);
+			});
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;
@@ -1832,9 +1904,17 @@ angular.module("travelPlanningGame.app")
 			// Start the timer
 			timer.config($scope.settings.travelDays, 3);
 			timer.start();
+			$scope.setTimeOfDay();
 
 			// Show first greeting
-			greet();
+			showAlert(alertMessages.greetings[$scope.getTimeOfDay()]);
+			// greet();
+
+			// Dismiss the alert as soon as the user begins picking landmarks
+			$scope.$watch("locations.selected.id", function(newValue, oldValue) {
+				if(angular.isDefined(newValue) && newValue !== oldValue)
+					dismissAlert();
+			});
 		};
 
 		// Check conditions for eligibility for another round
@@ -1871,7 +1951,8 @@ angular.module("travelPlanningGame.app")
 		$scope.game.startTurn = function() {
 
 			// Dismiss any greeting
-			stateTracker.get("alert").dismiss();
+			dismissAlert();
+			// stateTracker.get("alert").dismiss();
 
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
@@ -1888,7 +1969,7 @@ angular.module("travelPlanningGame.app")
 				resources.merge($scope.resources, $scope.current.location.resources, categoriesRequired);
 
 				// One-time xp points for "discovery"
-				if (!history.getInstance("landmarks").find($scope.current.location))
+				if (!$scope.current.location.isVisited())
 					resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.DISCOVERY]);
 			}
 
@@ -1909,13 +1990,18 @@ angular.module("travelPlanningGame.app")
 			// Update shopping state
 			stateTracker.get("shoppingState").purchase();
 
-			$scope.current.
-
 			// Charge for shopping
 			resources.merge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]);
 
 			// Record in history
+			// You just shopped!
 			history.getInstance("shopping").record(timer.toTimestamp(), resources);
+			// What did you buy?
+			history.getInstance("souvenirs").record(timer.toTimestamp(), $scope.current.location.shopping);
+		};
+
+		$scope.hasBought = function() {
+			return history.getInstance("souvenirs").find($scope.current.location.shopping) !== null;
 		};
 
 		$scope.game.endTurn = function() {
@@ -1938,7 +2024,7 @@ angular.module("travelPlanningGame.app")
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), resources);
-			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location);
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			// Days left?
 			if (timer.isLast())
@@ -1949,12 +2035,14 @@ angular.module("travelPlanningGame.app")
 
 				// Next turn this day
 				timer.next();
+				$scope.setTimeOfDay();
 
 				// Un-set as current location [FIXME]
 				$scope.locations.selected = null;
 
 				// Show greeting alert
-				greet();
+				showAlert(alertMessages.greetings[$scope.getTimeOfDay()]);
+				// greet();
 
 			}, 500);
 		}
@@ -2031,6 +2119,34 @@ angular.module("travelPlanningGame.app")
 		$scope.whyCantI = function(task) {
 			return task(true);
 		};
+
+		function showAlert(message, canGreet) {
+			var alertTracker = stateTracker.get("alert");
+
+			// Enqueue our intent to show until the current alert has been dismissed
+			if(!canGreet) {
+				$scope.alertUnbinder = alertTracker.$on("off", function() {
+					showAlert(message, true);
+				});
+			}
+
+			// When we can, show the alert asap
+			else {
+				$scope.alertMessage = message;
+
+				if(angular.isFunction($scope.alertUnbinder))
+					$scope.alertUnbinder();
+				$scope.alertUnbinder = null;
+
+				alertTracker.show();
+			}
+		}
+		function dismissAlert() {
+			var alertTracker = stateTracker.get("alert");
+
+			if(alertTracker.isOn())
+				alertTracker.dismiss();
+		}
 
 		function greet(canGreet) {
 			// Enqueue our intent to show until the current alert has been dismissed
@@ -2160,7 +2276,7 @@ angular.module("travelPlanningGame.app")
 
 	});
 
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -2173,16 +2289,16 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '\n' +
     '		<!-- Controls -->\n' +
     '		<i class="fa close fa-times fa-fw"\n' +
-    '			state-tracker="landmarkCardState"\n' +
-    '			ng-click="landmarkCardState.complete()"></i>\n' +
+    '			ng-show="landmark"\n' +
+    '			ng-click="landmarkCardState.reset()"></i>\n' +
     '		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->\n' +
     '\n' +
-    '		<h3>{{ landmark.name }}</h3>\n' +
+    '		<h3>{{ landmark.name }} &nbsp;</h3>\n' +
     '	</div>\n' +
     '	<!-- end name and controls -->\n' +
     '\n' +
     '	<!-- Image and quick stats -->\n' +
-    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + getLandmarkImage() + \')\'}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '			<div class="thumbnail resource text-center">\n' +
     '				<small>LODGING</small>\n' +
@@ -2197,7 +2313,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
     '			</div>\n' +
     '			<div class="thumbnail resource text-center">\n' +
-    '				<img ng-src="{{ landmark.shopping.image }}" />\n' +
+    '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '			</div>\n' +
     '		</div>\n' +
     '	</div>\n' +
@@ -2226,6 +2342,18 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '</div>\n' +
     '<!-- end card -->\n' +
     '');
+}]);
+
+angular.module('templates/landmark-view.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/landmark-view.tpl.html',
+    '<!-- Landmark view -->\n' +
+    '<div class="landmark-view layer overlay animate fadeIn" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="landmark-view-description layer animated slideInLeft">\n' +
+    '		<h1>{{ landmark.name }}</h1>\n' +
+    '		<p>{{ landmark.description }}</p>\n' +
+    '	</div>\n' +
+    '</div>');
 }]);
 
 angular.module('templates/loading.tpl.html', []).run(['$templateCache', function($templateCache) {
@@ -2266,7 +2394,7 @@ angular.module('templates/maps.game.tpl.html', []).run(['$templateCache', functi
     '		gm-on-click="selectLocation(object, marker)">\n' +
     '	</div>\n' +
     '	<div id="map-infoWindow-markerLabel-sample">\n' +
-    '		<div class="well">\n' +
+    '		<div>\n' +
     '			<strong>{{ location.name }}</strong>\n' +
     '		</div>\n' +
     '	</div>\n' +
@@ -2371,7 +2499,7 @@ angular.module('templates/widgets.alert.tpl.html', []).run(['$templateCache', fu
 angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.day-counter.tpl.html',
-    '<div class="widget-day-counter animated rotateInDownRight" ng-if="now.day">\n' +
+    '<div class="widget-day-counter">\n' +
     '	<div class="content">\n' +
     '		<h1>Day</h1>\n' +
     '		<h1>{{ now.day | number }}\n' +
@@ -2385,16 +2513,16 @@ angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCach
 angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
   $templateCache.put('templates/widgets.resource-indicator.tpl.html',
-    '<div class="widget-resource-indicator"\n' +
-    '	ng-class="\'widget-resource-indicator-\' + type"\n' +
-    '	state-tracker="resourceIndicatorState_{{ type }}"\n' +
-    '	state-class="[\'\', \'animated tada\', \'\', \'\']">\n' +
+    '<div class="widget-resource-indicator" ng-class="\'widget-resource-indicator-\' + type">\n' +
     '	<i ng-switch on="type" class="widget-resource-indicator-icon">\n' +
     '		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
+    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'sink\'">\n' +
+    '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
+    '	</span>\n' +
     '</div>\n' +
     '');
 }]);

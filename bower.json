@@ -14,7 +14,8 @@
     "angular-bootstrap": "~0.9.0",
     "underscore": "~1.5.2",
     "angular-underscore": "",
-    "font-awesome": "~4.0.3"
+    "font-awesome": "~4.0.3",
+    "animate.css": "~3.0.0"
   },
   "devDependencies": {
     "angular-mocks": "1.2.6",

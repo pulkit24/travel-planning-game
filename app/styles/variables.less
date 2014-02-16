@@ -85,3 +85,15 @@
 
 .shadow-box-hud { .shadow-box-heavy-down(); }
 .shadow-text-hud { .shadow-text-heavy-down(); }
+
+.glass {
+	@glassColor: #fff;
+	@shadowColor: #000;
+	border: 1px solid fadeout(@glassColor, 75%);
+	background-color: darken(@glassColor, 5%);
+	background-color: fadeout(@glassColor, 75%);
+	box-shadow: 1px 1px 3px fadeout(@shadowColor, 95%);
+
+	color: #fff;
+	text-shadow: 1px 1px 3px fadeout(@shadowColor, 50%);
+}

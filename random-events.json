@@ -20,14 +20,12 @@
 	, "impact": "You were fined $200"
 	, "resource": "MONEY"
 	, "amount": -200
-	, "unlocks": "tc"
 }, {
 	"type": "NEGATIVE"
 	, "description": "The taxi overcharged you!"
 	, "impact": "You lost $50"
 	, "resource": "MONEY"
 	, "amount": -50
-	, "unlocks": "tc"
 }, {
 	"type": "NEGATIVE"
 	, "description": "You fell ill and incurred medical charges."
@@ -50,33 +48,28 @@
 	, "impact": "You lose $300"
 	, "resource": "MONEY"
 	, "amount": -300
-	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You won a mini contest at this location and got some great souvenirs."
 	, "impact": "You received +5 souvenirs"
 	, "resource": "SOUVENIR"
 	, "amount": 5
-	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You received a discount at the diner."
 	, "impact": "You saved $50"
 	, "resource": "MONEY"
 	, "amount": 50
-	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "Your monthly savings interest just came through!"
 	, "impact": "You gain $100"
 	, "resource": "MONEY"
 	, "amount": 100
-	, "unlocks": "tc"
 }, {
 	"type": "POSITIVE"
 	, "description": "You found an ANZ ATM to withdraw money."
 	, "impact": "You saved $50 in transaction charges"
 	, "resource": "MONEY"
 	, "amount": 50
-	, "unlocks": "tc"
 }]

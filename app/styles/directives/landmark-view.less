@@ -1,0 +1,23 @@
+[landmark-view] {
+
+	&.ng-enter {
+		animation: fadeIn 1s;
+	}
+	&.ng-leave {
+		animation: fadeOut 1s;
+	}
+
+	.landmark-view {
+		background-size: cover;
+
+		.landmark-view-description {
+			@width: (90% - @size-width-sidebar);
+
+			.glass();
+			bottom: 25%;
+			padding: 20px;
+			width: @width;
+			border-left: 0;
+		}
+	}
+}

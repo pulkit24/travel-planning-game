@@ -28,6 +28,7 @@ module.exports = function(grunt) {
 					'app/vendor/bower_components/angular-resource/angular-resource.min.js',
 					'app/vendor/bower_components/angular-route/angular-route.min.js',
 					'app/vendor/bower_components/angular-sanitize/angular-sanitize.min.js',
+					'app/vendor/bower_components/angular-animate/angular-animate.min.js',
 					'app/vendor/bower_components/angular-underscore/angular-underscore.js',
 					'app/vendor/bower_components/AngularGM/angular-gm.min.js',
 					'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
@@ -45,7 +46,7 @@ module.exports = function(grunt) {
 				src: [
 					'app/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css',
 					'app/vendor/bower_components/font-awesome/css/font-awesome.min.css',
-					'app/vendor/animate/animate.min.css'
+					'app/vendor/bower_components/animate.css/animate.css'
 				]
 				, dest: 'app/dist/vendor.css'
 			}
@@ -179,6 +180,7 @@ module.exports = function(grunt) {
 				]
 				, options: {
 					livereload: true
+					, spawn: false
 				}
 			}
 			, css: {
@@ -189,6 +191,7 @@ module.exports = function(grunt) {
 				]
 				, options: {
 					livereload: true
+					, spawn: false
 				}
 			}
 			, tpl: {
@@ -196,6 +199,7 @@ module.exports = function(grunt) {
 				, tasks: '<%= watch.js.tasks %>'
 				, options: {
 					livereload: true
+					, spawn: false
 				}
 			}
 			, livereload: {
