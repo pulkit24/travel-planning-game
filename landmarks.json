@@ -3,6 +3,7 @@
 	, "address": "8 Sentosa Gateway, Singapore 098269"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/casino_sentosa.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 400
 	, "visitingCost": 55
 	, "visitingExp": 20
@@ -33,6 +34,7 @@
 	, "address": "Pulau Ubin, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/ubin_island.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
 	, "lodgingCost": 150
 	, "visitingCost": 30
 	, "visitingExp": 10
@@ -63,6 +65,7 @@
 	, "address": "10 Bayfront Ave, Singapore 018956"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/marina_bay.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 250
 	, "visitingCost": 45
 	, "visitingExp": 15
@@ -93,6 +96,7 @@
 	, "address": "Bukit Batok Nature Park, Singapore"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/bukit_batok.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
 	, "lodgingCost": 100
 	, "visitingCost": 20
 	, "visitingExp": 5
@@ -123,6 +127,7 @@
 	, "address": "18 Raffles Quay, Singapore 048582"
 	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 	, "image": "images/landmarks/telok_ayer.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 250
 	, "visitingCost": 20
 	, "visitingExp": 5
@@ -134,6 +139,37 @@
 		, "cost": 25
 	}
 	, "exp": 10
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Chinatown"
+	, "address": "48 Pagoda St, Singapore City 059207"
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "image": "images/landmarks/chinatown.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
+	, "lodgingCost": 150
+	, "visitingCost": 20
+	, "visitingExp": 5
+	, "shopping": {
+		"name": "Chilli Crab"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "images/items/anz_icon_chilly_crab.png"
+		, "souvenirs": 4
+		, "cost": 35
+	}
+	, "exp": 5
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"

@@ -7,11 +7,15 @@ angular.module("travelPlanningGame.app")
 		///////////////////////////
 
 		var alertMessages = {};
-		alertMessages.startLocation = "<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
+		alertMessages.startLocation =
+			"<h2>Where will you be starting?</h2><p>Select your hotel location on the map.</p>";
 		alertMessages.greetings = {};
-		alertMessages.greetings.morning = "<h2>Good morning!</h2><p>Where would you like to go today?</p>";
-		alertMessages.greetings.afternoon = "<h2>It's the afternoon!</h2><p>Where would you like to go next?</p>";
-		alertMessages.greetings.evening = "<h2>Good evening!</h2><p>What's your final destination for today?</p>";
+		alertMessages.greetings.morning =
+			"<h2>Good morning!</h2><p>Where would you like to go today?</p>";
+		alertMessages.greetings.afternoon =
+			"<h2>It's the afternoon!</h2><p>Where would you like to go next?</p>";
+		alertMessages.greetings.evening =
+			"<h2>Good evening!</h2><p>What's your final destination for today?</p>";
 
 		/////////////////////////
 		// Current game state //
@@ -42,8 +46,14 @@ angular.module("travelPlanningGame.app")
 		///////////////////////////
 		$scope.game = {};
 
-		// Initially (before the game starts)
-		mapCities();
+		function init() {
+			// Currently active map configuration
+			$scope.map.options = $scope.map.initConfig; // use initial configuration
+
+			// Initially (before the game starts)
+			mapCities();
+		}
+		init();
 
 		$scope.game.start = function() {
 			// Start the game
@@ -63,10 +73,15 @@ angular.module("travelPlanningGame.app")
 		$scope.game.end = function() {
 			// End the game
 			$scope.current.state.end();
+
+			// Compute the stats
+			$scope.calculateChartConfig();
 		};
 		$scope.game.menu = function() {
 			// Back to the menu
 			$scope.current.state.menu();
+
+			init();
 		};
 
 		$scope.getDay = function() {
@@ -123,7 +138,7 @@ angular.module("travelPlanningGame.app")
 
 			// Dismiss the alert as soon as the user begins picking landmarks
 			$scope.$watch("locations.selected.id", function(newValue, oldValue) {
-				if(angular.isDefined(newValue) && newValue !== oldValue)
+				if (angular.isDefined(newValue) && newValue !== oldValue)
 					dismissAlert();
 			});
 		};
@@ -151,7 +166,8 @@ angular.module("travelPlanningGame.app")
 					categoriesRequired.push(resources.categories.LODGING);
 
 				// Check if we have the funds for this
-				if (!resources.canMerge($scope.resources, $scope.locations.selected.resources, categoriesRequired))
+				if (!resources.canMerge($scope.resources, $scope.locations.selected.resources,
+					categoriesRequired))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -190,7 +206,8 @@ angular.module("travelPlanningGame.app")
 		$scope.game.canShop = function(giveReason) {
 			// Funds left?
 			if ($scope.current.location.resources) {
-				if (!resources.canMerge($scope.resources, $scope.current.location.resources, [resources.categories.SHOPPING]))
+				if (!resources.canMerge($scope.resources, $scope.current.location.resources, [resources.categories
+					.SHOPPING]))
 					return giveReason ? 'Not enough funds' : false;
 			}
 
@@ -225,7 +242,7 @@ angular.module("travelPlanningGame.app")
 			}
 
 			// Make a random event, randomly
-			if(randomEvents.hasOccurred())
+			if (randomEvents.hasOccurred())
 				handleRandomEvent(randomEvents.getEvent());
 			else
 				closingActivities();
@@ -234,7 +251,7 @@ angular.module("travelPlanningGame.app")
 		function closingActivities() {
 
 			// Record today's state in history
-			history.getInstance("resources").record(timer.toTimestamp(), resources);
+			history.getInstance("resources").record(timer.toTimestamp(), $scope.resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			// Days left?
@@ -242,7 +259,7 @@ angular.module("travelPlanningGame.app")
 				$scope.game.end(); // end game
 
 			// After a tiny gap between turns...
-			$timeout(function(){
+			$timeout(function() {
 
 				// Next turn this day
 				timer.next();
@@ -263,7 +280,7 @@ angular.module("travelPlanningGame.app")
 			showRandomEvent(randomEvent).then(function() {
 
 				// Charge for the impact
-				if(randomEvent) {
+				if (randomEvent) {
 
 					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 
@@ -271,7 +288,7 @@ angular.module("travelPlanningGame.app")
 
 						// Officially unlock the upgrade!
 						var upgrade = upgrades.get(randomEvent.unlocks);
-						if(upgrade) {
+						if (upgrade) {
 							// Add any resource bonuses
 							resources.merge($scope.resources, upgrade.resources);
 
@@ -285,7 +302,8 @@ angular.module("travelPlanningGame.app")
 
 					});
 
-				} else {
+				}
+				else {
 					$scope.randomEvent = null;
 					closingActivities();
 				}
@@ -296,14 +314,15 @@ angular.module("travelPlanningGame.app")
 		function showRandomEvent(randomEvent) {
 			var deferred = $q.defer();
 
-			if(randomEvent) {
+			if (randomEvent) {
 
 				$scope.randomEvent = randomEvent;
 				$scope.$on("tpg:event:eventCard:close", function() {
 					deferred.resolve();
 				});
 
-			} else
+			}
+			else
 				deferred.resolve();
 
 			return deferred.promise;
@@ -313,14 +332,15 @@ angular.module("travelPlanningGame.app")
 		function showUpgradeUnlocked(upgradeUnlocked) {
 			var deferred = $q.defer();
 
-			if(upgradeUnlocked) {
+			if (upgradeUnlocked) {
 
 				$scope.upgradeUnlocked = upgradeUnlocked;
 				$scope.$on("tpg:event:upgradeCard:close", function() {
 					deferred.resolve();
 				});
 
-			} else
+			}
+			else
 				deferred.resolve();
 
 			return deferred.promise;
@@ -335,7 +355,7 @@ angular.module("travelPlanningGame.app")
 			var alertTracker = stateTracker.get("alert");
 
 			// Enqueue our intent to show until the current alert has been dismissed
-			if(!canGreet) {
+			if (!canGreet) {
 				$scope.alertUnbinder = alertTracker.$on("off", function() {
 					showAlert(message, true);
 				});
@@ -345,23 +365,24 @@ angular.module("travelPlanningGame.app")
 			else {
 				$scope.alertMessage = message;
 
-				if(angular.isFunction($scope.alertUnbinder))
+				if (angular.isFunction($scope.alertUnbinder))
 					$scope.alertUnbinder();
 				$scope.alertUnbinder = null;
 
 				alertTracker.show();
 			}
 		}
+
 		function dismissAlert() {
 			var alertTracker = stateTracker.get("alert");
 
-			if(alertTracker.isOn())
+			if (alertTracker.isOn())
 				alertTracker.dismiss();
 		}
 
 		function greet(canGreet) {
 			// Enqueue our intent to show until the current alert has been dismissed
-			if(!canGreet) {
+			if (!canGreet) {
 				$scope.alertUnbinder = stateTracker.get("alert").$on("off", function() {
 					greet(true);
 				});
@@ -373,13 +394,76 @@ angular.module("travelPlanningGame.app")
 
 				$scope.alertMessage = alertMessages.greetings[$scope.getTimeOfDay()];
 
-				if(angular.isFunction($scope.alertUnbinder))
+				if (angular.isFunction($scope.alertUnbinder))
 					$scope.alertUnbinder();
 				$scope.alertUnbinder = null;
 
 				stateTracker.get("alert").show();
 			}
 		}
+
+		/////////////
+		// Stats //
+		/////////////
+
+		$scope.chartConfig = null;
+
+		function getResourceHistoryByType(category, type, multiplier) {
+			var records = [];
+
+			angular.forEach(history.getInstance("resources").retrieveAll(), function(resource, timestamp) {
+				var restoredResource = resources.copy(resource);
+				records.push(
+					restoredResource.get(
+						resources.categories[category]
+						, resources.types[type]
+					) * multiplier
+				);
+			});
+
+			return records;
+		}
+
+		$scope.calculateChartConfig = function() {
+			$scope.chartConfig = {
+				options: {
+					chart: {
+						type: "spline"
+					}
+					, plotOptions: {
+						series: {
+							animation: {
+								duration: 2000
+							}
+						}
+					}
+				}
+				, series: [{
+					data: getResourceHistoryByType("ALL", "MONEY", 1)
+					, name: "Funds"
+					, color: "#ffb03b"
+					, lineWidth: 5
+				}, {
+					data: getResourceHistoryByType("ALL", "XP", 4)
+					, name: "Experience Points"
+					, color: "#d41200"
+					, lineWidth: 5
+				}, {
+					data: getResourceHistoryByType("ALL", "SOUVENIR", 4)
+					, name: "Souvenirs Collected"
+					, color: "#27b3e6"
+					, lineWidth: 5
+				}]
+				, title: {
+					text: "Your Trip Analysis"
+				}
+				, credits: {
+					enabled: false
+				}
+				, loading: false
+			};
+		};
+
 
 		///////////////
 		// Locations //
@@ -437,7 +521,7 @@ angular.module("travelPlanningGame.app")
 		/////////////////////
 		$scope.settings = {};
 		$scope.settings.budget = 1000;
-		$scope.settings.travelDays = 4;
+		$scope.settings.travelDays = 1;
 
 		///////////////////////
 		// Game board/map  //
@@ -484,5 +568,4 @@ angular.module("travelPlanningGame.app")
 
 		// Currently active map configuration
 		$scope.map.options = $scope.map.initConfig; // use initial configuration
-
 	});

@@ -26,6 +26,10 @@ angular.module("travelPlanningGame.app")
 		// Track resources for the caller
 		var Resources = function() {
 
+			this.types = types;
+			this.categories = categories;
+			this.operations = operations;
+
 			// Get the value of a resource
 			// Safer alternative to manually access the object properties
 			this.get = function getResource(category, type) {

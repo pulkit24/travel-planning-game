@@ -2,29 +2,17 @@
 	top: 15%;
 	left: 5%;
 	width: @size-width-card;
-	transition: 4s ease-in-out;
+	transition: 0.5s ease-in-out;
 	zoom: 0.85;
 
 	// Animations
 	&.ng-hide {
 		display: block !important;
-		top: (@size-height-game + 100);
+		top: (@size-height-game + 111);
 		left: @panel-border-radius;
 		transform: rotateY(180deg);
-		// transition: 0.25s ease-in-out;
-		width: (@size-width-card / 2);
-	}
-	&.ng-hide-add .panel-heading {
-		background-color: yellow !important;
-	}
-	&.ng-hide-add-active .panel-heading {
-		background-color: red !important;
-	}
-	&.ng-hide-remove .panel-heading {
-		background-color: green !important;
-	}
-	&.ng-hide-remove-active .panel-heading {
-		background-color: black !important;
+		transition: 0.25s ease-in-out;
+		width: (@size-width-card * 0.75);
 	}
 
 	// Colour theming
@@ -83,7 +71,7 @@
 	.landmark-card {
 		.shadow-box-hud();
 		position: relative;
-		overflow: hidden;
+		// overflow: hidden;
 		border: none;
 		border-radius: @panel-border-radius;
 		background-color: none;
@@ -110,6 +98,15 @@
 		.thumbnail {
 			margin: 1px;
 			border: none;
+			position: relative;
+
+			// Popup on hover
+			.landmark-card-popup {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
 		}
 		.resource {
 			&:first-child {
@@ -137,3 +134,20 @@
 		}
 	}
 }
+
+// Stacked card positioning by index
+@supportedCards: 30;
+.loopingClass (@index) when (@index > -1) {
+	(~".stacked-card-@{index}.ng-hide") {
+		left: (-10px * @index);
+		margin-top: (-5px * @index);
+		z-index: (@supportedCards + 1 - @index);
+	}
+	// next iteration
+	.loopingClass(@index - 1);
+}
+// end the loop when index is less than 0
+.loopingClass (-1) {}
+// "call" the loopingClass the first time with highest value
+.loopingClass (@supportedCards);
+

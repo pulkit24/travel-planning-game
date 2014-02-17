@@ -7,21 +7,22 @@
 	height: @size-height-HUD;
 	background-color: @color-title;
 	color: white;
+
 	h1 {
 		margin: 0;
-		padding: 0;
+		padding: 0 20px;
 		white-space: nowrap;
 		line-height: @size-height-HUD;
-		animation: flight-schedule-marquee 4s linear infinite;
-	}
-}
 
-@keyframes flight-schedule-marquee {
-	from {
-		margin-left: @size-width-game;
-	}
-	to {
-		margin-left: (-1 * @size-width-game) / 2;
+		&.banner {
+			animation: flight-schedule-marquee 4s linear infinite;
+
+			@keyframes flight-schedule-marquee {
+				from { margin-left: @size-width-game; }
+				to { margin-left: (-1 * @size-width-game) / 2; }
+			}
+		}
+
 	}
 }
 
@@ -58,6 +59,10 @@
 	width: @size-width-sidebar;
 	height: 100%;
 	background-color: @color-light;
+
+	&.top-gap {
+		top: @size-height-HUD;
+	}
 
 	h2, p {
 		padding: 0 10px;

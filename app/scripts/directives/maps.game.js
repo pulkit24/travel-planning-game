@@ -177,6 +177,8 @@ angular.module('travelPlanningGame.maps')
 					point.resources.set(resources.categories.SHOPPING, resources.types.MONEY, 0);
 					point.resources.set(resources.categories.DISCOVERY, resources.types.XP, 0);
 
+					point.isVisited = function() { return true; };
+
 					// Create a single-member collection of points for this selected starting point
 					$scope.points = [point];
 

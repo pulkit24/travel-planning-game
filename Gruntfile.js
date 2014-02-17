@@ -31,6 +31,7 @@ module.exports = function(grunt) {
 					'app/vendor/bower_components/angular-animate/angular-animate.min.js',
 					'app/vendor/bower_components/angular-underscore/angular-underscore.js',
 					'app/vendor/bower_components/AngularGM/angular-gm.min.js',
+					'app/vendor/highcharts-ng/highcharts-ng.min.js',
 					'app/vendor/angular-rome2rio/angular-rome2rio.min.js',
 					'app/vendor/state-tracker/state-tracker.min.js'
 				]

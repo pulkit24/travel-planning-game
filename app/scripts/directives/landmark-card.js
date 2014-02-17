@@ -19,7 +19,7 @@ angular.module('travelPlanningGame.app')
 					if($scope.landmark && $scope.isVisited())
 						return $scope.landmark.image;
 					else
-						return 'app/images/landmarks/anz_icon_card_unknown.png';
+						return $scope.landmark.imageDefault;
 				};
 
 				$scope.getSouvenirImage = function() {

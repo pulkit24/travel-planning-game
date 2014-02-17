@@ -36,6 +36,27 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '			</div>\n' +
     '			<div class="thumbnail resource text-center">\n' +
     '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
+    '\n' +
+    '				<!-- Item hover pop up -->\n' +
+    '				<div class="landmark-card-popup">\n' +
+    '					<div class="souvenir picture">\n' +
+    '						<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />\n' +
+    '					</div>\n' +
+    '					<div class="souvenir info">\n' +
+    '						<h4> {{ landmark.shopping.name }}</h4>\n' +
+    '						<div class="souvenir cost">\n' +
+    '							<i class="fa fa-dollar"></i>\n' +
+    '							{{ landmark.shopping.cost }}\n' +
+    '						</div>\n' +
+    '						<div class="souvenir gains">\n' +
+    '							<i class="fa fa-shopping-cart"></i>\n' +
+    '							{{ landmark.shopping.souvenirs }}\n' +
+    '						</div>\n' +
+    '					</div>\n' +
+    '					<div class="clearfix"></div>\n' +
+    '				</div>\n' +
+    '				<!-- end pop up -->\n' +
+    '\n' +
     '			</div>\n' +
     '		</div>\n' +
     '	</div>\n' +
@@ -242,7 +263,7 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '		<img ng-switch-when="SOUVENIR" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
     '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
-    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'sink\'">\n' +
+    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'rise\'">\n' +
     '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
     '	</span>\n' +
     '</div>\n' +

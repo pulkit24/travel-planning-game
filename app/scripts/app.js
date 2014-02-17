@@ -2,7 +2,7 @@
 
 angular.module('travelPlanningGame.app', [
 	'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'angular-underscore',
-	'angular-rome2rio', 'state-tracker', 'travelPlanningGame.maps', 'travelPlanningGame.widgets',
+	'highcharts-ng', 'angular-rome2rio', 'state-tracker', 'travelPlanningGame.maps', 'travelPlanningGame.widgets',
 	'travelPlanningGame.templates'
 ])
 	.config(function($routeProvider, rome2rioProvider) {

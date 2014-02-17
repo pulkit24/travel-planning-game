@@ -1,29 +1,33 @@
 .btn {
 	&.btn-action {
 		.shadow-box-hud();
-		border-color: @color-alert;
+		.button-color(@color-alert);
 		border-radius: 0;
-		background-color: @color-alert;
-		color: white;
+		transition: 0.25s;
 	}
 
-	&.btn-cancel {
-
-	}
+	&[disabled] { .button-color(@color-background); }
 
 	.morning & {
-		border-color: @color-morning;
-		background-color: @color-morning;
-		color: white;
+		.button-color(@color-morning);
+		&[disabled] { .button-color(@color-background); }
 	}
 	.afternoon & {
-		border-color: @color-afternoon;
-		background-color: @color-afternoon;
-		color: white;
+		.button-color(@color-afternoon);
+		&[disabled] { .button-color(@color-background); }
 	}
 	.evening & {
-		border-color: @color-evening;
-		background-color: @color-evening;
+		.button-color(@color-evening);
+		&[disabled] { .button-color(@color-background); }
+	}
+
+	.button-color(@color) {
+		background-color: @color;
+		border-color: @color;
 		color: white;
+
+		&:hover {
+			border-top: 4px solid darken(@color, 15%);
+		}
 	}
 }

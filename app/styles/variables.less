@@ -5,7 +5,7 @@
 ////////////////
 
 @size-width-game: 800px;
-@size-width-sidebar: 30%;
+@size-width-sidebar: (0.3 * @size-width-game);
 @size-width-card: 400px;
 
 @size-height-game: ((@size-width-game * 3) / 4);
@@ -87,13 +87,13 @@
 .shadow-text-hud { .shadow-text-heavy-down(); }
 
 .glass {
-	@glassColor: #fff;
+	@glassColor: #000;
 	@shadowColor: #000;
-	border: 1px solid fadeout(@glassColor, 75%);
-	background-color: darken(@glassColor, 5%);
-	background-color: fadeout(@glassColor, 75%);
-	box-shadow: 1px 1px 3px fadeout(@shadowColor, 95%);
+	// border: 1px solid fadeout(@glassColor, 50%);
+	background-color: lighten(@glassColor, 5%);
+	background-color: fadeout(@glassColor, 25%);
+	box-shadow: 1px 1px 3px fadeout(@shadowColor, 25%);
 
 	color: #fff;
-	text-shadow: 1px 1px 3px fadeout(@shadowColor, 50%);
+	// text-shadow: 1px 1px 3px fadeout(@shadowColor, 50%);
 }

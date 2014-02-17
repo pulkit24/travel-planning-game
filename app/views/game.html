@@ -13,7 +13,7 @@
 <div ng-if="current.state.isMenu()">
 
 	<!-- Sidebar for more settings -->
-	<div class="layer sidebar">
+	<div class="layer sidebar top-gap">
 		<div accordion close-others="'true'">
 
 			<!-- Initial configuration -->
@@ -63,7 +63,7 @@
 
 	<!-- Selected destination -->
 	<div class="layer menu-top-bar">
-		<h1>Destination: {{ current.location.name }}</h1>
+		<h1 class="banner">Destination: {{ current.location.name }}</h1>
 	</div>
 	<!-- end selected destination -->
 
@@ -102,13 +102,13 @@
 		landmark="landmark"
 		ng-show="(locations.selected.id === landmark.id) && (map.options.selectable === 'location')"
 		class="layer"
-		ng-class="getTimeOfDay()">
+		ng-class="[getTimeOfDay(), 'stacked-card-' + $index]">
 	</div>
 	<!-- end landmark card -->
 
 	<!-- Landmark view -->
 	<div landmark-view landmark="current.location"
-		ng-if="false && current.location && turnState.isActive()">
+		ng-if="current.location && turnState.isActive()">
 	</div>
 
 	<!-- Resource indicators -->
@@ -221,6 +221,14 @@
 	</div>
 	<!-- end end-turn button -->
 
+	<!-- Menu button -->
+<!-- 	<div class="layer button-prev" ng-class="getTimeOfDay()">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
+			Quit
+		</button>
+	</div>
+ -->	<!-- end menu button -->
+
 	<!-- Random event card -->
 	<div ng-show="randomEvent">
 		<div random-event-card random-event="randomEvent" class="layer overlay"></div>
@@ -247,10 +255,128 @@
 <!-- Stats page at the end -->
 <div ng-if="current.state.isStats()">
 
-	<div class="layer overlay stat-screen">
-
-
-
+	<!-- Chart -->
+	<div class="layer overlay stats-chart">
+		<highchart id="resultsChart" config="chartConfig"></highchart>
 	</div>
+	<!-- end chart -->
 
+	<!-- Score computation -->
+	<div class="layer sidebar top-gap text-right">
+		<h2>Base Score:</h2>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.MONEY
+				) | currency }}
+			x 200</p>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.XP
+			) | number }}
+			x 400</p>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.SOUVENIR
+			) | number }}
+			x 400</p>
+		<p class="total">
+			{{ ( resources.get(
+					resources.categories.ALL
+					, resources.types.MONEY
+				) * 200
+			) + ( resources.get(
+					resources.categories.ALL
+					, resources.types.XP
+				) * 400
+			) + ( resources.get(
+					resources.categories.ALL
+					, resources.types.SOUVENIR
+				) * 400
+			) | number }}
+		</p>
+	</div>
+	<!-- end settings sidebar -->
+
+	<!-- Restart game button -->
+	<div class="layer button-prev">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
+			Play again
+		</button>
+	</div>
+	<!-- end restart button -->
+
+	<!-- Selected destination -->
+	<div class="layer menu-top-bar">
+		<h1>Results</h1>
+	</div>
+	<!-- end selected destination -->
+
+</div>
+<!-- end stats page -->
+
+<!-- Traveller's Journal page -->
+<div class="layer" ng-if="showJournal">
+
+	<!-- Chart -->
+	<div class="layer overlay stats-chart">
+		<highchart id="resultsChart" config="chartConfig"></highchart>
+	</div>
+	<!-- end chart -->
+
+	<!-- Score computation -->
+	<div class="layer sidebar top-gap text-right">
+		<h2>Base Score:</h2>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.MONEY
+				) | currency }}
+			x 200</p>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.XP
+			) | number }}
+			x 400</p>
+		<p>+ {{ resources.get(
+				resources.categories.ALL
+				, resources.types.SOUVENIR
+			) | number }}
+			x 400</p>
+		<p class="total">
+			{{ ( resources.get(
+					resources.categories.ALL
+					, resources.types.MONEY
+				) * 200
+			) + ( resources.get(
+					resources.categories.ALL
+					, resources.types.XP
+				) * 400
+			) + ( resources.get(
+					resources.categories.ALL
+					, resources.types.SOUVENIR
+				) * 400
+			) | number }}
+		</p>
+	</div>
+	<!-- end settings sidebar -->
+
+	<!-- Restart game button -->
+	<div class="layer button-prev">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
+			Play again
+		</button>
+	</div>
+	<!-- end restart button -->
+
+	<!-- Selected destination -->
+	<div class="layer menu-top-bar">
+		<h1>Results</h1>
+	</div>
+	<!-- end selected destination -->
+
+</div>
+<!-- end stats page -->
+
+<!-- debug/test -->
+<div class="layer">
+	<button type="button" class="btn btn-default" ng-click="showJournal = !showJournal">Test</button>
 </div>

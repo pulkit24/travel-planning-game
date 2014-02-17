@@ -31,6 +31,27 @@
 			</div>
 			<div class="thumbnail resource text-center">
 				<img ng-src="{{ getSouvenirImage() }}" />
+
+				<!-- Item hover pop up -->
+				<div class="landmark-card-popup">
+					<div class="souvenir picture">
+						<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />
+					</div>
+					<div class="souvenir info">
+						<h4> {{ landmark.shopping.name }}</h4>
+						<div class="souvenir cost">
+							<i class="fa fa-dollar"></i>
+							{{ landmark.shopping.cost }}
+						</div>
+						<div class="souvenir gains">
+							<i class="fa fa-shopping-cart"></i>
+							{{ landmark.shopping.souvenirs }}
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<!-- end pop up -->
+
 			</div>
 		</div>
 	</div>

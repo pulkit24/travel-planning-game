@@ -58,11 +58,9 @@
 
 .glass {
   color: #fff;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  background-color: #f2f2f2;
-  background-color: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.050000000000000044);
+  background-color: #0d0d0d;
+  background-color: rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
 }
 
 body {
@@ -96,6 +94,12 @@ body {
   text-shadow: none;
 }
 
+.stats-chart {
+  top: 75px;
+  width: 560px;
+  height: 525px;
+}
+
 /* Loading screen */
 
 .loading-screen {
@@ -115,10 +119,13 @@ body {
 }
 
 .menu-top-bar h1 {
-  padding: 0;
+  padding: 0 20px;
   margin: 0;
   line-height: 75px;
   white-space: nowrap;
+}
+
+.menu-top-bar h1.banner {
   -webkit-animation: flight-schedule-marquee 4s linear infinite;
   animation: flight-schedule-marquee 4s linear infinite;
 }
@@ -144,7 +151,7 @@ body {
 .button-next {
   right: 0;
   bottom: 0;
-  width: 30%;
+  width: 240px;
 }
 
 .button-next .btn {
@@ -154,7 +161,7 @@ body {
 .button-prev {
   bottom: 0;
   left: 0;
-  width: 30%;
+  width: 240px;
 }
 
 .button-prev .btn {
@@ -163,10 +170,14 @@ body {
 
 .sidebar {
   right: 0;
-  width: 30%;
+  width: 240px;
   height: 100%;
   background-color: #f4fce8;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar.top-gap {
+  top: 75px;
 }
 
 .sidebar h2,
@@ -280,6 +291,22 @@ body {
   border-color: #428bca;
   border-radius: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+}
+
+.btn.btn-action:hover {
+  border-top: 4px solid #2a6496;
+}
+
+.btn[disabled] {
+  color: white;
+  background-color: #777777;
+  border-color: #777777;
+}
+
+.btn[disabled]:hover {
+  border-top: 4px solid #515151;
 }
 
 .morning .btn {
@@ -288,16 +315,58 @@ body {
   border-color: #26affc;
 }
 
+.morning .btn:hover {
+  border-top: 4px solid #0388d3;
+}
+
+.morning .btn[disabled] {
+  color: white;
+  background-color: #777777;
+  border-color: #777777;
+}
+
+.morning .btn[disabled]:hover {
+  border-top: 4px solid #515151;
+}
+
 .afternoon .btn {
   color: white;
   background-color: #f69125;
   border-color: #f69125;
 }
 
+.afternoon .btn:hover {
+  border-top: 4px solid #c66a08;
+}
+
+.afternoon .btn[disabled] {
+  color: white;
+  background-color: #777777;
+  border-color: #777777;
+}
+
+.afternoon .btn[disabled]:hover {
+  border-top: 4px solid #515151;
+}
+
 .evening .btn {
   color: white;
   background-color: #2a304e;
   border-color: #2a304e;
+}
+
+.evening .btn:hover {
+  border-top: 4px solid #0f111c;
+}
+
+.evening .btn[disabled] {
+  color: white;
+  background-color: #777777;
+  border-color: #777777;
+}
+
+.evening .btn[disabled]:hover {
+  border-top: 4px solid #515151;
 }
 
 /* entire container, keeps perspective */
@@ -669,34 +738,20 @@ body {
   left: 5%;
   width: 400px;
   zoom: 0.85;
-  -webkit-transition: 4s ease-in-out;
-  transition: 4s ease-in-out;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
 }
 
 [landmark-card].ng-hide {
-  top: 700px;
+  top: 711px;
   left: 4px;
   display: block !important;
-  width: 200px;
+  width: 300px;
   -webkit-transform: rotateY(180deg);
   -ms-transform: rotateY(180deg);
   transform: rotateY(180deg);
-}
-
-[landmark-card].ng-hide-add .panel-heading {
-  background-color: yellow !important;
-}
-
-[landmark-card].ng-hide-add-active .panel-heading {
-  background-color: red !important;
-}
-
-[landmark-card].ng-hide-remove .panel-heading {
-  background-color: green !important;
-}
-
-[landmark-card].ng-hide-remove-active .panel-heading {
-  background-color: black !important;
+  -webkit-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
 }
 
 [landmark-card] .panel {
@@ -753,7 +808,6 @@ body {
 
 [landmark-card] .landmark-card {
   position: relative;
-  overflow: hidden;
   background-color: none;
   border: none;
   border-radius: 4px;
@@ -791,8 +845,15 @@ body {
 }
 
 [landmark-card] .landmark-card .thumbnail {
+  position: relative;
   margin: 1px;
   border: none;
+}
+
+[landmark-card] .landmark-card .thumbnail .landmark-card-popup {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 [landmark-card] .landmark-card .resource:first-child {
@@ -833,6 +894,192 @@ body {
     color: gold;
     text-shadow: 0 0 5px orange;
   }
+}
+
+.stacked-card-30.ng-hide {
+  left: -300px;
+  z-index: 1;
+  margin-top: -150px;
+}
+
+.stacked-card-29.ng-hide {
+  left: -290px;
+  z-index: 2;
+  margin-top: -145px;
+}
+
+.stacked-card-28.ng-hide {
+  left: -280px;
+  z-index: 3;
+  margin-top: -140px;
+}
+
+.stacked-card-27.ng-hide {
+  left: -270px;
+  z-index: 4;
+  margin-top: -135px;
+}
+
+.stacked-card-26.ng-hide {
+  left: -260px;
+  z-index: 5;
+  margin-top: -130px;
+}
+
+.stacked-card-25.ng-hide {
+  left: -250px;
+  z-index: 6;
+  margin-top: -125px;
+}
+
+.stacked-card-24.ng-hide {
+  left: -240px;
+  z-index: 7;
+  margin-top: -120px;
+}
+
+.stacked-card-23.ng-hide {
+  left: -230px;
+  z-index: 8;
+  margin-top: -115px;
+}
+
+.stacked-card-22.ng-hide {
+  left: -220px;
+  z-index: 9;
+  margin-top: -110px;
+}
+
+.stacked-card-21.ng-hide {
+  left: -210px;
+  z-index: 10;
+  margin-top: -105px;
+}
+
+.stacked-card-20.ng-hide {
+  left: -200px;
+  z-index: 11;
+  margin-top: -100px;
+}
+
+.stacked-card-19.ng-hide {
+  left: -190px;
+  z-index: 12;
+  margin-top: -95px;
+}
+
+.stacked-card-18.ng-hide {
+  left: -180px;
+  z-index: 13;
+  margin-top: -90px;
+}
+
+.stacked-card-17.ng-hide {
+  left: -170px;
+  z-index: 14;
+  margin-top: -85px;
+}
+
+.stacked-card-16.ng-hide {
+  left: -160px;
+  z-index: 15;
+  margin-top: -80px;
+}
+
+.stacked-card-15.ng-hide {
+  left: -150px;
+  z-index: 16;
+  margin-top: -75px;
+}
+
+.stacked-card-14.ng-hide {
+  left: -140px;
+  z-index: 17;
+  margin-top: -70px;
+}
+
+.stacked-card-13.ng-hide {
+  left: -130px;
+  z-index: 18;
+  margin-top: -65px;
+}
+
+.stacked-card-12.ng-hide {
+  left: -120px;
+  z-index: 19;
+  margin-top: -60px;
+}
+
+.stacked-card-11.ng-hide {
+  left: -110px;
+  z-index: 20;
+  margin-top: -55px;
+}
+
+.stacked-card-10.ng-hide {
+  left: -100px;
+  z-index: 21;
+  margin-top: -50px;
+}
+
+.stacked-card-9.ng-hide {
+  left: -90px;
+  z-index: 22;
+  margin-top: -45px;
+}
+
+.stacked-card-8.ng-hide {
+  left: -80px;
+  z-index: 23;
+  margin-top: -40px;
+}
+
+.stacked-card-7.ng-hide {
+  left: -70px;
+  z-index: 24;
+  margin-top: -35px;
+}
+
+.stacked-card-6.ng-hide {
+  left: -60px;
+  z-index: 25;
+  margin-top: -30px;
+}
+
+.stacked-card-5.ng-hide {
+  left: -50px;
+  z-index: 26;
+  margin-top: -25px;
+}
+
+.stacked-card-4.ng-hide {
+  left: -40px;
+  z-index: 27;
+  margin-top: -20px;
+}
+
+.stacked-card-3.ng-hide {
+  left: -30px;
+  z-index: 28;
+  margin-top: -15px;
+}
+
+.stacked-card-2.ng-hide {
+  left: -20px;
+  z-index: 29;
+  margin-top: -10px;
+}
+
+.stacked-card-1.ng-hide {
+  left: -10px;
+  z-index: 30;
+  margin-top: -5px;
+}
+
+.stacked-card-0.ng-hide {
+  left: 0;
+  z-index: 31;
+  margin-top: 0;
 }
 
 [random-event-card] {
@@ -974,13 +1221,11 @@ body {
 
 [landmark-view] .landmark-view .landmark-view-description {
   bottom: 25%;
-  width: 60%;
+  width: 540px;
   padding: 20px;
   color: #fff;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  background-color: #f2f2f2;
-  background-color: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: #0d0d0d;
+  background-color: rgba(0, 0, 0, 0.75);
   border-left: 0;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.050000000000000044);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
 }
