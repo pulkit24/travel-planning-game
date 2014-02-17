@@ -12,14 +12,16 @@
 		gm-id="object.id"
 		gm-marker-options="getMarkerOptions(object)"
 		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
-		gm-on-click="selectLocation(object, marker)">
+		gm-on-click="selectLocation(object, marker)"
+		gm-on-mouseover="showLabel(object, marker)">
 	</div>
 	<div gm-markers
 		gm-objects="points"
 		gm-id="object.id"
 		gm-marker-options="getMarkerOptions(object)"
 		gm-position="{lat: object.coords.lat, lng: object.coords.lng}"
-		gm-on-click="selectLocation(object, marker)">
+		gm-on-click="selectLocation(object, marker)"
+		gm-on-mouseover="showLabel(object, marker)">
 	</div>
 	<div id="map-infoWindow-markerLabel-sample">
 		<div>

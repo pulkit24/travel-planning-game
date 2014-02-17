@@ -14,8 +14,8 @@
 	<meta name="viewport" content="width=device-width">
 
 	
-	<link rel="stylesheet" href="dist/vendor.min.css?20140217185437">
-	<link rel="stylesheet" href="dist/local.min.css?20140217185437">
+	<link rel="stylesheet" href="dist/vendor.min.css?20140218100922">
+	<link rel="stylesheet" href="dist/local.min.css?20140218100922">
 	
 </head>
 
@@ -25,23 +25,38 @@
     <![endif]-->
 
     <!-- Left gutter -->
-    <!-- Map style switcher -->
-    <div class="layer panel panel-success hide">
-    	<div class="panel-heading">Map styles</div>
-		<ul class="list-group">
-			<li class="list-group-item list-item">
-				<strong>Select existing:</strong>
-		    	<select class="form-control" ng-model="selectedMapStyles" ng-options="name as name for (name, style) in mapStyles">
-		    		<option value="">(Custom)</option>
-		    	</select>
-		    </li>
-			<li class="list-group-item list-item">
-				<strong>Or, supply your own styles:</strong><br/>
-				<strong class="text-danger" ng-if="!isCustomStyleValid">Invalid styles (syntax error)</strong>
-		    	<textarea class="form-control" rows="15" ng-model="customMapStyles"></textarea>
-			</li>
-		</ul>
-    </div>
+    <div class="layer" ng-cloak>
+	    <button class="btn btn-default btn-xs" ng-click="experiments.disabled = !experiments.disabled">Experiments</button>
+	    <div collapse="experiments.disabled">
+		    <!-- Map style switcher -->
+		    <div class="panel panel-primary">
+		    	<div class="panel-heading" ng-click="experiments.disabledMapStyles = !experiments.disabledMapStyles">Map styles</div>
+				<ul class="list-group" collapse="experiments.disabledMapStyles">
+					<li class="list-group-item list-item">
+						<strong>Select existing:</strong>
+				    	<select class="form-control" ng-model="experiments.selectedMapStyles" ng-options="name as name for (name, style) in mapStyles">
+				    		<option value="">(Custom)</option>
+				    	</select>
+				    </li>
+					<li class="list-group-item list-item">
+						<strong>Or, supply your own styles:</strong><br/>
+						<strong class="text-danger" ng-if="!experiments.isCustomStyleValid">Invalid styles (syntax error)</strong>
+				    	<textarea class="form-control" rows="15" ng-model="experiments.customMapStyles"></textarea>
+					</li>
+				</ul>
+		    </div>
+		    <!-- Game screen switcher -->
+		    <div class="panel panel-primary">
+		    	<div class="panel-heading" ng-click="experiments.disabledScreenSwitcher = !experiments.disabledScreenSwitcher">Screens</div>
+				<div class="panel-body" collapse="experiments.disabledScreenSwitcher">
+					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('menu')">Menu</button>
+					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('game')">Game</button>
+					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('results')">Results</button>
+					<!-- <button type="button" class="btn btn-default" ng-click="showJournal = !showJournal">Test</button> -->
+				</div>
+		    </div>
+		</div>
+	</div>
 
     <!-- Game content -->
 	<div class="game-container" ng-view=""></div>
@@ -56,8 +71,8 @@
 	<script src="http://code.highcharts.com/highcharts.js"></script>
 
 	
-	<script src="dist/vendor.min.js?20140217185437"></script>
-	<script src="dist/local.min.js?20140217185437"></script>
+	<script src="dist/vendor.min.js?20140218100922"></script>
+	<script src="dist/local.min.js?20140218100922"></script>
 	
 </body>
 

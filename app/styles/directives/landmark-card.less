@@ -7,12 +7,12 @@
 
 	// Animations
 	&.ng-hide {
-		display: block !important;
-		top: (@size-height-game + 111);
+		top: (@size-height-game + 142);
 		left: @panel-border-radius;
-		transform: rotateY(180deg);
-		transition: 0.25s ease-in-out;
+		display: block !important;
 		width: (@size-width-card * 0.75);
+		transition: 0.25s ease-in-out;
+		transform: rotateY(180deg);
 	}
 
 	// Colour theming
@@ -71,10 +71,10 @@
 	.landmark-card {
 		.shadow-box-hud();
 		position: relative;
-		// overflow: hidden;
-		border: none;
 		border-radius: @panel-border-radius;
 		background-color: none;
+		// overflow: hidden;
+		border: none;
 
 		h1, h2, h3, h4, h5, h6 {
 			margin:0;
@@ -89,34 +89,116 @@
 			background-color: #777;
 			&.active {
 				color: orange;
-				animation: landmark-card-text-highlight 2s ease-in-out infinite;
+				animation: landmark-card-text-highlight 1s ease-in-out infinite;
 			}
 			&.inactive {
 				color: #444;
 			}
 		}
 		.thumbnail {
+			position: relative;
 			margin: 1px;
 			border: none;
-			position: relative;
 
 			// Popup on hover
 			.landmark-card-popup {
+				.shadow-box-hud();
 				position: absolute;
 				top: 0;
-				left: 0;
+				left: 120%;
+				display: none;
+				width: 400px;
+
+				&.panel {
+					@popupColor: rgb(226, 208, 158);
+
+					border-color: @popupColor;
+
+					.panel-heading {
+						position: relative;
+						background-color: @popupColor;
+						border: none;
+
+						&:after, &:before {
+							position: absolute;
+							top: 50%;
+							right: 100%;
+							width: 0;
+							height: 0;
+							border: solid transparent;
+							content: " ";
+							pointer-events: none;
+						}
+
+						&:after {
+							margin-top: -20px;
+							border-width: 20px;
+							border-color: transparent;
+							border-right-color: @popupColor;
+						}
+						&:before {
+							margin-top: -26px;
+							border-width: 26px;
+							border-color: transparent;
+							border-right-color: @popupColor;
+						}
+					}
+				}
+
+
+				.souvenir {
+					float: left;
+					text-align: center;
+
+					&.picture {
+						padding: 0 3% 0;
+						width: 35%;
+
+						img {
+							vertical-align: bottom;
+						}
+					}
+
+					&.info {
+						width: 59%;
+
+						h4 {
+							margin: 0;
+						}
+
+						.cost, .gains {
+							width: 49%;
+							font-size: 1.6em;
+						}
+
+						.cost {
+							color: @color-money;
+						}
+
+						.gains {
+							color: @color-souvenirs;
+						}
+					}
+				}
+			}
+
+			&:hover .landmark-card-popup {
+				display: block;
 			}
 
 		}
 		.resource {
-			&:first-child {
-				background-color: @color-lodging;
+			&.resource-money {
+				// background-color: @color-lodging;
+				background-color: tint(@color-money, 50%);
 			}
-			&:first-child+& {
-				background-color: @color-visiting;
+			&.resource-xp {
+				// background-color: @color-visiting;
+				background-color: tint(@color-xp, 50%);
 			}
-			&:last-child {
-				background-color: @color-shopping;
+			&.resource-souvenirs {
+				// background-color: @color-shopping;
+				background-color: tint(@color-souvenirs, 50%);
 			}
 			.close {
 				color: white;
@@ -138,16 +220,16 @@
 // Stacked card positioning by index
 @supportedCards: 30;
 .loopingClass (@index) when (@index > -1) {
-	(~".stacked-card-@{index}.ng-hide") {
-		left: (-10px * @index);
-		margin-top: (-5px * @index);
-		z-index: (@supportedCards + 1 - @index);
-	}
 	// next iteration
 	.loopingClass(@index - 1);
+	(~".stacked-card-@{index}.ng-hide") {
+		left: (-10px * @index);
+		z-index: (@supportedCards + 1 - @index);
+		margin-top: (-5px * @index);
+	}
 }
 // end the loop when index is less than 0
-.loopingClass (-1) {}
+.loopingClass (-1) { }
 // "call" the loopingClass the first time with highest value
 .loopingClass (@supportedCards);
 

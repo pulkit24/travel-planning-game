@@ -1,7 +1,7 @@
 [{
 	"name": "Casino Sentosa"
 	, "address": "8 Sentosa Gateway, Singapore 098269"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "description": "Government regulations also require Singapore citizens and permanent residents to purchase a S$100 day pass or S$2000 yearly membership for access into the casino. Singaporean patrons can enter/leave the casino freely as long as their levy has not expired. Both types of entry levy allow the patron to visit to only one casino. Overseas citizens can also enter and leave free of charge with their passports or employment passes. The Casino Levy money is collected by the Singapore Totalisator Board controlled by the Government, and is used for public and charity causes. The Casino does not keep any part of the levy money."
 	, "image": "images/landmarks/casino_sentosa.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 400
@@ -9,7 +9,7 @@
 	, "visitingExp": 20
 	, "shopping": {
 		"name": "Singapore Sling"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "The famous Singapore sling was first created by Ngiam Tong Boon, a Hainanese bartender working at the Long Bar in Raffles Hotel Singapore. Yes, it is supposed to be a tall drink. But we couldn't fit the icon inside the box, so you'll have to do with a short one instead."
 		, "image": "images/items/anz_icon_singapore_sling.png"
 		, "souvenirs": 5
 		, "cost": 45
@@ -32,7 +32,7 @@
 }, {
 	"name": "Ubin Island"
 	, "address": "Pulau Ubin, Singapore"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "description": "The name Pulau Ubin literally means \"Granite Island\" in Malay, which explains the many abandoned granite quarries there. Pulau means \"island\", and Ubin is said to be a Javanese term for \"squared stone\". To the Malays, the island is also known as Pulau Batu Ubin, or \"Granite Stone Island\". The rocks on the island were used to make floor tiles in the past and were called Jubin, which was then shortened to Ubin."
 	, "image": "images/landmarks/ubin_island.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
 	, "lodgingCost": 150
@@ -40,7 +40,7 @@
 	, "visitingExp": 10
 	, "shopping": {
 		"name": "Sambal Stingray"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "Originally considered a cheap and unpopular food, stingrays found their claim to fame after some adventurous chef decided to try barbequeing the fish. Served with the nutty, spicy, Sambal paste, the Sambal Stingray is a highly recommended dish for all seafood aficionados."
 		, "image": "images/items/anz_icon_stingray.png"
 		, "souvenirs": 3
 		, "cost": 25
@@ -62,8 +62,8 @@
 	}]
 }, {
 	"name": "Marina Bay"
-	, "address": "10 Bayfront Ave, Singapore 018956"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "address": "18 Marina Gardens Dr, Singapore 018953"
+	, "description": "In 1970s, land reclamation was carried out at Marina Bay, forming what is today the Marina Centre and Marina South areas. In the reclamation process, Telok Ayer Basin and Inner Roads was removed from the map by reclaiming land, while the Singapore River's mouth now flows into the bay instead of directly into the sea. In 2008, Marina Barrage was built, asin into a new downtown freshwater Marina Reservoir, providing water supply, flood control and a new lifestyle attraction."
 	, "image": "images/landmarks/marina_bay.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 250
@@ -71,7 +71,7 @@
 	, "visitingExp": 15
 	, "shopping": {
 		"name": "Golden Orchid Brooch"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "Vanda 'Miss Joaquim' also known as the Singapore Orchid and the Princess Aloha Orchid is a hybrid orchid cultivar that is Singapore's national flower. For her resilence and year round blooming quality, she was chosen on 15 April 1981 to represent Singapore's uniqueness and hybrid culture."
 		, "image": "images/items/anz_icon_golden_orchid.png"
 		, "souvenirs": 15
 		, "cost": 80
@@ -94,15 +94,15 @@
 }, {
 	"name": "Bukit Batok Nature Park"
 	, "address": "Bukit Batok Nature Park, Singapore"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "description": "During World War II, the Lorong Sesuai site, which is located within the park, was selected by the Japanese as a memorial for the soldiers who died. The two pillars and 120 concrete steps leading to a transmission tower are the only remains. The significance and meaning of the location is conveyed to visitors via a memorial plaque that lies at the foot of the stairs. The park was later developed on an abandoned quarry site in 1988."
 	, "image": "images/landmarks/bukit_batok.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
 	, "lodgingCost": 100
 	, "visitingCost": 20
 	, "visitingExp": 5
 	, "shopping": {
-		"name": "Merlion Doll"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		"name": "Merlion Plushie"
+		, "description": "What's half-fish half-lion? You might be tempted to say \"lionfish\", but the national symbol of Singapore begs to differ. With It's adorable googly eyes and tiny little flippers, this doll is a must have for any serious plushie enthusiast."
 		, "image": "images/items/anz_icon_merlion_plush.png"
 		, "souvenirs": 7
 		, "cost": 50
@@ -124,8 +124,8 @@
 	}]
 }, {
 	"name": "Telok Ayer Market"
-	, "address": "18 Raffles Quay, Singapore 048582"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "address": "Tanjong Pagar Terminal Road B, Singapore"
+	, "description": "In the early nineteenth century, Telok Ayer Market was a simple wooden building, located on piles just over the waters of Telok Ayer Bay and hence the market's name. The Malay name Telok Ayer means \"water bay\" as the coastal road Telok Ayer Street lies alongside the bay. Because of its Victorian iron structure, the market is referred to in Malay as pasar besi (market of iron)."
 	, "image": "images/landmarks/telok_ayer.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 250
@@ -133,7 +133,7 @@
 	, "visitingExp": 5
 	, "shopping": {
 		"name": "Kueh Tutu"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "Pronounced \"Kway-tutu\", Kueh Tutu are small rice cakes stuffed with coconut or peanut fillings. Traditionally served on pandan leaves to enhance the flavour, many packaged varieties have begun using plastic sheets instead. For the authentic taste, just head down to your local street vendor for some freshly made Kueh Tutu."
 		, "image": "images/items/anz_icon_kueh_tutu.png"
 		, "souvenirs": 3
 		, "cost": 25
@@ -155,8 +155,8 @@
 	}]
 }, {
 	"name": "Chinatown"
-	, "address": "48 Pagoda St, Singapore City 059207"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "address": "81 Clemenceau Ave, Singapore 239917"
+	, "description": "As the largest ethnic group in Singapore is Chinese, Chinatown is considerably less of an enclave than it once was. However, the district does retain significant historical and cultural significance. Large sections of it have been declared national heritage sites officially designated for conservation by the Urban Redevelopment Authority."
 	, "image": "images/landmarks/chinatown.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
 	, "lodgingCost": 150
@@ -164,12 +164,167 @@
 	, "visitingExp": 5
 	, "shopping": {
 		"name": "Chilli Crab"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "Despite it's name, chilli crab is not very spicy - the dish uses a generous amount of tomato sauce, giving it it's distinct sweet taste. This dish was created in 1956 by the pushcart vendor Cher Yam Tian, who added chilli sauce to the original recipe, which only featured tomato sauce."
 		, "image": "images/items/anz_icon_chilly_crab.png"
 		, "souvenirs": 4
 		, "cost": 35
 	}
 	, "exp": 5
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Jurong Bird Park"
+	, "address": "2 Jurong Hill, Singapore 628925"
+	, "description": "The idea of a permanent bird exhibit was first conceived by late Dr Goh Keng Swee, then Minister for Finance, in 1968. During a World Bank Meeting in Rio de Janeiro, Dr Goh visited its zoological garden and was impressed with its free-flight aviary. Jurong Bird Park is now currently the world's largest bird park in terms of number of birds, and second largest both in number of bird species and land area (after Germany's Weltvogelpark Walsrode). There are 5,000 birds of 380 species in Jurong Bird Park."
+	, "image": "images/landmarks/jurong_bird_park.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
+	, "lodgingCost": 150
+	, "visitingCost": 35
+	, "visitingExp": 10
+	, "shopping": {
+		"name": "Crimson Sunbird Doll"
+		, "description": "The national bird of Singapore, Crimson Sunbirds sound like this: \"chee-cheewee\". This particular representation is a tad plumper than the real thing - a good thing, considering that adult birds average at a miniscule 11cm in length."
+		, "image": "images/items/anz_icon_crimson_sunbird_plush.png"
+		, "souvenirs": 7
+		, "cost": 50
+	}
+	, "exp": 15
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Labrador Nature Reserve"
+	, "address": "Labrador Villa Rd, Singapore"
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "image": "images/landmarks/labrador.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_monument.png"
+	, "lodgingCost": 100
+	, "visitingCost": 20
+	, "visitingExp": 5
+	, "shopping": {
+		"name": "Laksa"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "images/items/anz_icon_laksa.png"
+		, "souvenirs": 2
+		, "cost": 20
+	}
+	, "exp": 15
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Sentosa Island"
+	, "address": "Sentosa Island, Singapore"
+	, "description": "Plans by the Singapore government for Sentosa aims to establish it as one of the world's most luxurious holiday locations, with a SGD$10 billion masterplan for the future involving the construction of private housing at the Sentosa Cove, the aforementioned partial redevelopment of Siloso Beach, and Asia's first tourism academy."
+	, "image": "images/landmarks/sentosa_island.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
+	, "lodgingCost": 400
+	, "visitingCost": 55
+	, "visitingExp": 20
+	, "shopping": {
+		"name": "Merlion Statuette"
+		, "description": "Did you know that there are 5 official Merlion statues in Singapore city? The statue that's in your pocket right now is a direct replica of those guys - unless of course, you didn't buy one of the official, STB-endorsed, Merlion Statuetes. But who would do such a thing?"
+		, "image": "images/items/anz_icon_merlion_plush.png"
+		, "souvenirs": 10
+		, "cost": 65
+	}
+	, "exp": 12
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Singapore Science Centre"
+	, "address": "15 Science Centre Rd, Singapore 609081"
+	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "image": "images/landmarks/science_centre.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_museum.png"
+	, "lodgingCost": 150
+	, "visitingCost": 35
+	, "visitingExp": 10
+	, "shopping": {
+		"name": "Humorous T-Shirt"
+		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "image": "images/items/anz_icon_merlion_plush.png"
+		, "souvenirs": 5
+		, "cost": 30
+	}
+	, "exp": 15
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Sri Mariamman Temple"
+	, "address": "11 Hospital Dr, Singapore 169610"
+	, "description": "The Sri Mariamman Temple was founded in 1827 by Naraina Pillai, eight years after the East India Company established a trading settlement in Singapore. Pillai was a government clerk from Penang who arrived in Singapore with Sir Stamford Raffles on his second visit to the island in May 1819. Pillai went on to set up the island's first construction company, and also entered the textile trade. He rapidly established himself in business and was identified as a leader of the Indian community."
+	, "image": "images/landmarks/sri_mariamman.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_monument.png"
+	, "lodgingCost": 150
+	, "visitingCost": 15
+	, "visitingExp": 3
+	, "shopping": {
+		"name": "Chicken Rice"
+		, "description": "\"Chicken Rice? That sounds awfully generic!\" Fret not; the Hainanese chicken rice belies far more than it's humble name might suggest. Both the chicken and the rice are carefully prepared in seperate broths, creating an oily, flavoursome dish that smells as good as it tastes."
+		, "image": "images/items/anz_icon_chiken_rice.png"
+		, "souvenirs": 2
+		, "cost": 20
+	}
+	, "exp": 25
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"

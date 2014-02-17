@@ -67,14 +67,6 @@
 	</div>
 	<!-- end selected destination -->
 
-	<!-- Loading/splash screen -->
-	<div class="layer overlay loading"
-		state-tracker="menuLoadingState"
-		state-transition="{idle: {complete: 500}}"
-		state-class="['', '', 'hide']">
-		<h1><div loading></div> Loading...</h1>
-	</div>
-
 </div>
 <!-- end menu page -->
 
@@ -100,7 +92,7 @@
 	<div landmark-card
 		ng-repeat="landmark in locations.landmarks"
 		landmark="landmark"
-		ng-show="(locations.selected.id === landmark.id) && (map.options.selectable === 'location')"
+		ng-show="(locations.selected.id === landmark.id) && (map.options.selectable === 'location') && !landmark.isCardClosed"
 		class="layer"
 		ng-class="[getTimeOfDay(), 'stacked-card-' + $index]">
 	</div>
@@ -142,15 +134,16 @@
 				<div class="souvenir info">
 					<h4> {{ current.location.shopping.name }}</h4>
 					<div class="souvenir cost">
-						<i class="fa fa-dollar"></i>
+						<img src="images/icons/anz_icon_ui_money_small.png" height="42" width="42" />
 						{{ current.location.shopping.cost }}
 					</div>
 					<div class="souvenir gains">
-						<i class="fa fa-shopping-cart"></i>
+						<img src="images/icons/anz_icon_ui_shopping_small.png" height="42" width="42" />
 						{{ current.location.shopping.souvenirs }}
 					</div>
 				</div>
 				<div class="clearfix"></div>
+				{{ current.location.shopping.description }}
 
 				<div class="action">
 					<button type="button"
@@ -240,14 +233,6 @@
 		<div upgrade-card upgrade="upgradeUnlocked" class="layer overlay"></div>
 	</div>
 	<!-- end upgrade card -->
-
-	<!-- Loading/splash screen -->
-	<div class="layer overlay loading"
-		state-tracker="playLoadingState"
-		state-transition="{idle: {complete: 2000}}"
-		state-class="['', '', 'hide']">
-		<h1><div loading></div> Loading...</h1>
-	</div>
 
 </div>
 <!-- end play page -->
@@ -376,7 +361,11 @@
 </div>
 <!-- end stats page -->
 
-<!-- debug/test -->
-<div class="layer">
-	<button type="button" class="btn btn-default" ng-click="showJournal = !showJournal">Test</button>
+<!-- Loading/splash screen -->
+<div class="layer overlay loading"
+	state-tracker="loadingState"
+	state-transition="{active: {complete: 500}, complete: {failed: 500}}"
+	state-class="['', 'animated fadeIn animated-fast', 'animated fadeOut', 'hide']">
+	<div loading></div>
 </div>
+

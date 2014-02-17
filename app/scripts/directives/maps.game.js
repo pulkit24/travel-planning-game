@@ -27,7 +27,7 @@ angular.module('travelPlanningGame.maps')
 				});
 
 				function loadMap() {
-					$scope.clearLabels();
+					// $scope.clearLabels();
 
 					// Request Google map to kindly use our preset parameters
 					setMapParameters();
@@ -41,11 +41,14 @@ angular.module('travelPlanningGame.maps')
 							$scope.focus();
 
 							// Refresh the markers being displayed on the map
-							$scope.$broadcast('gmMarkersRedraw');
+							// $scope.$broadcast('gmMarkersRedraw');
 
 							// If last, mark geocoding as complete
-							if (index === $scope.locations.length - 1)
+							if (index === $scope.locations.length - 1) {
+								$scope.$broadcast('gmMarkersUpdate');
+							// $scope.$broadcast('gmMarkersRedraw');
 								stateTracker.new("geocodingState").complete();
+							}
 						});
 					});
 
@@ -106,7 +109,7 @@ angular.module('travelPlanningGame.maps')
 								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
 
 								// Show landmark label
-								$scope.showLabel(location, null, $scope.map);
+								// $scope.showLabel(location, null, $scope.map);
 
 								deferred.resolve();
 							}
@@ -187,13 +190,14 @@ angular.module('travelPlanningGame.maps')
 					$scope.focus(); // focus if needed
 
 					// Show label
-					$scope.showLabel(point, null, $scope.map);
+					// $scope.showLabel(point, null, $scope.map);
 
 					// Update the markers being displayed on the map
 					// Note: because this is a new point selected on the map
 					// that erases any previously-selected point, we need
 					// to force redraw instead of just a notify update (which does a shallow object match)
-					$scope.$broadcast('gmMarkersRedraw');
+					// $scope.$broadcast('gmMarkersRedraw');
+					$scope.$broadcast('gmMarkersUpdate');
 				};
 
 				// Change location as needed
@@ -205,7 +209,7 @@ angular.module('travelPlanningGame.maps')
 					if($scope.selectable === "all") {
 						$timeout(function() {
 							$scope.points = [];
-							$scope.clearLabel('startingPoint');
+							// $scope.clearLabel('startingPoint');
 						}, 0);
 					}
 
@@ -227,18 +231,25 @@ angular.module('travelPlanningGame.maps')
 					}
 
 					// Show label
-					$scope.showLabel(location, null, $scope.map);
+					// $scope.showLabel(location, null, $scope.map);
 
 					// Update the markers being displayed on the map
 					$scope.$broadcast('gmMarkersUpdate');
+
+					// Trigger listeners, if any
+					if($scope.selectable === "location")
+						location.isCardClosed = false;
 				};
 
 				// Construct an info window for the landmark label
-				$scope.infoWindows = {}; // track all info windows
+				// $scope.infoWindows = {}; // track all info windows
+				$scope.infoWindow = null;
 				$scope.clearLabels = function() {
-					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
-						infoWindow.close();
-					});
+					// angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
+					// 	infoWindow.close();
+					// });
+					if($scope.infoWindow)
+						$scope.infoWindow.close();
 				};
 				$scope.clearLabel = function(labelLocationID) {
 					angular.forEach($scope.infoWindows, function(infoWindow, locationID) {
@@ -247,6 +258,9 @@ angular.module('travelPlanningGame.maps')
 					});
 				};
 				$scope.showLabel = function(location, marker, map) {
+					if(!location || !location.coords)
+						return false;
+
 					// Either of map and marker must be provided
 					if (!marker && !map) {
 						return false;
@@ -254,10 +268,13 @@ angular.module('travelPlanningGame.maps')
 
 					// Does an infowindow already exist for this location?
 					var infoWindow;
-					if ($scope.infoWindows[location.id]) {
-						// Yes, destroy it
-						$scope.infoWindows[location.id].close();
-					}
+					// if ($scope.infoWindows[location.id]) {
+					// 	// Yes, destroy it
+					// 	$scope.infoWindows[location.id].close();
+					// }
+					// Re-create
+					if($scope.infoWindow)
+						$scope.infoWindow.close();
 
 					// Now, create one
 					var options = {};
@@ -266,7 +283,8 @@ angular.module('travelPlanningGame.maps')
 					options.pixelOffset = new google.maps.Size(0, -15);
 
 					infoWindow = new google.maps.InfoWindow(options);
-					$scope.infoWindows[location.id] = infoWindow;
+					// $scope.infoWindows[location.id] = infoWindow;
+					$scope.infoWindow = infoWindow;
 
 					if (!map) {
 						map = marker.getMap();

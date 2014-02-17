@@ -5,45 +5,53 @@ angular.module("travelPlanningGame.app")
 			return typeof google !== "undefined";
 		};
 
-		$scope.mapStyles = mapStyles;
-		$scope.selectedMapStyles = "routeXL";
+		$scope.experiments = {};
 
-		$scope.$watch("selectedMapStyles", function(newValue) {
+		$scope.experiments.disabled = true;
+
+		$scope.mapStyles = mapStyles;
+		$scope.experiments.selectedMapStyles = "routeXL";
+
+		$scope.$watch("experiments.selectedMapStyles", function(newValue) {
 			if(newValue) {
-				$scope.customMapStyles = angular.toJson(mapStyles[$scope.selectedMapStyles]);
-				window.selectedMapStyles = mapStyles[$scope.selectedMapStyles];
+				$scope.experiments.customMapStyles = angular.toJson(mapStyles[$scope.experiments.selectedMapStyles]);
+				window.selectedMapStyles = mapStyles[$scope.experiments.selectedMapStyles];
 				$scope.$broadcast("event:map:stylesChanged");
 			}
 		});
 
-		$scope.$watch("customMapStyles", function(newValue) {
+		$scope.$watch("experiments.customMapStyles", function(newValue) {
 			if(newValue) {
 				for(var name in mapStyles) {
 					if(newValue === angular.toJson(mapStyles[name])) {
-						$scope.selectedMapStyles = name;
-						$scope.isCustomStyleValid = true;
+						$scope.experiments.selectedMapStyles = name;
+						$scope.experiments.isCustomStyleValid = true;
 						return;
 					}
 				}
 			}
 
-			$scope.selectedMapStyles = "";
+			$scope.experiments.selectedMapStyles = "";
 			if($scope.validate(newValue)) {
 				window.selectedMapStyles = angular.fromJson(newValue);
 				$scope.$broadcast("event:map:stylesChanged");
 			}
 		});
 
-		$scope.isCustomStyleValid = true;
+		$scope.experiments.isCustomStyleValid = true;
 		$scope.validate = function(newStyles) {
 			try {
 				angular.toJson(angular.fromJson(newStyles));
-				$scope.isCustomStyleValid = true;
+				$scope.experiments.isCustomStyleValid = true;
 				return true;
 			} catch (e) {
-				$scope.isCustomStyleValid = false;
+				$scope.experiments.isCustomStyleValid = false;
 				return false;
 			}
+		};
+
+		$scope.experiments.showScreen = function(screen) {
+			$scope.$broadcast("event:screen:switch", { screen: screen });
 		};
 
 	});

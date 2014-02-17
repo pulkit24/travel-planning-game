@@ -55,6 +55,8 @@
 .sidebar {
 
 	.shadow-box-hud();
+
+	.theme(@color-title);
 	right: 0;
 	width: @size-width-sidebar;
 	height: 100%;
@@ -74,42 +76,66 @@
 	&.ng-leave {
 		animation: bounceOutDown 1s;
 	}
+	&.morning { .theme(@color-morning); }
+	&.afternoon { .theme(@color-afternoon); }
+	&.evening { .theme(@color-evening); }
 
-	&.morning {
-		background-color: lighten(@color-morning, 40%);
-		.panel .panel-heading {
-			background-color: darken(shade(@color-morning, 10%), 10%);
-		}
-	}
-	&.afternoon {
-		background-color: lighten(@color-afternoon, 40%);
-		.panel .panel-heading {
-			background-color: darken(shade(@color-afternoon, 10%), 10%);
-		}
-	}
-	&.evening {
-		background-color: lighten(@color-evening, 40%);
-		.panel .panel-heading {
-			background-color: darken(shade(@color-evening, 10%), 10%);
+	.theme(@color) {
+		// background-color: lighten(@color, 40%);
+		// .panel .panel-heading {
+		// 	background-color: darken(shade(@color, 10%), 10%);
+		// }
+		&, & .panel {
+			background-color: darken(@color, 15%);
+			color: white;
 		}
 	}
 
 	.panel {
 		top: 0;
+		overflow: visible;
 		margin: 0;
 		padding: 0;
 		border: none;
 		border-radius: 0;
-		background-color: white;
 
 		.panel-heading {
+			.shadow-box-heavy-down();
+			position: relative;
+			margin-left: -1em;
 			border: none;
 			border-radius: 0;
-			background-color: @color-title;
+			background-color: #444;
 			color: white;
 			text-align: center;
 			text-transform: uppercase;
 			font-weight: bold;
+
+			&:before {
+				position: absolute;
+				bottom: -1em;
+				left: 0;
+				display: block;
+				border-width: 1em 0 0 1em;
+				border-style: solid;
+				border-color: #222 transparent transparent transparent;
+				content: "";
+			}
+
+			&:hover {
+				background-color: #555;
+				&:before {
+					border-top-color: #333;
+				}
+			}
+
+			.panel-title {
+				font-weight: bold;
+			}
+		}
+
+		.panel-body {
+			border: none !important;
 		}
 
 		.souvenir {

@@ -32,20 +32,23 @@
 			font-size: 18px;
 
 			&.rise {
-				animation: rise 2s linear;
+				animation: rise 1s ease-in;
 				animation-fill-mode: both;
 			}
 			&.sink {
-				animation: sink 2s linear;
+				animation: rise 1s ease-in;
+				// animation: sink 1s ease-in;
 				animation-fill-mode: both;
 			}
 			@keyframes rise {
-				0% { top: 0; opacity: 1; }
-				100% { top: -@floatDistance; opacity: 0; }
+				0% { top: 0; opacity: 1; color: gold; text-shadow: 0 0 5px orange;}
+				50% { color: white; text-shadow: none; }
+				100% { top: -@floatDistance; opacity: 0; color: white; text-shadow: none; }
 			}
 			@keyframes sink {
-				0% { bottom: 0; opacity: 1; }
-				100% { bottom: -@floatDistance; opacity: 0; }
+				0% { bottom: 0; opacity: 1; color: gold; text-shadow: 0 0 5px orange;}
+				50% { color: white; text-shadow: none; }
+				100% { bottom: -@floatDistance; opacity: 0; color: white; text-shadow: none; }
 			}
 		}
 	}

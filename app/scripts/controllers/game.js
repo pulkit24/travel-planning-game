@@ -47,6 +47,8 @@ angular.module("travelPlanningGame.app")
 		$scope.game = {};
 
 		function init() {
+			stateTracker.new("loadingState").activate();
+
 			// Currently active map configuration
 			$scope.map.options = $scope.map.initConfig; // use initial configuration
 
@@ -56,8 +58,12 @@ angular.module("travelPlanningGame.app")
 		init();
 
 		$scope.game.start = function() {
-			// Start the game
-			$scope.current.state.play();
+			stateTracker.new("loadingState").activate();
+
+			stateTracker.new("loadingState").$on("complete", function() {
+				// Start the game
+				$scope.current.state.play();
+			});
 
 			// Map the landmarks
 			mapLandmarks();
@@ -84,6 +90,15 @@ angular.module("travelPlanningGame.app")
 			init();
 		};
 
+		$scope.$on("event:screen:switch", function(event, options) {
+			if(options.screen === 'menu')
+				$scope.game.menu();
+			else if(options.screen === 'game')
+				$scope.game.start();
+			else if(options.screen === 'results')
+				$scope.game.end();
+		});
+
 		$scope.getDay = function() {
 			return timer.now() ? timer.now().day : null;
 		};
@@ -103,7 +118,7 @@ angular.module("travelPlanningGame.app")
 
 		function initPlay() {
 			$scope.alertMessage = alertMessages.startLocation;
-			stateTracker.new("playLoadingState").$on("complete", function() {
+			stateTracker.new("loadingState").$on("complete", function() {
 				stateTracker.get("alert").show();
 			});
 

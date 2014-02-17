@@ -7,7 +7,7 @@
 		<!-- Controls -->
 		<i class="fa close fa-times fa-fw"
 			ng-show="landmark"
-			ng-click="landmarkCardState.reset()"></i>
+			ng-click="landmark.isCardClosed = true"></i>
 		<!-- <i class="fa close fa-rotate-left fa-fw" ng-click="isFlipped = !isFlipped"></i> -->
 
 		<h3>{{ landmark.name }} &nbsp;</h3>
@@ -15,40 +15,45 @@
 	<!-- end name and controls -->
 
 	<!-- Image and quick stats -->
-	<div class="panel-body" ng-style="{'background-image': 'url(' + getLandmarkImage() + ')'}">
+	<div class="panel-body" ng-style="{'background-image': 'url(' + getLandmarkImage() + ')', 'background-size': isVisited() ? 'cover' : 'initial'}">
 		<div class="col-xs-offset-9">
-			<div class="thumbnail resource text-center">
+			<div class="thumbnail resource resource-money text-center">
 				<small>LODGING</small>
 				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				<small>PER DAY</small>
 			</div>
-			<div class="thumbnail resource text-center">
+			<div class="thumbnail resource resource-xp text-center">
 				<small>VISITING</small>
 				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>
 			</div>
-			<div class="thumbnail resource text-center">
+			<div class="thumbnail resource resource-souvenirs text-center">
 				<img ng-src="{{ getSouvenirImage() }}" />
 
 				<!-- Item hover pop up -->
-				<div class="landmark-card-popup">
-					<div class="souvenir picture">
-						<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />
-					</div>
-					<div class="souvenir info">
-						<h4> {{ landmark.shopping.name }}</h4>
-						<div class="souvenir cost">
-							<i class="fa fa-dollar"></i>
-							{{ landmark.shopping.cost }}
+				<div class="landmark-card-popup panel panel-warning" ng-if="isVisited()">
+					<div class="panel-heading">
+						<div class="souvenir picture">
+							<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />
 						</div>
-						<div class="souvenir gains">
-							<i class="fa fa-shopping-cart"></i>
-							{{ landmark.shopping.souvenirs }}
+						<div class="souvenir info">
+							<h4> {{ landmark.shopping.name }}</h4>
+							<div class="souvenir cost">
+								<img src="images/icons/anz_icon_ui_money_small.png" height="48" width="48" />
+								{{ landmark.shopping.cost }}
+							</div>
+							<div class="souvenir gains">
+								<img src="images/icons/anz_icon_ui_shopping_small.png" height="48" width="48" />
+								{{ landmark.shopping.souvenirs }}
+							</div>
 						</div>
+						<div class="clearfix"></div>
 					</div>
-					<div class="clearfix"></div>
+					<div class="panel-body">
+						{{ landmark.shopping.description }}
+					</div>
 				</div>
 				<!-- end pop up -->
 
