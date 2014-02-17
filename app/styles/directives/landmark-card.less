@@ -41,6 +41,7 @@
 			background-color: @color-title;
 		}
 	}
+
 	&.morning {
 		.panel {
 			border-color: @color-morning;
@@ -96,6 +97,16 @@
 			background-size: cover;
 			background-repeat: no-repeat;
 		}
+		.panel-footer {
+			background-color: #777;
+			&.active {
+				color: orange;
+				animation: landmark-card-text-highlight 2s ease-in-out infinite;
+			}
+			&.inactive {
+				color: #444;
+			}
+		}
 		.thumbnail {
 			margin: 1px;
 			border: none;
@@ -112,6 +123,16 @@
 			}
 			.close {
 				color: white;
+			}
+		}
+		@keyframes landmark-card-text-highlight {
+			0%, 100% {
+				color: orange;
+				text-shadow: none;
+			}
+			50% {
+				color: gold;
+				text-shadow: 0 0 5px orange;
 			}
 		}
 	}

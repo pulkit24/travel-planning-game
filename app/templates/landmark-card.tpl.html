@@ -49,7 +49,7 @@
 	<!-- end features -->
 
 	<!-- One time bonus -->
-	<div class="panel-footer text-center">
+	<div class="panel-footer text-center" ng-class="isVisited() ? 'inactive' : 'active'">
 		One-time visiting bonus:
 		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>
 		</strong>

@@ -519,7 +519,7 @@ body {
 [widget-day-counter] .widget-day-counter {
   width: 100%;
   height: 100%;
-  background: transparent url(../../images/icons/anz_icon_clock.png) right top no-repeat;
+  background: transparent url(../images/icons/anz_icon_clock.png) right top no-repeat;
   background-size: contain;
 }
 
@@ -712,6 +712,19 @@ body {
   background-size: cover;
 }
 
+[landmark-card] .landmark-card .panel-footer {
+  background-color: #777;
+}
+
+[landmark-card] .landmark-card .panel-footer.active {
+  color: orange;
+  animation: landmark-card-text-highlight 2s ease-in-out infinite;
+}
+
+[landmark-card] .landmark-card .panel-footer.inactive {
+  color: #444;
+}
+
 [landmark-card] .landmark-card .thumbnail {
   margin: 1px;
   border: none;
@@ -731,6 +744,18 @@ body {
 
 [landmark-card] .landmark-card .resource .close {
   color: white;
+}
+
+@keyframes landmark-card-text-highlight {
+  0%,
+  100% {
+    color: orange;
+    text-shadow: none;
+  }
+  50% {
+    color: gold;
+    text-shadow: 0 0 5px orange;
+  }
 }
 
 [random-event-card] {

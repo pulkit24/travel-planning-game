@@ -1,8 +1,8 @@
 <div class="widget-resource-indicator" ng-class="'widget-resource-indicator-' + type">
 	<i ng-switch on="type" class="widget-resource-indicator-icon">
-		<img ng-switch-when="MONEY" src="../images/icons/anz_icon_ui_money_small.png" height="64" width="64" />
-		<img ng-switch-when="XP" src="../images/icons/anz_icon_ui_star_small.png" height="64" width="64" />
-		<img ng-switch-when="SOUVENIR" src="../images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />
+		<img ng-switch-when="MONEY" src="images/icons/anz_icon_ui_money_small.png" height="64" width="64" />
+		<img ng-switch-when="XP" src="images/icons/anz_icon_ui_star_small.png" height="64" width="64" />
+		<img ng-switch-when="SOUVENIR" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />
 	</i>
 	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>
 	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? 'rise' : 'sink'">
