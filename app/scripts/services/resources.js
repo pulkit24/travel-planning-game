@@ -52,6 +52,8 @@ angular.module("travelPlanningGame.app")
 			// Overwrites any existing value, and doesn't perform validation tests
 			this.set = function setResource(category, type, amount) {
 				this._init(category, type);
+				amount = parseInt(amount, 10);
+
 				this[category][type] = amount;
 
 				return this;
@@ -61,6 +63,7 @@ angular.module("travelPlanningGame.app")
 			// Checks for validation unless specified to skip
 			this.update = function updateResource(category, type, amount, skipTests) {
 				this._init(category, type);
+				amount = parseInt(amount, 10);
 
 				if(skipTests || (this[category][type] + amount > 0))
 					this[category][type] += amount;

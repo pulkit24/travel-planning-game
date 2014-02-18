@@ -48,7 +48,11 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	<!-- end name and controls -->\n' +
     '\n' +
     '	<!-- Image and quick stats -->\n' +
-    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + getLandmarkImage() + \')\', \'background-size\': isVisited() ? \'cover\' : \'initial\'}">\n' +
+    '	<div class="panel-body" ng-style="{\n' +
+    '		\'background-image\': \'url(\' + getLandmarkImage() + \')\'\n' +
+    '		, \'background-size\': isVisited() ? \'cover\' : \'initial\'\n' +
+    '		, \'background-position-x\': !isVisited() ? \'85px\' : \'center\'\n' +
+    '	}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '			<div class="thumbnail resource resource-money text-center">\n' +
     '				<small>LODGING</small>\n' +
@@ -172,8 +176,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
-    '		<h3 ng-if="randomEvent.type === \'POSITIVE\'">Hang on, something great happened today!</h3>\n' +
-    '		<h3 ng-if="randomEvent.type === \'NEGATIVE\'">Uh-oh! Something bad happened today!</h3>\n' +
+    '		<h3>{{ randomEvent.name }}</h3>\n' +
     '	</div>\n' +
     '	<!-- end name and controls -->\n' +
     '\n' +
@@ -191,6 +194,11 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +
+    '\n' +
+    '	<div class="layer countered animated fadeIn" ng-if="getCurrentCounter()">\n' +
+    '		<h1><i class="fa fa-check"></i> Avoided!</h1>\n' +
+    '		<p>You currently possess the {{ getCurrentCounter().name }}, which helped prevent this nuisance.</p>\n' +
+    '	</div>\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +
@@ -235,8 +243,8 @@ angular.module('templates/upgrade-card.tpl.html', []).run(['$templateCache', fun
     '	<!-- end features -->\n' +
     '\n' +
     '	<!-- One time bonus -->\n' +
-    '	<div class="panel-footer">\n' +
-    '		<a ng-href="{{ upgrade.link }}" class="btn btn-link" target="_blank">Learn more</a>\n' +
+    '	<div class="panel-footer text-right">\n' +
+    '		<a ng-href="{{ upgrade.link }}" class="btn btn-primary" target="_blank">Learn more</a>\n' +
     '		<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
     '	</div>\n' +
     '	<!-- end bonus -->\n' +

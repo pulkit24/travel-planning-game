@@ -99,7 +99,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
 		}
 
 		return {

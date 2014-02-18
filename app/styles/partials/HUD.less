@@ -2,11 +2,22 @@
 // Top HUD //
 /////////////
 
+@font-face {
+	font-family: "DS-DIGI";
+	src: url("../app/fonts/DS-DIGI.ttf");
+}
+
 .menu-top-bar {
 	width: 100%;
 	height: @size-height-HUD;
 	background-color: @color-title;
 	color: white;
+	.shadow-box-hud();
+
+	&.banner-bar {
+		background-color: #333;
+		color: #ffff5c;
+	}
 
 	h1 {
 		margin: 0;
@@ -15,7 +26,10 @@
 		line-height: @size-height-HUD;
 
 		&.banner {
-			animation: flight-schedule-marquee 4s linear infinite;
+			font-family: 'DS-DIGI', sans-serif;
+			font-size: 72px;
+			text-transform: uppercase;
+			animation: flight-schedule-marquee 5s linear infinite;
 
 			@keyframes flight-schedule-marquee {
 				from { margin-left: @size-width-game; }
@@ -56,7 +70,7 @@
 
 	.shadow-box-hud();
 
-	.theme(@color-title);
+	.theme(@color-light);
 	right: 0;
 	width: @size-width-sidebar;
 	height: 100%;
@@ -154,17 +168,17 @@
 			}
 
 			&.info {
-				width: 59%;
+				width: 64%;
 
 				h4 {
 					margin: 0;
 				}
 
 				.cost, .gains {
-					width: 49%;
-					font-size: 1.6em;
-					font-weight: bold;
 					.shadow-text-hud();
+					width: 49%;
+					font-weight: bold;
+					font-size: 1.6em;
 				}
 
 				.cost {
@@ -188,4 +202,29 @@
 		text-decoration: none;
 		cursor: pointer;
 	}
+}
+
+/* Upgrades unlocked */
+.upgrade-indicators {
+	@gutter: 10px;
+
+	top: 2 * @gutter;
+	right: @size-width-sidebar - (4 * @gutter);
+	margin: 0 @gutter;
+
+	.upgrade-indicator {
+		margin: 0 (@gutter / 2);
+
+		a {
+			display: inline-block;
+		}
+
+		img {
+			.shadow-box-glow();
+			width: auto;
+			height: 32px;
+			border-radius: 2px;
+		}
+	}
+
 }

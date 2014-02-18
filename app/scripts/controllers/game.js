@@ -135,6 +135,7 @@ angular.module("travelPlanningGame.app")
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;
+			$scope.map.options.mapStyle = "morning";
 			// Notify map to refresh
 			$scope.map.state.update();
 		}
@@ -259,8 +260,6 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.game.endTurn = function() {
-			$scope.turnState.complete();
-
 			// Is this EOD?
 			if (timer.isEOD()) {
 				// Charge for lodging
@@ -279,6 +278,8 @@ angular.module("travelPlanningGame.app")
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), $scope.resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
+
+			$scope.turnState.complete();
 
 			// Days left?
 			if (timer.isLast())
@@ -301,6 +302,8 @@ angular.module("travelPlanningGame.app")
 			}, 500);
 		}
 
+		$scope.upgrades = upgrades.getUpgrades();
+
 		// Random event
 		function handleRandomEvent(randomEvent) {
 			showRandomEvent(randomEvent).then(function() {
@@ -310,11 +313,25 @@ angular.module("travelPlanningGame.app")
 
 					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 
-					showUpgradeUnlocked(upgrades.get(randomEvent.unlocks)).then(function() {
+					// Get the upgrade to unlock
+					var eventUpgrades = upgrades.get(randomEvent.unlocks);
+					var upgrade = null;
+					if (eventUpgrades) {
+						// Pick the first upgrade we don't have
+						if(angular.isArray(eventUpgrades)) {
+							for(var i = 0, len = eventUpgrades.length; i < len; i++)
+								if(!eventUpgrades[i].isUnlocked) {
+									upgrade = eventUpgrades[i];
+									break;
+								}
+						} else
+							upgrade = eventUpgrades;
+					}
+
+					showUpgradeUnlocked(upgrade).then(function() {
 
 						// Officially unlock the upgrade!
-						var upgrade = upgrades.get(randomEvent.unlocks);
-						if (upgrade) {
+						if(upgrade) {
 							// Add any resource bonuses
 							resources.merge($scope.resources, upgrade.resources);
 
@@ -547,7 +564,7 @@ angular.module("travelPlanningGame.app")
 		/////////////////////
 		$scope.settings = {};
 		$scope.settings.budget = 1000;
-		$scope.settings.travelDays = 1;
+		$scope.settings.travelDays = 3;
 
 		///////////////////////
 		// Game board/map  //
@@ -584,7 +601,7 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.map.initConfig = {
-			zoom: 1 // number or auto
+			zoom: 2 // number or auto
 			, locations: null
 			, selectable: "none" // all, point, location, none
 			, focusOn: "auto" // auto, selected, current

@@ -855,7 +855,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
 		}
 
 		return {
@@ -919,6 +919,8 @@ angular.module("travelPlanningGame.app")
 			// Overwrites any existing value, and doesn't perform validation tests
 			this.set = function setResource(category, type, amount) {
 				this._init(category, type);
+				amount = parseInt(amount, 10);
+
 				this[category][type] = amount;
 
 				return this;
@@ -928,6 +930,7 @@ angular.module("travelPlanningGame.app")
 			// Checks for validation unless specified to skip
 			this.update = function updateResource(category, type, amount, skipTests) {
 				this._init(category, type);
+				amount = parseInt(amount, 10);
 
 				if(skipTests || (this[category][type] + amount > 0))
 					this[category][type] += amount;
@@ -1231,6 +1234,23 @@ angular.module("travelPlanningGame.app")
 			return null;
 		}
 
+		// Handles both single id and array
+		function get(id) {
+			var ids = [];
+			if(angular.isArray(id))
+				ids = id;
+			else
+				ids.push(id);
+
+			for(var i = 0, len = ids.length; i < len; i++)
+				ids[i] = getByID(ids[i]);
+
+			if(angular.isArray(id))
+				return ids;
+			else
+				return ids[0];
+		}
+
 		function getByID(id) {
 			for(var i = 0, len = upgrades.length; i < len; i++)
 				if(upgrades[i].id === id)
@@ -1261,7 +1281,7 @@ angular.module("travelPlanningGame.app")
 		return {
 			load: loadUpgrades
 			, getUpgrades: getUpgrades
-			, get: getByID
+			, get: get
 		};
 	});
 
@@ -1410,7 +1430,7 @@ angular.module('travelPlanningGame.maps')
 					$scope.bounds = new google.maps.LatLngBounds();
 
 					$scope.getTimeOfDay = function() {
-						return timer.now() ? timer.toTimeOfDay(timer.now().time) : "morning";
+						return timer.now() ? timer.toTimeOfDay(timer.now().time) : ($scope.mapStyle ? $scope.mapStyle : "retro");
 					};
 					$scope.styles = mapStyles[$scope.getTimeOfDay()];
 
@@ -1704,9 +1724,33 @@ angular.module('travelPlanningGame.app')
 				randomEvent: '='
 			}
 			, templateUrl: 'templates/random-event-card.tpl.html'
-			, controller: function($scope) {
+			, controller: function($scope, upgrades) {
+
 				$scope.close = function() {
 					$scope.$emit("tpg:event:eventCard:close");
+				};
+
+				$scope.currentCounter = null;
+				$scope.getCurrentCounter = function() {
+					if(!$scope.randomEvent) {
+						$scope.currentCounter = null;
+						return null;
+					}
+
+					// Get the current counters
+					var counters = $scope.randomEvent.counteredBy;
+					if(!angular.isArray(counters))
+						counters = [counters];
+					for(var i = 0, len = counters.length; i < len; i++) {
+						var counter = upgrades.get(counters[i]);
+						if(counter && counter.isUnlocked) {
+							$scope.currentCounter = counter;
+							return counter; // if any one of the counters is already unlocked
+						}
+					}
+
+					$scope.currentCounter = null;
+					return null;
 				};
 			}
 		};
@@ -1807,10 +1851,10 @@ angular.module("travelPlanningGame.app")
 
 		$scope.experiments = {};
 
-		// $scope.experiments.disabled = true;
+		$scope.experiments.disabled = true;
 
 		$scope.mapStyles = mapStyles;
-		$scope.experiments.selectedMapStyles = "routeXL";
+		$scope.experiments.selectedMapStyles = "retro";
 
 		$scope.$watch("experiments.selectedMapStyles", function(newValue) {
 			if(newValue) {
@@ -1993,6 +2037,7 @@ angular.module("travelPlanningGame.app")
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;
+			$scope.map.options.mapStyle = "morning";
 			// Notify map to refresh
 			$scope.map.state.update();
 		}
@@ -2117,8 +2162,6 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.game.endTurn = function() {
-			$scope.turnState.complete();
-
 			// Is this EOD?
 			if (timer.isEOD()) {
 				// Charge for lodging
@@ -2137,6 +2180,8 @@ angular.module("travelPlanningGame.app")
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), $scope.resources);
 			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
+
+			$scope.turnState.complete();
 
 			// Days left?
 			if (timer.isLast())
@@ -2159,6 +2204,8 @@ angular.module("travelPlanningGame.app")
 			}, 500);
 		}
 
+		$scope.upgrades = upgrades.getUpgrades();
+
 		// Random event
 		function handleRandomEvent(randomEvent) {
 			showRandomEvent(randomEvent).then(function() {
@@ -2168,11 +2215,25 @@ angular.module("travelPlanningGame.app")
 
 					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 
-					showUpgradeUnlocked(upgrades.get(randomEvent.unlocks)).then(function() {
+					// Get the upgrade to unlock
+					var eventUpgrades = upgrades.get(randomEvent.unlocks);
+					var upgrade = null;
+					if (eventUpgrades) {
+						// Pick the first upgrade we don't have
+						if(angular.isArray(eventUpgrades)) {
+							for(var i = 0, len = eventUpgrades.length; i < len; i++)
+								if(!eventUpgrades[i].isUnlocked) {
+									upgrade = eventUpgrades[i];
+									break;
+								}
+						} else
+							upgrade = eventUpgrades;
+					}
+
+					showUpgradeUnlocked(upgrade).then(function() {
 
 						// Officially unlock the upgrade!
-						var upgrade = upgrades.get(randomEvent.unlocks);
-						if (upgrade) {
+						if(upgrade) {
 							// Add any resource bonuses
 							resources.merge($scope.resources, upgrade.resources);
 
@@ -2405,7 +2466,7 @@ angular.module("travelPlanningGame.app")
 		/////////////////////
 		$scope.settings = {};
 		$scope.settings.budget = 1000;
-		$scope.settings.travelDays = 1;
+		$scope.settings.travelDays = 3;
 
 		///////////////////////
 		// Game board/map  //
@@ -2442,7 +2503,7 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.map.initConfig = {
-			zoom: 1 // number or auto
+			zoom: 2 // number or auto
 			, locations: null
 			, selectable: "none" // all, point, location, none
 			, focusOn: "auto" // auto, selected, current
@@ -2548,7 +2609,11 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	<!-- end name and controls -->\n' +
     '\n' +
     '	<!-- Image and quick stats -->\n' +
-    '	<div class="panel-body" ng-style="{\'background-image\': \'url(\' + getLandmarkImage() + \')\', \'background-size\': isVisited() ? \'cover\' : \'initial\'}">\n' +
+    '	<div class="panel-body" ng-style="{\n' +
+    '		\'background-image\': \'url(\' + getLandmarkImage() + \')\'\n' +
+    '		, \'background-size\': isVisited() ? \'cover\' : \'initial\'\n' +
+    '		, \'background-position-x\': !isVisited() ? \'85px\' : \'center\'\n' +
+    '	}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '			<div class="thumbnail resource resource-money text-center">\n' +
     '				<small>LODGING</small>\n' +
@@ -2672,8 +2737,7 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '\n' +
     '	<!-- Event name and controls -->\n' +
     '	<div class="panel-header panel-heading">\n' +
-    '		<h3 ng-if="randomEvent.type === \'POSITIVE\'">Hang on, something great happened today!</h3>\n' +
-    '		<h3 ng-if="randomEvent.type === \'NEGATIVE\'">Uh-oh! Something bad happened today!</h3>\n' +
+    '		<h3>{{ randomEvent.name }}</h3>\n' +
     '	</div>\n' +
     '	<!-- end name and controls -->\n' +
     '\n' +
@@ -2691,6 +2755,11 @@ angular.module('templates/random-event-card.tpl.html', []).run(['$templateCache'
     '		</p>\n' +
     '	</div>\n' +
     '	<!-- end impact -->\n' +
+    '\n' +
+    '	<div class="layer countered animated fadeIn" ng-if="getCurrentCounter()">\n' +
+    '		<h1><i class="fa fa-check"></i> Avoided!</h1>\n' +
+    '		<p>You currently possess the {{ getCurrentCounter().name }}, which helped prevent this nuisance.</p>\n' +
+    '	</div>\n' +
     '\n' +
     '</div>\n' +
     '<!-- end card -->\n' +
@@ -2735,8 +2804,8 @@ angular.module('templates/upgrade-card.tpl.html', []).run(['$templateCache', fun
     '	<!-- end features -->\n' +
     '\n' +
     '	<!-- One time bonus -->\n' +
-    '	<div class="panel-footer">\n' +
-    '		<a ng-href="{{ upgrade.link }}" class="btn btn-link" target="_blank">Learn more</a>\n' +
+    '	<div class="panel-footer text-right">\n' +
+    '		<a ng-href="{{ upgrade.link }}" class="btn btn-primary" target="_blank">Learn more</a>\n' +
     '		<button type="button" class="btn btn-default" ng-click="close()">Okay</button>\n' +
     '	</div>\n' +
     '	<!-- end bonus -->\n' +

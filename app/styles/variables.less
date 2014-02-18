@@ -15,12 +15,12 @@
 // Colours //
 /////////////
 
-@color-light: #F4FCE8;
+@color-light: #A2B0B9;
 @color-title: #428BCA;
 @color-alert: #428BCA; //#FC9526;
 @color-background: #777;
 
-@color-action-primary: #87D69B;
+@color-action-primary: #877849;
 @color-action-primary-complete: #4E9689;
 @color-action-ordinary: #C3FF68;
 @color-action-ordinary-complete: #87D69B;
@@ -97,4 +97,18 @@
 
 .animated-fast {
 	animation-duration: 0.4s;
+}
+
+.shadow-box-glow {
+	animation: box-glow 2s ease-in-out infinite;
+	animation-fill-mode: both;
+}
+
+@keyframes box-glow {
+	0%, 100% {
+		 box-shadow: 0 0 4px 1px rgba(255, 255, 0, 0.5);
+	}
+	50% {
+		 box-shadow: 0 0 10px 4px rgba(255, 255, 0, 0.5);
+	}
 }

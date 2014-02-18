@@ -1,9 +1,16 @@
-[{
+<html>
+
+<head>
+	<script src="./app/vendor/bower_components/angular/angular.min.js"></script>
+	<script>
+	angular.module("x", []).controller("y", function($scope) {
+
+
+$scope.u = [{
 	"name": "ANZ Travel Card"
 	, "id": "tc"
 	, "description": "Travel without worry with this pre-paid card!"
-	, "image": "images/upgrades/tc.jpg"
-	, "icon": "images/upgrades/tc_icon.png"
+	, "image": "//www.anz.com.au/resources/6/4/6442878046c036c293f59fff59dc78ef/travelcardspotlight_200x126.jpg?MOD=AJPERES&CACHEID=6442878046c036c293f59fff59dc78ef"
 	, "link": "//www.anz.com.au/personal/travel-foreign-exchange/travel-money/travel-card/"
 	, "impacts": [{
 		"flavour": "Security and control over your money"
@@ -23,8 +30,7 @@
 	"name": "ANZ Platinum"
 	, "id": "cc"
 	, "description": "Medical insurance while you travel, and Platinum concierge services! Find the best food and accommodation options throughout your trip."
-	, "image": "images/upgrades/cc.jpg"
-	, "icon": "images/upgrades/cc_icon.png"
+	, "image": "//www.anz.com.au/resources/c/4/c4966f00445d4ec1a156effb15aad448/1/img_PlatLarge.jpg?MOD=AJPERES&CACHEID=c4966f00445d4ec1a156effb15aad448/1"
 	, "link": "//www.anz.com.au/personal/credit-cards/platinum/anz-platinum/"
 	, "impacts": [{
 		"flavour": "Increased spending power"
@@ -54,8 +60,7 @@
 	"name": "Travel Insurance"
 	, "id": "ti"
 	, "description": "Protects you against various travel mishaps: theft, getting sick etc."
-	, "image": "images/upgrades/ti.jpg"
-	, "icon": "images/upgrades/ti_icon.png"
+	, "image": "//img812.imageshack.us/img812/4041/j16k.png"
 	, "link": "//www.wealth.anz.com/insurance/travel-insurance"
 	, "impacts": [{
 		"flavour": "Travel insurance"
@@ -66,4 +71,12 @@
 		, "implication": "no more medical mishaps"
 		, "icon": "fa-medkit"
 	}]
-}]
+}];
+
+	});
+	</script>
+</head>
+
+<body ng-app="x" ng-controller="y">
+	{{ u }}
+</body>

@@ -8,8 +8,7 @@
 
 	<!-- Event name and controls -->
 	<div class="panel-header panel-heading">
-		<h3 ng-if="randomEvent.type === 'POSITIVE'">Hang on, something great happened today!</h3>
-		<h3 ng-if="randomEvent.type === 'NEGATIVE'">Uh-oh! Something bad happened today!</h3>
+		<h3>{{ randomEvent.name }}</h3>
 	</div>
 	<!-- end name and controls -->
 
@@ -27,6 +26,11 @@
 		</p>
 	</div>
 	<!-- end impact -->
+
+	<div class="layer countered animated fadeIn" ng-if="getCurrentCounter()">
+		<h1><i class="fa fa-check"></i> Avoided!</h1>
+		<p>You currently possess the {{ getCurrentCounter().name }}, which helped prevent this nuisance.</p>
+	</div>
 
 </div>
 <!-- end card -->

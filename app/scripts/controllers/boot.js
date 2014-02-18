@@ -7,10 +7,10 @@ angular.module("travelPlanningGame.app")
 
 		$scope.experiments = {};
 
-		// $scope.experiments.disabled = true;
+		$scope.experiments.disabled = true;
 
 		$scope.mapStyles = mapStyles;
-		$scope.experiments.selectedMapStyles = "routeXL";
+		$scope.experiments.selectedMapStyles = "retro";
 
 		$scope.$watch("experiments.selectedMapStyles", function(newValue) {
 			if(newValue) {

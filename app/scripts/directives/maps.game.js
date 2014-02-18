@@ -69,7 +69,7 @@ angular.module('travelPlanningGame.maps')
 					$scope.bounds = new google.maps.LatLngBounds();
 
 					$scope.getTimeOfDay = function() {
-						return timer.now() ? timer.toTimeOfDay(timer.now().time) : "morning";
+						return timer.now() ? timer.toTimeOfDay(timer.now().time) : ($scope.mapStyle ? $scope.mapStyle : "retro");
 					};
 					$scope.styles = mapStyles[$scope.getTimeOfDay()];
 

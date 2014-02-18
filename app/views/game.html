@@ -62,7 +62,7 @@
 	<!-- end start button -->
 
 	<!-- Selected destination -->
-	<div class="layer menu-top-bar">
+	<div class="layer menu-top-bar banner-bar">
 		<h1 class="banner">Destination: {{ current.location.name }}</h1>
 	</div>
 	<!-- end selected destination -->
@@ -113,6 +113,16 @@
 	<div widget-day-counter day="getDay()" class="layer" ng-if="getDay() && !turnState.isActive()"></div>
 	<!-- end indicators -->
 
+	<!-- Ungrades unlocked -->
+	<div class="layer upgrade-indicators">
+		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="upgrade.isUnlocked">
+			<a href="#" tooltip="You have the {{ upgrade.name }} unlocked" tooltip-placement="bottom">
+				<img ng-src="{{ upgrade.icon }}" />
+			</a>
+		</span>
+	</div>
+	<!-- end upgrades -->
+
 	<!-- Sidebar for turn options -->
 	<div class="layer sidebar turn-options"
 		ng-class="getTimeOfDay()"
@@ -132,7 +142,7 @@
 					<img class="img-responsive" ng-src="{{ current.location.shopping.image }}" width="128" height="128" />
 				</div>
 				<div class="souvenir info">
-					<h3>{{ current.location.shopping.name }}</h3>
+					<h4>{{ current.location.shopping.name }}</h4>
 					<div class="souvenir cost">
 						<img src="images/icons/anz_icon_ui_money_tiny.png" height="36" width="23" />
 						{{ current.location.shopping.cost }}

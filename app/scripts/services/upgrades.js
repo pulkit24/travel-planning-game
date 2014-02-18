@@ -50,6 +50,23 @@ angular.module("travelPlanningGame.app")
 			return null;
 		}
 
+		// Handles both single id and array
+		function get(id) {
+			var ids = [];
+			if(angular.isArray(id))
+				ids = id;
+			else
+				ids.push(id);
+
+			for(var i = 0, len = ids.length; i < len; i++)
+				ids[i] = getByID(ids[i]);
+
+			if(angular.isArray(id))
+				return ids;
+			else
+				return ids[0];
+		}
+
 		function getByID(id) {
 			for(var i = 0, len = upgrades.length; i < len; i++)
 				if(upgrades[i].id === id)
@@ -80,6 +97,6 @@ angular.module("travelPlanningGame.app")
 		return {
 			load: loadUpgrades
 			, getUpgrades: getUpgrades
-			, get: getByID
+			, get: get
 		};
 	});

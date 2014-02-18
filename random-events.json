@@ -1,73 +1,102 @@
 [{
 	"type": "NEGATIVE"
-	, "description": "Your were mugged!"
-	, "impact": "You lost $100"
+	, "name": "Stolen Wallet"
+	, "description": "Oh no! An opportunistic thief has gotten away with your wallet."
+	, "impact": "You lost $250"
 	, "resource": "MONEY"
 	, "amount": -100
 	, "unlocks": "tc"
-	, "counteredBy": ["tc", "ti"]
+	, "counteredBy": ["tc", "ti", "cc"]
 }, {
 	"type": "NEGATIVE"
-	, "description": "A pick-pocket stole your wallet."
+	, "name": "Lost Wallet"
+	, "description": "Drat - you've lost your wallet. Thankfully, there was only money inside - your passport and credit cards are still safe!"
 	, "impact": "You lost $100"
 	, "resource": "MONEY"
 	, "amount": -100
-	, "unlocks": "tc"
-	, "counteredBy": ["tc", "ti"]
+	, "unlocks": ["tc", "cc"]
+	, "counteredBy": ["tc", "ti", "cc"]
 }, {
 	"type": "NEGATIVE"
-	, "description": "You dropped your ticket and got fined for using public transport."
+	, "name": "Ticketed!"
+	, "description": "Oops - you were caught without a ticket!"
 	, "impact": "You were fined $200"
 	, "resource": "MONEY"
 	, "amount": -200
 }, {
 	"type": "NEGATIVE"
-	, "description": "The taxi overcharged you!"
+	, "name": "Late Night Transport Charges"
+	, "description": "Staying up for the local night-life has it's disadvantages - and exorbitant transport costs are one of them."
+	, "impact": "You were charged $50"
+	, "resource": "MONEY"
+	, "amount": -200
+}, {
+	"type": "NEGATIVE"
+	, "name": "Taxi Troubles"
+	, "description": "Through a combination of miscommunication, traffic, and tourist naivete, you were taken to the wrong location by the local taxi."
 	, "impact": "You lost $50"
 	, "resource": "MONEY"
 	, "amount": -50
 }, {
 	"type": "NEGATIVE"
-	, "description": "You fell ill and incurred medical charges."
-	, "impact": "You lose $200"
+	, "name": "Fell Sick"
+	, "description": "You caught the seasonal flu and have fallen ill."
+	, "impact": "You lose $100 in medical charges and skip a turn"
 	, "resource": "MONEY"
-	, "amount": -200
+	, "amount": -100
+	, "turn-skip": 1
 	, "unlocks": "ti"
 	, "counteredBy": ["cc", "ti"]
 }, {
 	"type": "NEGATIVE"
-	, "description": "Your luggage was misplaced or stolen. You don't know. It's just disappeared!"
-	, "impact": "You lose $500"
+	, "name": "Minor Accident"
+	, "description": "You met with a road accident. It wasn't much, but you now face the greater trauma of dealing with the hospital bills."
+	, "impact": "You lose $300 in medical charges and skip a turn"
 	, "resource": "MONEY"
-	, "amount": -500
+	, "amount": -300
+	, "turn-skip": 1
+	, "unlocks": ["ti", "cc"]
+	, "counteredBy": ["cc", "ti"]
+}, {
+	"type": "NEGATIVE"
+	, "name": "Lost Baggage"
+	, "description": "Your luggage was misplaced or stolen. You don't know. It's just disappeared!"
+	, "impact": "You lose 10 souvenirs"
+	, "resource": "SOUVENIR"
+	, "amount": -10
 	, "unlocks": "ti"
 	, "counteredBy": ["ti"]
 }, {
 	"type": "NEGATIVE"
-	, "description": "Pay hotel room damages for what you did last night."
+	, "name": "Hotel Room Damages"
+	, "description": "Looks like you partied a bit too hard - and the hotel staff aren't too happy about it."
 	, "impact": "You lose $300"
 	, "resource": "MONEY"
 	, "amount": -300
 }, {
 	"type": "POSITIVE"
-	, "description": "You won a mini contest at this location and got some great souvenirs."
-	, "impact": "You received +5 souvenirs"
+	, "name": "We have a winner!"
+	, "description": "Congratulations! You managed to win yourself a prize at a local fair. Keep up the good work!"
+	, "impact": "You received 5 gift items"
 	, "resource": "SOUVENIR"
 	, "amount": 5
 }, {
 	"type": "POSITIVE"
-	, "description": "You received a discount at the diner."
+	, "name": "Restaurant Discount"
+	, "description": "By a stroke of luck, the restaurant you went to today had a massive discount!"
 	, "impact": "You saved $50"
 	, "resource": "MONEY"
 	, "amount": 50
 }, {
 	"type": "POSITIVE"
+	, "name": "Interest Earned"
 	, "description": "Your monthly savings interest just came through!"
-	, "impact": "You gain $100"
+	, "impact": "You gain $500"
 	, "resource": "MONEY"
-	, "amount": 100
+	, "amount": 500
 }, {
 	"type": "POSITIVE"
+	, "name": "ATM Discovered"
 	, "description": "You found an ANZ ATM to withdraw money."
 	, "impact": "You saved $50 in transaction charges"
 	, "resource": "MONEY"

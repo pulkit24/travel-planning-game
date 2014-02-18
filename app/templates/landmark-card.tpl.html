@@ -15,7 +15,11 @@
 	<!-- end name and controls -->
 
 	<!-- Image and quick stats -->
-	<div class="panel-body" ng-style="{'background-image': 'url(' + getLandmarkImage() + ')', 'background-size': isVisited() ? 'cover' : 'initial'}">
+	<div class="panel-body" ng-style="{
+		'background-image': 'url(' + getLandmarkImage() + ')'
+		, 'background-size': isVisited() ? 'cover' : 'initial'
+		, 'background-position-x': !isVisited() ? '85px' : 'center'
+	}">
 		<div class="col-xs-offset-9">
 			<div class="thumbnail resource resource-money text-center">
 				<small>LODGING</small>

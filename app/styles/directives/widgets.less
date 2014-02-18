@@ -4,9 +4,11 @@
 
 [widget-resource-indicator] {
 	display: inline-block;
+
 	.widget-resource-indicator {
 		position: relative;
-		margin: 5px;
+		margin: 5px 0;
+
 		.widget-resource-indicator-icon {
 			position: relative;
 			z-index: 20;
@@ -54,7 +56,7 @@
 	}
 	.widget-resource-indicator(@color) {
 		.widget-resource-indicator-value {
-			border: 2px solid darken(desaturate(@color, 25%), 10%);
+			border: 3px solid darken(desaturate(@color, 25%), 10%);
 			background-color: tint(desaturate(@color, 25%), 15%);
 		}
 	}

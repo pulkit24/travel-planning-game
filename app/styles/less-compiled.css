@@ -45,6 +45,21 @@
   animation-duration: 0.4s;
 }
 
+.shadow-box-glow {
+  animation: box-glow 2s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+
+@keyframes box-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 4px 1px rgba(255, 255, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 10px 4px rgba(255, 255, 0, 0.5);
+  }
+}
+
 body {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -102,11 +117,22 @@ body {
   background-color: white;
 }
 
+@font-face {
+  font-family: "DS-DIGI";
+  src: url("../app/fonts/DS-DIGI.ttf");
+}
+
 .menu-top-bar {
   width: 100%;
   height: 75px;
   color: white;
   background-color: #428bca;
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+}
+
+.menu-top-bar.banner-bar {
+  color: #ffff5c;
+  background-color: #333;
 }
 
 .menu-top-bar h1 {
@@ -117,7 +143,10 @@ body {
 }
 
 .menu-top-bar h1.banner {
-  animation: flight-schedule-marquee 4s linear infinite;
+  font-family: 'DS-DIGI', sans-serif;
+  font-size: 72px;
+  text-transform: uppercase;
+  animation: flight-schedule-marquee 5s linear infinite;
 }
 
 @keyframes flight-schedule-marquee {
@@ -153,14 +182,14 @@ body {
   right: 0;
   width: 240px;
   height: 100%;
-  background-color: #f4fce8;
+  background-color: #a2b0b9;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar,
 .sidebar .panel {
   color: white;
-  background-color: #2a6496;
+  background-color: #768b98;
 }
 
 .sidebar.top-gap {
@@ -264,7 +293,7 @@ body {
 }
 
 .sidebar .panel .souvenir.info {
-  width: 59%;
+  width: 64%;
 }
 
 .sidebar .panel .souvenir.info h4 {
@@ -298,17 +327,41 @@ body {
   cursor: pointer;
 }
 
+/* Upgrades unlocked */
+
+.upgrade-indicators {
+  top: 20px;
+  right: 200px;
+  margin: 0 10px;
+}
+
+.upgrade-indicators .upgrade-indicator {
+  margin: 0 5px;
+}
+
+.upgrade-indicators .upgrade-indicator a {
+  display: inline-block;
+}
+
+.upgrade-indicators .upgrade-indicator img {
+  width: auto;
+  height: 32px;
+  border-radius: 2px;
+  animation: box-glow 2s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+
 .btn.btn-action {
   color: white;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #877849;
+  border-color: #877849;
   border-radius: 0;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
   transition: 0.25s;
 }
 
 .btn.btn-action:hover {
-  border-top: 4px solid #2a6496;
+  border-top: 4px solid #554c2e;
 }
 
 .btn[disabled] {
@@ -653,7 +706,7 @@ body {
 
 [widget-resource-indicator] .widget-resource-indicator {
   position: relative;
-  margin: 5px;
+  margin: 5px 0;
 }
 
 [widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-icon {
@@ -732,17 +785,17 @@ body {
 
 [widget-resource-indicator] .widget-resource-indicator-MONEY .widget-resource-indicator-value {
   background-color: #eab86d;
-  border: 2px solid #e09527;
+  border: 3px solid #e09527;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-XP .widget-resource-indicator-value {
   background-color: #c4483d;
-  border: 2px solid #8d1e14;
+  border: 3px solid #8d1e14;
 }
 
 [widget-resource-indicator] .widget-resource-indicator-SOUVENIR .widget-resource-indicator-value {
   background-color: #61b2d0;
-  border: 2px solid #3289a8;
+  border: 3px solid #3289a8;
 }
 
 [widget-day-counter] {
@@ -865,6 +918,7 @@ body {
 }
 
 [landmark-card] .panel {
+  background-color: #ccc;
   border-color: #428bca;
 }
 
@@ -1231,6 +1285,20 @@ body {
 [random-event-card] .random-event-card .panel-heading h6 {
   padding: 0;
   margin: 0;
+}
+
+[random-event-card] .random-event-card .countered {
+  bottom: 60px;
+  width: 120%;
+  padding: 15px 10px;
+  margin-left: -10%;
+  color: white;
+  background-color: rgba(80, 179, 55, 0.75);
+  transform: rotate(-5deg);
+}
+
+[random-event-card] .random-event-card .countered p {
+  font-size: 24px;
 }
 
 [upgrade-card] {
