@@ -194,7 +194,7 @@
 	, "visitingCost": 35
 	, "visitingExp": 10
 	, "shopping": {
-		"name": "Crimson Sunbird Doll"
+		"name": "Crimson Sunbird Plushie"
 		, "description": "The national bird of Singapore, Crimson Sunbirds sound like this: \"chee-cheewee\". This particular representation is a tad plumper than the real thing - a good thing, considering that adult birds average at a miniscule 11cm in length."
 		, "image": "images/items/anz_icon_crimson_sunbird_plush.png"
 		, "souvenirs": 7
@@ -258,7 +258,7 @@
 	, "shopping": {
 		"name": "Merlion Statuette"
 		, "description": "Did you know that there are 5 official Merlion statues in Singapore city? The statue that's in your pocket right now is a direct replica of those guys - unless of course, you didn't buy one of the official, STB-endorsed, Merlion Statuetes. But who would do such a thing?"
-		, "image": "images/items/anz_icon_merlion_plush.png"
+		, "image": "images/items/anz_icon_merlion_statue.png"
 		, "souvenirs": 10
 		, "cost": 65
 	}
@@ -289,7 +289,7 @@
 	, "shopping": {
 		"name": "Humorous T-Shirt"
 		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-		, "image": "images/items/anz_icon_merlion_plush.png"
+		, "image": "images/items/anz_icon_card_unknown.png"
 		, "souvenirs": 5
 		, "cost": 30
 	}

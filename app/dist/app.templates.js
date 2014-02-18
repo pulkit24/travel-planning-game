@@ -1,4 +1,32 @@
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module('travelPlanningGame.templates', ['templates/item-card.tpl.html', 'templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+
+angular.module('templates/item-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/item-card.tpl.html',
+    '<div class="item-card panel panel-warning">\n' +
+    '	<div class="panel-heading">\n' +
+    '		<div class="souvenir picture">\n' +
+    '			<img class="img-responsive" ng-src="{{ item.image }}" width="128" height="128" />\n' +
+    '		</div>\n' +
+    '		<div class="souvenir info">\n' +
+    '			<h3>{{ item.name }}</h3>\n' +
+    '			<div class="souvenir cost">\n' +
+    '				<img src="images/icons/anz_icon_ui_money_tiny.png" height="36" width="23" />\n' +
+    '				{{ item.cost }}\n' +
+    '			</div>\n' +
+    '			<div class="souvenir gains">\n' +
+    '				<img src="images/icons/anz_icon_ui_shopping_tiny.png" height="36" width="30" />\n' +
+    '				{{ item.souvenirs }}\n' +
+    '			</div>\n' +
+    '		</div>\n' +
+    '		<div class="clearfix"></div>\n' +
+    '	</div>\n' +
+    '	<div class="panel-body">\n' +
+    '		{{ item.description }}\n' +
+    '	</div>\n' +
+    '</div>\n' +
+    '');
+}]);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -38,28 +66,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '\n' +
     '				<!-- Item hover pop up -->\n' +
-    '				<div class="landmark-card-popup panel panel-warning" ng-if="isVisited()">\n' +
-    '					<div class="panel-heading">\n' +
-    '						<div class="souvenir picture">\n' +
-    '							<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />\n' +
-    '						</div>\n' +
-    '						<div class="souvenir info">\n' +
-    '							<h4> {{ landmark.shopping.name }}</h4>\n' +
-    '							<div class="souvenir cost">\n' +
-    '								<img src="images/icons/anz_icon_ui_money_small.png" height="48" width="48" />\n' +
-    '								{{ landmark.shopping.cost }}\n' +
-    '							</div>\n' +
-    '							<div class="souvenir gains">\n' +
-    '								<img src="images/icons/anz_icon_ui_shopping_small.png" height="48" width="48" />\n' +
-    '								{{ landmark.shopping.souvenirs }}\n' +
-    '							</div>\n' +
-    '						</div>\n' +
-    '						<div class="clearfix"></div>\n' +
-    '					</div>\n' +
-    '					<div class="panel-body">\n' +
-    '						{{ landmark.shopping.description }}\n' +
-    '					</div>\n' +
-    '				</div>\n' +
+    '				<div item-card item="landmark.shopping" ng-if="isVisited()"></div>\n' +
     '				<!-- end pop up -->\n' +
     '\n' +
     '			</div>\n' +
@@ -96,8 +103,8 @@ angular.module('templates/landmark-view.tpl.html', []).run(['$templateCache', fu
   'use strict';
   $templateCache.put('templates/landmark-view.tpl.html',
     '<!-- Landmark view -->\n' +
-    '<div class="landmark-view layer overlay animate fadeIn" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '	<div class="landmark-view-description layer animated slideInLeft">\n' +
+    '<div class="landmark-view overlay" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="landmark-view-description layer animated">\n' +
     '		<h1>{{ landmark.name }}</h1>\n' +
     '		<p>{{ landmark.description }}</p>\n' +
     '	</div>\n' +

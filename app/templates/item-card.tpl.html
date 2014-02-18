@@ -1,0 +1,22 @@
+<div class="item-card panel panel-warning">
+	<div class="panel-heading">
+		<div class="souvenir picture">
+			<img class="img-responsive" ng-src="{{ item.image }}" width="128" height="128" />
+		</div>
+		<div class="souvenir info">
+			<h3>{{ item.name }}</h3>
+			<div class="souvenir cost">
+				<img src="images/icons/anz_icon_ui_money_tiny.png" height="36" width="23" />
+				{{ item.cost }}
+			</div>
+			<div class="souvenir gains">
+				<img src="images/icons/anz_icon_ui_shopping_tiny.png" height="36" width="30" />
+				{{ item.souvenirs }}
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<div class="panel-body">
+		{{ item.description }}
+	</div>
+</div>

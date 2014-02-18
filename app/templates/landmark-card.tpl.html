@@ -33,28 +33,7 @@
 				<img ng-src="{{ getSouvenirImage() }}" />
 
 				<!-- Item hover pop up -->
-				<div class="landmark-card-popup panel panel-warning" ng-if="isVisited()">
-					<div class="panel-heading">
-						<div class="souvenir picture">
-							<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />
-						</div>
-						<div class="souvenir info">
-							<h4> {{ landmark.shopping.name }}</h4>
-							<div class="souvenir cost">
-								<img src="images/icons/anz_icon_ui_money_small.png" height="48" width="48" />
-								{{ landmark.shopping.cost }}
-							</div>
-							<div class="souvenir gains">
-								<img src="images/icons/anz_icon_ui_shopping_small.png" height="48" width="48" />
-								{{ landmark.shopping.souvenirs }}
-							</div>
-						</div>
-						<div class="clearfix"></div>
-					</div>
-					<div class="panel-body">
-						{{ landmark.shopping.description }}
-					</div>
-				</div>
+				<div item-card item="landmark.shopping" ng-if="isVisited()"></div>
 				<!-- end pop up -->
 
 			</div>

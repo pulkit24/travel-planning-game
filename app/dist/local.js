@@ -236,13 +236,22 @@ angular.module("travelPlanningGame.app")
 
 		function isVisited(location, historyRecord) {
 			return function() {
-				return history.getInstance(historyRecord).find(location) !== null;
+				return history.getInstance(historyRecord).find(location.id) !== null;
 			};
+		}
+
+		function getNow(type) {
+			if(type === "landmarks")
+				return landmarks;
+			else if(type === "cities")
+				return cities;
+			return null;
 		}
 
 		return {
 			getLandmarks: loadLandmarks
 			, getCities: loadCities
+			, getNow: getNow
 		};
 	});
 
@@ -738,6 +747,9 @@ angular.module('travelPlanningGame.maps')
 		mapStyles.subtle = [{"featureType":"poi","stylers":[{"visibility":"off"}]},{"stylers":[{"saturation":-70},{"lightness":37},{"gamma":1.15}]},{"elementType":"labels","stylers":[{"gamma":0.26},{"visibility":"off"}]},{"featureType":"road","stylers":[{"lightness":0},{"saturation":0},{"hue":"#ffffff"},{"gamma":0}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"lightness":50},{"saturation":0},{"hue":"#ffffff"}]},{"featureType":"administrative.province","stylers":[{"visibility":"on"},{"lightness":-50}]},{"featureType":"administrative.province","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative.province","elementType":"labels.text","stylers":[{"lightness":20}]}];
 		mapStyles.paper = [{"featureType":"administrative","stylers":[{"visibility":"off"}]},{"featureType":"poi","stylers":[{"visibility":"simplified"}]},{"featureType":"road","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","stylers":[{"visibility":"simplified"}]},{"featureType":"landscape","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","stylers":[{"visibility":"off"}]},{"featureType":"road.local","stylers":[{"visibility":"on"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","stylers":[{"visibility":"off"}]},{"featureType":"water","stylers":[{"color":"#5f94ff"},{"lightness":26},{"gamma":5.86}]},{},{"featureType":"road.highway","stylers":[{"weight":0.6},{"saturation":-85},{"lightness":61}]},{"featureType":"road"},{},{"featureType":"landscape","stylers":[{"hue":"#0066ff"},{"saturation":74},{"lightness":100}]}];
 
+		mapStyles.morning = [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#A9D4DB"}]},{"featureType":"landscape","stylers":[{"color":"#F2F2DC"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}];
+		mapStyles.afternoon = [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]},{"featureType":"landscape","stylers":[{"color":"#FFE8C9"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}];
+		mapStyles.evening = [{"featureType":"water","stylers":[{"color":"#021019"}]},{"featureType":"landscape","stylers":[{"color":"#08304b"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#0c4152"},{"lightness":5}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#0b434f"},{"lightness":25}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"color":"#0b3d51"},{"lightness":16}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"}]},{"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"elementType":"labels.text.stroke","stylers":[{"color":"#000000"},{"lightness":13}]},{"featureType":"transit","stylers":[{"color":"#146474"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#144b53"},{"lightness":14},{"weight":1.4}]}];
 
 		return mapStyles;
 	});
@@ -1256,6 +1268,20 @@ angular.module("travelPlanningGame.app")
 'use strict';
 
 angular.module('travelPlanningGame.app')
+	.directive('itemCard', function() {
+		return {
+			restrict: 'EA'
+			, transclude: true
+			, scope: {
+				item: '='
+			}
+			, templateUrl: 'templates/item-card.tpl.html'
+		};
+	});
+
+'use strict';
+
+angular.module('travelPlanningGame.app')
 	.directive('landmarkCard', function() {
 		return {
 			restrict: 'EA'
@@ -1281,7 +1307,7 @@ angular.module('travelPlanningGame.app')
 					if($scope.landmark && $scope.isVisited())
 						return $scope.landmark.shopping.image;
 					else
-						return 'app/images/landmarks/anz_icon_card_bg_shopping.png';
+						return 'app/images/items/anz_icon_card_bg_shopping.png';
 				};
 			}
 		};
@@ -1326,7 +1352,7 @@ angular.module('travelPlanningGame.maps')
 				, selected: "="
 			}
 			, controller: function($scope, $q, $timeout, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
-				mapGeocoder, stateTracker, resources) {
+				mapGeocoder, stateTracker, resources, timer) {
 
 				// On load, see if the map data is ready
 				$scope.mapState = stateTracker.get("mapState");
@@ -1382,7 +1408,18 @@ angular.module('travelPlanningGame.maps')
 					$scope.disabled = $scope.disabled || angular.isUndefined(google);
 					$scope.type = 'roadmap';
 					$scope.bounds = new google.maps.LatLngBounds();
-					$scope.styles = window.selectedMapStyles;
+
+					$scope.getTimeOfDay = function() {
+						return timer.now() ? timer.toTimeOfDay(timer.now().time) : "morning";
+					};
+					$scope.styles = mapStyles[$scope.getTimeOfDay()];
+
+					$scope.$watch("getTimeOfDay()", function(newValue, oldValue) {
+						if(newValue && newValue !== oldValue)
+							$scope.map.setOptions({
+								styles: mapStyles[newValue]
+							});
+					});
 
 					$scope.$on("event:map:stylesChanged", function() {
 						$scope.map.setOptions({
@@ -1770,7 +1807,7 @@ angular.module("travelPlanningGame.app")
 
 		$scope.experiments = {};
 
-		$scope.experiments.disabled = true;
+		// $scope.experiments.disabled = true;
 
 		$scope.mapStyles = mapStyles;
 		$scope.experiments.selectedMapStyles = "routeXL";
@@ -1884,7 +1921,7 @@ angular.module("travelPlanningGame.app")
 			stateTracker.new("loadingState").$on("complete", function() {
 				// Start the game
 				$scope.current.state.play();
-			});
+			}, true);
 
 			// Map the landmarks
 			mapLandmarks();
@@ -1898,15 +1935,23 @@ angular.module("travelPlanningGame.app")
 			initPlay();
 		};
 		$scope.game.end = function() {
-			// End the game
-			$scope.current.state.end();
+			stateTracker.new("loadingState").activate();
+
+			stateTracker.new("loadingState").$on("complete", function() {
+				// End the game
+				$scope.current.state.end();
+			}, true);
 
 			// Compute the stats
 			$scope.calculateChartConfig();
 		};
 		$scope.game.menu = function() {
-			// Back to the menu
-			$scope.current.state.menu();
+			stateTracker.new("loadingState").reset();
+
+			stateTracker.new("loadingState").$on("complete", function() {
+				// Back to the menu
+				$scope.current.state.menu();
+			}, true);
 
 			init();
 		};
@@ -1942,6 +1987,9 @@ angular.module("travelPlanningGame.app")
 			stateTracker.new("loadingState").$on("complete", function() {
 				stateTracker.get("alert").show();
 			});
+
+			$scope.current.location = null;
+			$scope.locations.selected = null;
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;
@@ -2406,7 +2454,79 @@ angular.module("travelPlanningGame.app")
 		$scope.map.options = $scope.map.initConfig; // use initial configuration
 	});
 
-angular.module('travelPlanningGame.templates', ['templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+angular.module("travelPlanningGame.app")
+	.controller('JournalCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
+		randomEvents, upgrades) {
+
+		$scope.getTotalLandmarks = function() {
+			return locations.getNow("landmarks").length;
+		};
+		$scope.getTotalItems = function() {
+			return locations.getNow("landmarks").length; // each landmark has one unique item
+		};
+		$scope.getVisitedLandmarks = function() {
+			var visited = history.getInstance("landmarks").retrieveAll();
+			var uniqueVisited = {};
+			var totalVisited = 0;
+			angular.forEach(visited, function(landmarkID, timestamp) {
+				if(!uniqueVisited[landmarkID]) {
+					totalVisited += 1;
+					uniqueVisited[landmarkID] = landmarkID;
+				}
+			});
+			return totalVisited;
+		};
+		$scope.getBoughtItems = function() {
+			var bought = history.getInstance("souvenirs").retrieveAll();
+			var uniqueVisited = {};
+			var totalVisited = 0;
+			angular.forEach(bought, function(item, timestamp) {
+				if(!uniqueVisited[item.name]) {
+					totalVisited += 1;
+					uniqueVisited[item.name] = item;
+				}
+			});
+			return totalVisited;
+		};
+		$scope.hasBought = function(item) {
+			var boughtItems = history.getInstance("souvenirs").retrieveAll();
+			var matchFound = false;
+			angular.forEach(boughtItems, function(boughtItem, timestamp) {
+				if(boughtItem.name === item.name)
+					matchFound = true;
+			});
+			return matchFound;
+		};
+	});
+angular.module('travelPlanningGame.templates', ['templates/item-card.tpl.html', 'templates/landmark-card.tpl.html', 'templates/landmark-view.tpl.html', 'templates/loading.tpl.html', 'templates/maps.game.tpl.html', 'templates/random-event-card.tpl.html', 'templates/upgrade-card.tpl.html', 'templates/widgets.alert.tpl.html', 'templates/widgets.day-counter.tpl.html', 'templates/widgets.resource-indicator.tpl.html']);
+
+angular.module('templates/item-card.tpl.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates/item-card.tpl.html',
+    '<div class="item-card panel panel-warning">\n' +
+    '	<div class="panel-heading">\n' +
+    '		<div class="souvenir picture">\n' +
+    '			<img class="img-responsive" ng-src="{{ item.image }}" width="128" height="128" />\n' +
+    '		</div>\n' +
+    '		<div class="souvenir info">\n' +
+    '			<h3>{{ item.name }}</h3>\n' +
+    '			<div class="souvenir cost">\n' +
+    '				<img src="images/icons/anz_icon_ui_money_tiny.png" height="36" width="23" />\n' +
+    '				{{ item.cost }}\n' +
+    '			</div>\n' +
+    '			<div class="souvenir gains">\n' +
+    '				<img src="images/icons/anz_icon_ui_shopping_tiny.png" height="36" width="30" />\n' +
+    '				{{ item.souvenirs }}\n' +
+    '			</div>\n' +
+    '		</div>\n' +
+    '		<div class="clearfix"></div>\n' +
+    '	</div>\n' +
+    '	<div class="panel-body">\n' +
+    '		{{ item.description }}\n' +
+    '	</div>\n' +
+    '</div>\n' +
+    '');
+}]);
 
 angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -2446,28 +2566,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '\n' +
     '				<!-- Item hover pop up -->\n' +
-    '				<div class="landmark-card-popup panel panel-warning" ng-if="isVisited()">\n' +
-    '					<div class="panel-heading">\n' +
-    '						<div class="souvenir picture">\n' +
-    '							<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />\n' +
-    '						</div>\n' +
-    '						<div class="souvenir info">\n' +
-    '							<h4> {{ landmark.shopping.name }}</h4>\n' +
-    '							<div class="souvenir cost">\n' +
-    '								<img src="images/icons/anz_icon_ui_money_small.png" height="48" width="48" />\n' +
-    '								{{ landmark.shopping.cost }}\n' +
-    '							</div>\n' +
-    '							<div class="souvenir gains">\n' +
-    '								<img src="images/icons/anz_icon_ui_shopping_small.png" height="48" width="48" />\n' +
-    '								{{ landmark.shopping.souvenirs }}\n' +
-    '							</div>\n' +
-    '						</div>\n' +
-    '						<div class="clearfix"></div>\n' +
-    '					</div>\n' +
-    '					<div class="panel-body">\n' +
-    '						{{ landmark.shopping.description }}\n' +
-    '					</div>\n' +
-    '				</div>\n' +
+    '				<div item-card item="landmark.shopping" ng-if="isVisited()"></div>\n' +
     '				<!-- end pop up -->\n' +
     '\n' +
     '			</div>\n' +
@@ -2504,8 +2603,8 @@ angular.module('templates/landmark-view.tpl.html', []).run(['$templateCache', fu
   'use strict';
   $templateCache.put('templates/landmark-view.tpl.html',
     '<!-- Landmark view -->\n' +
-    '<div class="landmark-view layer overlay animate fadeIn" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
-    '	<div class="landmark-view-description layer animated slideInLeft">\n' +
+    '<div class="landmark-view overlay" ng-style="{\'background-image\': \'url(\' + landmark.image + \')\'}">\n' +
+    '	<div class="landmark-view-description layer animated">\n' +
     '		<h1>{{ landmark.name }}</h1>\n' +
     '		<p>{{ landmark.description }}</p>\n' +
     '	</div>\n' +

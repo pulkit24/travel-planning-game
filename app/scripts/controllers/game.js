@@ -63,7 +63,7 @@ angular.module("travelPlanningGame.app")
 			stateTracker.new("loadingState").$on("complete", function() {
 				// Start the game
 				$scope.current.state.play();
-			});
+			}, true);
 
 			// Map the landmarks
 			mapLandmarks();
@@ -77,15 +77,23 @@ angular.module("travelPlanningGame.app")
 			initPlay();
 		};
 		$scope.game.end = function() {
-			// End the game
-			$scope.current.state.end();
+			stateTracker.new("loadingState").activate();
+
+			stateTracker.new("loadingState").$on("complete", function() {
+				// End the game
+				$scope.current.state.end();
+			}, true);
 
 			// Compute the stats
 			$scope.calculateChartConfig();
 		};
 		$scope.game.menu = function() {
-			// Back to the menu
-			$scope.current.state.menu();
+			stateTracker.new("loadingState").reset();
+
+			stateTracker.new("loadingState").$on("complete", function() {
+				// Back to the menu
+				$scope.current.state.menu();
+			}, true);
 
 			init();
 		};
@@ -121,6 +129,9 @@ angular.module("travelPlanningGame.app")
 			stateTracker.new("loadingState").$on("complete", function() {
 				stateTracker.get("alert").show();
 			});
+
+			$scope.current.location = null;
+			$scope.locations.selected = null;
 
 			// Set map options
 			$scope.map.options = $scope.map.playConfig;

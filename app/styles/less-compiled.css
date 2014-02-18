@@ -38,7 +38,7 @@
   color: #fff;
   background-color: #0d0d0d;
   background-color: rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
 .animated-fast {
@@ -174,6 +174,8 @@ body {
 
 .sidebar.ng-enter {
   animation: bounceInUp 1s;
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
 }
 
 .sidebar.ng-leave {
@@ -273,6 +275,8 @@ body {
 .sidebar .panel .souvenir.info .gains {
   width: 49%;
   font-size: 1.6em;
+  font-weight: bold;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar .panel .souvenir.info .cost {
@@ -377,62 +381,198 @@ body {
   border-top: 4px solid #515151;
 }
 
-/* entire container, keeps perspective */
-
-.flip-container {
-  perspective: 1000;
-  transform-style: preserve-3d;
+.journal {
+  background: #000000 url(../images/journal-bkg2.jpg) center center no-repeat;
 }
 
-/*  UPDATED! flip the pane when hovered */
-
-.landmark-card-closed .back {
-  transform: rotateY(0deg);
+.journal .menu-top-bar {
+  color: #fff;
+  text-align: center;
+  background-color: #0d0d0d;
+  background-color: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
-.landmark-card-closed .front {
-  transform: rotateY(180deg);
-}
-
-.flip-container,
-.front,
-.back {
-  width: 400px;
-  height: 480px;
-}
-
-/* flip speed goes here */
-
-.flipper {
+.journal .journal-option {
   position: relative;
-  transition: 0.6s;
-  transform-style: preserve-3d;
+  float: left;
+  width: 50%;
+  margin-top: 75px;
+  text-align: center;
 }
 
-/* hide back of pane during swap */
-
-.front,
-.back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: 0.6s;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
+.journal .journal-option img {
+  height: auto;
+  max-width: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+  transition: 0.25s;
 }
 
-/*  UPDATED! front pane, placed above back */
-
-.front {
-  z-index: 2;
-  transform: rotateY(0deg);
+.journal .journal-option img:hover {
+  max-width: 55%;
+  zoom: 1.1;
 }
 
-/* back, initially hidden pane */
+.journal .journal-option h2 {
+  font-weight: bold;
+  color: white;
+}
 
-.back {
-  background-color: #1880ba;
-  transform: rotateY(-180deg);
+.journal .journal-landmark-option {
+  transform: rotate(-10deg);
+}
+
+.journal .journal-landmark-option img {
+  border-radius: 25px;
+}
+
+.journal .journal-landmark-option h2 {
+  margin-top: -50px;
+}
+
+.journal .journal-items-option {
+  transform: rotate(10deg);
+}
+
+.journal .journal-items-option img {
+  border-radius: 5px;
+}
+
+.journal .journal-page {
+  overflow: hidden;
+  background: transparent url(../images/journal-book2.jpg) center center no-repeat;
+}
+
+.journal .journal-page .journal-page-half {
+  float: left;
+  width: 50%;
+  height: 525px;
+  padding: 0 0;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.journal .journal-page .journal-zoom {
+  padding: 20px;
+}
+
+.journal .journal-page .journal-zoom [landmark-card] {
+  top: 7%;
+  text-align: left;
+  zoom: 0.8;
+}
+
+.journal .journal-page .journal-zoom [item-card] .item-card {
+  top: 20px;
+  left: 30px;
+  width: 300px;
+}
+
+.journal .journal-page .journal-zoom [item-card] .item-card .panel-heading:after,
+.journal .journal-page .journal-zoom [item-card] .item-card .panel-heading:before {
+  display: none;
+}
+
+.journal .journal-page .journal-list {
+  width: 45%;
+  margin: 20px auto 0 5px;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail {
+  float: left;
+  width: 125px;
+  height: 161px;
+  margin: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card {
+  margin-bottom: 0;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .close,
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .thumbnail,
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .list-group,
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .panel-footer {
+  display: none;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .panel-heading h3 {
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.1s;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card:hover .panel-heading h3 {
+  height: 161px;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail .landmark-card .panel-body {
+  height: 100px;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail.unavailable {
+  cursor: auto;
+  background: #ffffff url(../images/landmarks/anz_icon_card_back.png) center center no-repeat;
+  background-size: cover;
+}
+
+.journal .journal-page .journal-list .journal-landmark-card-thumbnail.unavailable .landmark-card {
+  visibility: hidden;
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail {
+  float: left;
+  width: 75px;
+  height: 75px;
+  margin: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail h3 {
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: #f69125;
+  transition: 0.1s;
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail:hover h3 {
+  height: 75px;
+  padding: 5px 0 0;
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail:hover img {
+  visibility: hidden;
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail.unavailable {
+  cursor: auto;
+  background: #ffffff url(../images/items/anz_icon_item.png) center center no-repeat;
+  background-size: cover;
+}
+
+.journal .journal-page .journal-list .journal-item-card-thumbnail.unavailable h3,
+.journal .journal-page .journal-list .journal-item-card-thumbnail.unavailable img {
+  visibility: hidden;
 }
 
 .loading {
@@ -819,88 +959,11 @@ body {
   border: none;
 }
 
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup {
-  position: absolute;
-  top: 0;
-  left: 120%;
+[landmark-card] .landmark-card .thumbnail [item-card] {
   display: none;
-  width: 400px;
-  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel {
-  border-color: #e2d09e;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel .panel-heading {
-  position: relative;
-  background-color: #e2d09e;
-  border: none;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel .panel-heading:after,
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel .panel-heading:before {
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  border: solid transparent;
-  content: " ";
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel .panel-heading:after {
-  margin-top: -20px;
-  border-color: transparent;
-  border-right-color: #e2d09e;
-  border-width: 20px;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup.panel .panel-heading:before {
-  margin-top: -26px;
-  border-color: transparent;
-  border-right-color: #e2d09e;
-  border-width: 26px;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir {
-  float: left;
-  text-align: center;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.picture {
-  width: 35%;
-  padding: 0 3% 0;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.picture img {
-  vertical-align: bottom;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info {
-  width: 59%;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info h4 {
-  margin: 0;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info .cost,
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info .gains {
-  width: 49%;
-  font-size: 1.6em;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info .cost {
-  color: #ffb03b;
-}
-
-[landmark-card] .landmark-card .thumbnail .landmark-card-popup .souvenir.info .gains {
-  color: #27b3e6;
-}
-
-[landmark-card] .landmark-card .thumbnail:hover .landmark-card-popup {
+[landmark-card] .landmark-card .thumbnail:hover [item-card] {
   display: block;
 }
 
@@ -1238,11 +1301,58 @@ body {
 }
 
 [landmark-view].ng-enter {
-  animation: fadeIn 1s;
+  animation: zoomIn 0.5s ease-in-out;
 }
 
 [landmark-view].ng-leave {
-  animation: fadeOut 1s;
+  animation: zoomOut 0.5s ease-in-out;
+  animation-delay: 0.75s;
+  animation-fill-mode: both;
+}
+
+[landmark-view].ng-leave .landmark-view-description {
+  animation: slideOutLeft 0.5s !important;
+  animation-delay: 0 !important;
+}
+
+[landmark-view].ng-leave-active .landmark-view-description {
+  opacity: 0;
+}
+
+@keyframes zoomIn {
+  0% {
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  0% {
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    opacity: 1;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
 }
 
 [landmark-view] .landmark-view {
@@ -1257,5 +1367,91 @@ body {
   background-color: #0d0d0d;
   background-color: rgba(0, 0, 0, 0.75);
   border-left: 0;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+  animation: slideInLeft 0.25s;
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+}
+
+[item-card] .item-card {
+  position: absolute;
+  top: 0;
+  left: 120%;
+  z-index: 10;
+  width: 400px;
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+}
+
+[item-card] .item-card.panel {
+  border-color: #e2d09e;
+}
+
+[item-card] .item-card.panel .panel-heading {
+  position: relative;
+  background-color: #e2d09e;
+  border: none;
+}
+
+[item-card] .item-card.panel .panel-heading:after,
+[item-card] .item-card.panel .panel-heading:before {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border: solid transparent;
+  content: " ";
+}
+
+[item-card] .item-card.panel .panel-heading:after {
+  margin-top: -20px;
+  border-color: transparent;
+  border-right-color: #e2d09e;
+  border-width: 20px;
+}
+
+[item-card] .item-card.panel .panel-heading:before {
+  margin-top: -26px;
+  border-color: transparent;
+  border-right-color: #e2d09e;
+  border-width: 26px;
+}
+
+[item-card] .item-card .souvenir {
+  float: left;
+  text-align: center;
+}
+
+[item-card] .item-card .souvenir.picture {
+  width: 35%;
+  padding: 0 3% 0;
+}
+
+[item-card] .item-card .souvenir.picture img {
+  vertical-align: bottom;
+}
+
+[item-card] .item-card .souvenir.info {
+  width: 59%;
+}
+
+[item-card] .item-card .souvenir.info h4 {
+  margin: 0;
+}
+
+[item-card] .item-card .souvenir.info .cost,
+[item-card] .item-card .souvenir.info .gains {
+  width: 49%;
+  font-size: 1.6em;
+  font-weight: bold;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+[item-card] .item-card .souvenir.info .cost {
+  color: #ffb03b;
+}
+
+[item-card] .item-card .souvenir.info .gains {
+  color: #27b3e6;
 }

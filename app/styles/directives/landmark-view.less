@@ -1,10 +1,33 @@
 [landmark-view] {
 
 	&.ng-enter {
-		animation: fadeIn 1s;
+		// animation: fadeIn 1s;
+		animation: zoomIn 0.5s ease-in-out;
 	}
 	&.ng-leave {
-		animation: fadeOut 1s;
+		// animation: fadeOut 1s;
+		animation: zoomOut 0.5s ease-in-out;
+		animation-fill-mode: both;
+		animation-delay: 0.75s;
+
+		.landmark-view-description {
+			animation: slideOutLeft 0.5s !important;
+			animation-delay: 0 !important;
+		}
+	}
+	&.ng-leave-active {
+		.landmark-view-description {
+			opacity: 0;
+		}
+	}
+
+	@keyframes zoomIn {
+		0% { width: 0; height: 0; overflow: hidden; top: 50%; left: 50%; opacity: 0; }
+		100% { width: @size-width-game; height: @size-height-game; top: 0; left: 0; opacity: 1; }
+	}
+	@keyframes zoomOut {
+		0% { width: @size-width-game; height: @size-height-game; top: 0; left: 0; opacity: 1; }
+		100% { width: 0; height: 0; overflow: hidden; top: 50%; left: 50%; opacity: 0; }
 	}
 
 	.landmark-view {
@@ -18,6 +41,10 @@
 			padding: 20px;
 			width: @width;
 			border-left: 0;
+
+			animation: slideInLeft 0.25s;
+			animation-fill-mode: both;
+			animation-delay: 0.5s;
 		}
 	}
 }

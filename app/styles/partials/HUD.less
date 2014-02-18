@@ -72,6 +72,8 @@
 
 	&.ng-enter {
 		animation: bounceInUp 1s;
+		animation-delay: 0.5s;
+		animation-fill-mode: both;
 	}
 	&.ng-leave {
 		animation: bounceOutDown 1s;
@@ -161,6 +163,8 @@
 				.cost, .gains {
 					width: 49%;
 					font-size: 1.6em;
+					font-weight: bold;
+					.shadow-text-hud();
 				}
 
 				.cost {

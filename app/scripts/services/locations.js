@@ -107,12 +107,21 @@ angular.module("travelPlanningGame.app")
 
 		function isVisited(location, historyRecord) {
 			return function() {
-				return history.getInstance(historyRecord).find(location) !== null;
+				return history.getInstance(historyRecord).find(location.id) !== null;
 			};
+		}
+
+		function getNow(type) {
+			if(type === "landmarks")
+				return landmarks;
+			else if(type === "cities")
+				return cities;
+			return null;
 		}
 
 		return {
 			getLandmarks: loadLandmarks
 			, getCities: loadCities
+			, getNow: getNow
 		};
 	});

@@ -99,7 +99,7 @@
 	<!-- end landmark card -->
 
 	<!-- Landmark view -->
-	<div landmark-view landmark="current.location"
+	<div landmark-view landmark="current.location" class="layer overlay"
 		ng-if="current.location && turnState.isActive()">
 	</div>
 
@@ -132,18 +132,19 @@
 					<img class="img-responsive" ng-src="{{ current.location.shopping.image }}" width="128" height="128" />
 				</div>
 				<div class="souvenir info">
-					<h4> {{ current.location.shopping.name }}</h4>
+					<h3>{{ current.location.shopping.name }}</h3>
 					<div class="souvenir cost">
-						<img src="images/icons/anz_icon_ui_money_small.png" height="42" width="42" />
+						<img src="images/icons/anz_icon_ui_money_tiny.png" height="36" width="23" />
 						{{ current.location.shopping.cost }}
 					</div>
 					<div class="souvenir gains">
-						<img src="images/icons/anz_icon_ui_shopping_small.png" height="42" width="42" />
+						<img src="images/icons/anz_icon_ui_shopping_tiny.png" height="36" width="30" />
 						{{ current.location.shopping.souvenirs }}
 					</div>
 				</div>
 				<div class="clearfix"></div>
-				{{ current.location.shopping.description }}
+
+				<small>{{ current.location.shopping.description }}</small>
 
 				<div class="action">
 					<button type="button"
@@ -300,63 +301,112 @@
 <!-- end stats page -->
 
 <!-- Traveller's Journal page -->
-<div class="layer" ng-if="showJournal">
+<div class="layer overlay journal" ng-if="journal.isOpen" ng-controller="JournalCtrl">
 
-	<!-- Chart -->
-	<div class="layer overlay stats-chart">
-		<highchart id="resultsChart" config="chartConfig"></highchart>
+	<div class="menu-top-bar">
+		<h1>Traveller's Journal</h1>
 	</div>
-	<!-- end chart -->
 
-	<!-- Score computation -->
-	<div class="layer sidebar top-gap text-right">
-		<h2>Base Score:</h2>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.MONEY
-				) | currency }}
-			x 200</p>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.XP
-			) | number }}
-			x 400</p>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.SOUVENIR
-			) | number }}
-			x 400</p>
-		<p class="total">
-			{{ ( resources.get(
-					resources.categories.ALL
-					, resources.types.MONEY
-				) * 200
-			) + ( resources.get(
-					resources.categories.ALL
-					, resources.types.XP
-				) * 400
-			) + ( resources.get(
-					resources.categories.ALL
-					, resources.types.SOUVENIR
-				) * 400
-			) | number }}
-		</p>
+	<div class="journal-option journal-landmark-option">
+		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true" />
+		<h2>{{ getVisitedLandmarks() }} / {{ getTotalLandmarks() }}</h2>
 	</div>
-	<!-- end settings sidebar -->
+	<div class="journal-option journal-items-option">
+		<img src="images/items/anz_icon_item.png" height="128" width="128" ng-click="journal.showItems = true" />
+		<h2>{{ getBoughtItems() }} / {{ getTotalItems() }}</h2>
+	</div>
 
-	<!-- Restart game button -->
+	<!-- Back button -->
 	<div class="layer button-prev">
-		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
-			Play again
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.isOpen = false">
+			Back
 		</button>
 	</div>
-	<!-- end restart button -->
+	<!-- end back button -->
 
-	<!-- Selected destination -->
-	<div class="layer menu-top-bar">
-		<h1>Results</h1>
+	<!-- Landmarks subpage -->
+	<div class="layer overlay journal-page" ng-if="journal.showLandmarks">
+
+		<!-- Zoom in the selected landmark card -->
+		<div class="journal-page-half journal-zoom">
+
+			<!-- Selected landmark card -->
+			<div landmark-card
+				landmark="journal.selectedLandmark"
+				ng-if="journal.selectedLandmark"
+				class="layer">
+			</div>
+			<!-- end landmark card -->
+
+			<h1 ng-if="!journal.selectedLandmark">
+				Select a landmark you've visited
+				<br />
+				&rarr;
+			</h1>
+
+		</div>
+		<div class="journal-page-half journal-list">
+
+			<div landmark-card
+				ng-repeat="landmark in locations.landmarks"
+				landmark="landmark"
+				ng-click="journal.selectedLandmark = (landmark.isVisited() ? landmark : null)"
+				class="journal-landmark-card-thumbnail"
+				ng-class="{ unavailable: !landmark.isVisited() }">
+			</div>
+
+		</div>
 	</div>
-	<!-- end selected destination -->
+
+	<!-- Back button -->
+	<div class="layer button-prev" ng-if="journal.showLandmarks">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showLandmarks = false">
+			Back
+		</button>
+	</div>
+	<!-- end back button -->
+
+	<!-- Items subpage -->
+	<div class="layer overlay journal-page" ng-if="journal.showItems">
+
+		<!-- Zoom in the selected item card -->
+		<div class="journal-page-half journal-zoom">
+
+			<!-- Selected item card -->
+			<div item-card
+				item="journal.selectedItem"
+				ng-if="journal.selectedItem"
+				class="layer">
+			</div>
+			<!-- end item card -->
+
+			<h1 ng-if="!journal.selectedItem">
+				Select an item you've purchased
+				<br />
+				&rarr;
+			</h1>
+
+		</div>
+		<div class="journal-page-half journal-list">
+
+			<div class="journal-item-card-thumbnail" ng-repeat="landmark in locations.landmarks"
+				ng-class="{ unavailable: !hasBought(landmark.shopping) }"
+				ng-click="journal.selectedItem = (hasBought(landmark.shopping) ? landmark.shopping : null)">
+				<h3>{{ landmark.shopping.name }}</h3>
+				<img class="img-responsive" ng-src="{{ landmark.shopping.image }}" width="128" height="128" />
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Back button -->
+	<div class="layer button-prev" ng-if="journal.showItems">
+		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showItems = false">
+			Back
+		</button>
+	</div>
+	<!-- end back button -->
+
 
 </div>
 <!-- end stats page -->

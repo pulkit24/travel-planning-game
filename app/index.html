@@ -14,8 +14,8 @@
 	<meta name="viewport" content="width=device-width">
 
 	
-	<link rel="stylesheet" href="dist/vendor.min.css?20140218100922">
-	<link rel="stylesheet" href="dist/local.min.css?20140218100922">
+	<link rel="stylesheet" href="dist/vendor.min.css?20140219052035">
+	<link rel="stylesheet" href="dist/local.min.css?20140219052035">
 	
 </head>
 
@@ -41,7 +41,7 @@
 					<li class="list-group-item list-item">
 						<strong>Or, supply your own styles:</strong><br/>
 						<strong class="text-danger" ng-if="!experiments.isCustomStyleValid">Invalid styles (syntax error)</strong>
-				    	<textarea class="form-control" rows="15" ng-model="experiments.customMapStyles"></textarea>
+				    	<textarea class="form-control" rows="5" ng-model="experiments.customMapStyles"></textarea>
 					</li>
 				</ul>
 		    </div>
@@ -49,10 +49,14 @@
 		    <div class="panel panel-primary">
 		    	<div class="panel-heading" ng-click="experiments.disabledScreenSwitcher = !experiments.disabledScreenSwitcher">Screens</div>
 				<div class="panel-body" collapse="experiments.disabledScreenSwitcher">
-					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('menu')">Menu</button>
-					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('game')">Game</button>
-					<button type="button" class="btn btn-default" ng-click="experiments.showScreen('results')">Results</button>
-					<!-- <button type="button" class="btn btn-default" ng-click="showJournal = !showJournal">Test</button> -->
+					<p>
+						<button type="button" class="btn btn-default" ng-click="experiments.showScreen('menu')">Menu</button>
+						<button type="button" class="btn btn-default" ng-click="experiments.showScreen('game')">Game</button>
+						<button type="button" class="btn btn-default" ng-click="experiments.showScreen('results')">Results</button>
+					</p>
+					<p>
+						<button type="button" class="btn btn-default" ng-click="journal.isOpen = true">Journal</button>
+					</p>
 				</div>
 		    </div>
 		</div>
@@ -71,8 +75,8 @@
 	<script src="http://code.highcharts.com/highcharts.js"></script>
 
 	
-	<script src="dist/vendor.min.js?20140218100922"></script>
-	<script src="dist/local.min.js?20140218100922"></script>
+	<script src="dist/vendor.min.js?20140219052035"></script>
+	<script src="dist/local.min.js?20140219052035"></script>
 	
 </body>
 

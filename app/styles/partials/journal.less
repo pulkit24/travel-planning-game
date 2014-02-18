@@ -1,0 +1,195 @@
+.journal {
+	background: black url(../images/journal-bkg2.jpg) center center no-repeat;
+
+	.menu-top-bar {
+		.glass();
+		text-align: center;
+	}
+
+	.journal-option {
+		position: relative;
+		float: left;
+		margin-top: @size-height-HUD;
+		width: 50%;
+		text-align: center;
+
+		img {
+			.shadow-box-hud();
+			max-width: 50%;
+			height: auto;
+			cursor: pointer;
+			transition: 0.25s;
+		}
+
+		img:hover {
+			max-width: 55%;
+			zoom: 1.1;
+		}
+
+		h2 {
+			color: white;
+			font-weight: bold;
+		}
+	}
+	.journal-landmark-option {
+		transform: rotate(-10deg);
+
+		img {
+			border-radius: 25px;
+		}
+
+		h2 {
+			margin-top: -50px;
+		}
+	}
+	.journal-items-option {
+		transform: rotate(10deg);
+
+		img {
+			border-radius: 5px;
+		}
+	}
+
+	.journal-page {
+		overflow: hidden;
+		background: transparent url(../images/journal-book2.jpg) center center no-repeat;
+
+		.journal-page-half {
+			@padding: 0px;
+
+			float: left;
+			overflow-y: auto;
+			padding: @padding 0;
+			width: 50%;
+			text-align: center;
+			// margin-top: @size-height-HUD;
+			height: @size-height-game - @size-height-HUD - @padding;
+		}
+
+		.journal-zoom {
+			padding: 20px;
+
+			[landmark-card] {
+				top: 7%;
+				text-align: left;
+				zoom: 0.8;
+			}
+
+			[item-card] {
+				.item-card {
+					width: 300px;
+					top: 20px;
+					left: 30px;
+
+					.panel-heading {
+
+						&:after, &:before {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+
+		.journal-list {
+			margin: 20px auto 0 5px;
+			width: 45%;
+
+			.journal-landmark-card-thumbnail {
+				float: left;
+				overflow: hidden;
+				margin: 5px;
+				width: 125px;
+				height: 161px;
+				.shadow-box-low();
+				border-radius: @panel-border-radius;
+				cursor: pointer;
+
+				.landmark-card {
+					margin-bottom: 0;
+
+					.close, .thumbnail, .list-group, .panel-footer { display: none; }
+					.panel-heading h3 {
+						overflow: hidden;
+						margin: 0;
+						padding: 0;
+						height: 40px;
+						text-align: center;
+						text-transform: uppercase;
+						font-size: 16px;
+						transition: 0.1s;
+					}
+					&:hover {
+						.panel-heading h3 {
+							height: 161px;
+						}
+					}
+					.panel-body {
+						height: 100px;
+					}
+					&:hover .panel-body {
+						// height: 0;
+					}
+				}
+
+				&.unavailable {
+					background: white url(../images/landmarks/anz_icon_card_back.png) center center no-repeat;
+					background-size: cover;
+					cursor: auto;
+
+					.landmark-card {
+						visibility: hidden;
+					}
+				}
+			}
+
+			.journal-item-card-thumbnail {
+				float: left;
+				overflow: hidden;
+				margin: 5px;
+				width: 75px;
+				height: 75px;
+				border-radius: @panel-border-radius;
+				.shadow-box-low();
+				cursor: pointer;
+
+				h3 {
+					height: 0;
+					overflow: hidden;
+					margin: 0;
+					text-align: center;
+					text-transform: uppercase;
+					font-size: 14px;
+					transition: 0.1s;
+					padding: 0;
+					background-color: @color-afternoon;
+					// #8a4f36;
+					color: white;
+					font-weight: bold;
+				}
+
+				&:hover {
+
+					h3 {
+						padding: 5px 0 0;
+						height: 75px;
+					}
+
+					img {
+						visibility: hidden;
+					}
+				}
+
+				&.unavailable {
+					background: white url(../images/items/anz_icon_item.png) center center no-repeat;
+					background-size: cover;
+					cursor: auto;
+
+					h3, img {
+						visibility: hidden;
+					}
+				}
+			}
+		}
+	}
+}

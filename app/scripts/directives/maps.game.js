@@ -11,7 +11,7 @@ angular.module('travelPlanningGame.maps')
 				, selected: "="
 			}
 			, controller: function($scope, $q, $timeout, angulargmContainer, angulargmUtils, mapStyles, mapRouter,
-				mapGeocoder, stateTracker, resources) {
+				mapGeocoder, stateTracker, resources, timer) {
 
 				// On load, see if the map data is ready
 				$scope.mapState = stateTracker.get("mapState");
@@ -67,7 +67,18 @@ angular.module('travelPlanningGame.maps')
 					$scope.disabled = $scope.disabled || angular.isUndefined(google);
 					$scope.type = 'roadmap';
 					$scope.bounds = new google.maps.LatLngBounds();
-					$scope.styles = window.selectedMapStyles;
+
+					$scope.getTimeOfDay = function() {
+						return timer.now() ? timer.toTimeOfDay(timer.now().time) : "morning";
+					};
+					$scope.styles = mapStyles[$scope.getTimeOfDay()];
+
+					$scope.$watch("getTimeOfDay()", function(newValue, oldValue) {
+						if(newValue && newValue !== oldValue)
+							$scope.map.setOptions({
+								styles: mapStyles[newValue]
+							});
+					});
 
 					$scope.$on("event:map:stylesChanged", function() {
 						$scope.map.setOptions({

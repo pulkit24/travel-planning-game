@@ -1,0 +1,84 @@
+[item-card] {
+	// Popup on hover
+	.item-card {
+		.shadow-box-hud();
+		position: absolute;
+		top: 0;
+		left: 120%;
+		width: 400px;
+		z-index: 10;
+
+		&.panel {
+			@popupColor: rgb(226, 208, 158);
+
+			border-color: @popupColor;
+
+			.panel-heading {
+				position: relative;
+				background-color: @popupColor;
+				border: none;
+
+				&:after, &:before {
+					position: absolute;
+					top: 50%;
+					right: 100%;
+					width: 0;
+					height: 0;
+					border: solid transparent;
+					content: " ";
+					pointer-events: none;
+				}
+
+				&:after {
+					margin-top: -20px;
+					border-width: 20px;
+					border-color: transparent;
+					border-right-color: @popupColor;
+				}
+				&:before {
+					margin-top: -26px;
+					border-width: 26px;
+					border-color: transparent;
+					border-right-color: @popupColor;
+				}
+			}
+		}
+
+		.souvenir {
+			float: left;
+			text-align: center;
+
+			&.picture {
+				padding: 0 3% 0;
+				width: 35%;
+
+				img {
+					vertical-align: bottom;
+				}
+			}
+
+			&.info {
+				width: 59%;
+
+				h4 {
+					margin: 0;
+				}
+
+				.cost, .gains {
+					width: 49%;
+					font-size: 1.6em;
+					font-weight: bold;
+					.shadow-text-hud();
+				}
+
+				.cost {
+					color: @color-money;
+				}
+
+				.gains {
+					color: @color-souvenirs;
+				}
+			}
+		}
+	}
+}
