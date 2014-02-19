@@ -130,7 +130,7 @@ body {
 
 @font-face {
   font-family: "DS-DIGI";
-  src: url("../fonts/DS-DIGI.ttf");
+  src: url("../fonts/dsdigital.ttf");
 }
 
 .menu-top-bar {
@@ -155,7 +155,7 @@ body {
 
 .menu-top-bar h1.banner {
   position: absolute;
-  font-family: 'DS-DIGI', sans-serif;
+  font-family: 'dsdigital', sans-serif;
   font-size: 72px;
   text-transform: uppercase;
   -webkit-animation: flight-schedule-marquee 9s linear infinite;
