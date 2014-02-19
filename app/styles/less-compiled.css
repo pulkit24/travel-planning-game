@@ -119,7 +119,7 @@ body {
 
 @font-face {
   font-family: "DS-DIGI";
-  src: url("/app/fonts/DS-DIGI.ttf");
+  src: url("/fonts/DS-DIGI.ttf");
 }
 
 .menu-top-bar {
