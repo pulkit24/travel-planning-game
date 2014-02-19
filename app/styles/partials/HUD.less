@@ -26,14 +26,22 @@
 		line-height: @size-height-HUD;
 
 		&.banner {
+			@movementSpeed: 9s;
+
 			font-family: 'DS-DIGI', sans-serif;
 			font-size: 72px;
 			text-transform: uppercase;
-			animation: flight-schedule-marquee 5s linear infinite;
+			animation: flight-schedule-marquee @movementSpeed linear infinite;
+			position: absolute;
+
+			&.delayed {
+				opacity: 0;
+				animation-delay: @movementSpeed / 2;
+			}
 
 			@keyframes flight-schedule-marquee {
-				from { margin-left: @size-width-game; }
-				to { margin-left: (-1 * @size-width-game) / 2; }
+				0% { opacity: 1; transform: translateX(@size-width-game); }
+				100% { opacity: 1; transform: translateX(-@size-width-game); }
 			}
 		}
 

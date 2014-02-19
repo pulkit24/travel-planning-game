@@ -26,7 +26,7 @@ angular.module('travelPlanningGame.app')
 					if($scope.landmark && $scope.isVisited())
 						return $scope.landmark.shopping.image;
 					else
-						return 'app/images/items/anz_icon_card_bg_shopping.png';
+						return 'images/items/anz_icon_card_bg_shopping.png';
 				};
 			}
 		};

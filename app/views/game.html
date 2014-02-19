@@ -64,6 +64,7 @@
 	<!-- Selected destination -->
 	<div class="layer menu-top-bar banner-bar">
 		<h1 class="banner">Destination: {{ current.location.name }}</h1>
+		<h1 class="banner delayed">Destination: {{ current.location.name }}</h1>
 	</div>
 	<!-- end selected destination -->
 
@@ -116,7 +117,7 @@
 	<!-- Ungrades unlocked -->
 	<div class="layer upgrade-indicators">
 		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="upgrade.isUnlocked">
-			<a href="#" tooltip="You have the {{ upgrade.name }} unlocked" tooltip-placement="bottom">
+			<a tooltip="You have the {{ upgrade.name }} unlocked" tooltip-placement="bottom">
 				<img ng-src="{{ upgrade.icon }}" />
 			</a>
 		</span>

@@ -143,18 +143,26 @@ body {
 }
 
 .menu-top-bar h1.banner {
+  position: absolute;
   font-family: 'DS-DIGI', sans-serif;
   font-size: 72px;
   text-transform: uppercase;
-  animation: flight-schedule-marquee 5s linear infinite;
+  animation: flight-schedule-marquee 9s linear infinite;
+}
+
+.menu-top-bar h1.banner.delayed {
+  opacity: 0;
+  animation-delay: 4.5s;
 }
 
 @keyframes flight-schedule-marquee {
-  from {
-    margin-left: 800px;
+  0% {
+    opacity: 1;
+    transform: translateX(800px);
   }
-  to {
-    margin-left: -400px;
+  100% {
+    opacity: 1;
+    transform: translateX(-800px);
   }
 }
 
