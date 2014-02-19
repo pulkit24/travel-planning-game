@@ -45,8 +45,8 @@ angular.module('travelPlanningGame.maps')
 
 							// If last, mark geocoding as complete
 							if (index === $scope.locations.length - 1) {
-								$scope.$broadcast('gmMarkersUpdate');
-							// $scope.$broadcast('gmMarkersRedraw');
+								// $scope.$broadcast('gmMarkersUpdate');
+								$scope.$broadcast('gmMarkersRedraw');
 								stateTracker.new("geocodingState").complete();
 							}
 						});

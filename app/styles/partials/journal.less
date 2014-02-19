@@ -1,5 +1,15 @@
 .journal {
 	background: black url(../images/journal-bkg2.jpg) center center no-repeat;
+	z-index: 30;
+
+	&.ng-enter {
+		animation: fadeIn 0.25s ease-in-out;
+		animation-fill-mode: both;
+	}
+	&.ng-leave {
+		animation: fadeOut 0.25s ease-in-out;
+		animation-fill-mode: both;
+	}
 
 	.menu-top-bar {
 		.glass();

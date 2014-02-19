@@ -86,7 +86,13 @@ angular.module("travelPlanningGame.app")
 			return history;
 		};
 
+		var removeInstance = function unregister(name) {
+			registry[name] = null;
+			return true;
+		};
+
 		return {
 			getInstance: getInstance
+			, removeInstance: removeInstance
 		};
 	});

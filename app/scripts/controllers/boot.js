@@ -6,8 +6,9 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.experiments = {};
-
 		$scope.experiments.disabled = true;
+
+		$scope.journal = {};
 
 		$scope.mapStyles = mapStyles;
 		$scope.experiments.selectedMapStyles = "retro";

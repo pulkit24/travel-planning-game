@@ -122,8 +122,14 @@ angular.module("travelPlanningGame.app")
 			return history;
 		};
 
+		var removeInstance = function unregister(name) {
+			registry[name] = null;
+			return true;
+		};
+
 		return {
 			getInstance: getInstance
+			, removeInstance: removeInstance
 		};
 	});
 
@@ -1406,8 +1412,8 @@ angular.module('travelPlanningGame.maps')
 
 							// If last, mark geocoding as complete
 							if (index === $scope.locations.length - 1) {
-								$scope.$broadcast('gmMarkersUpdate');
-							// $scope.$broadcast('gmMarkersRedraw');
+								// $scope.$broadcast('gmMarkersUpdate');
+								$scope.$broadcast('gmMarkersRedraw');
 								stateTracker.new("geocodingState").complete();
 							}
 						});
@@ -1850,8 +1856,9 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.experiments = {};
-
 		$scope.experiments.disabled = true;
+
+		$scope.journal = {};
 
 		$scope.mapStyles = mapStyles;
 		$scope.experiments.selectedMapStyles = "retro";

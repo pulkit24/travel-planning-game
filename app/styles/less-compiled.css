@@ -60,6 +60,10 @@
   }
 }
 
+.text-brown {
+  color: #877849;
+}
+
 body {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -343,6 +347,11 @@ body {
   margin: 0 10px;
 }
 
+.upgrade-indicators .journal-icon {
+  position: absolute;
+  right: -64px;
+}
+
 .upgrade-indicators .upgrade-indicator {
   margin: 0 5px;
 }
@@ -443,7 +452,18 @@ body {
 }
 
 .journal {
+  z-index: 30;
   background: #000000 url(../images/journal-bkg2.jpg) center center no-repeat;
+}
+
+.journal.ng-enter {
+  animation: fadeIn 0.25s ease-in-out;
+  animation-fill-mode: both;
+}
+
+.journal.ng-leave {
+  animation: fadeOut 0.25s ease-in-out;
+  animation-fill-mode: both;
 }
 
 .journal .menu-top-bar {
