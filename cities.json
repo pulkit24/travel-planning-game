@@ -1,13 +1,4 @@
 [{
 	"name": "Singapore"
 	, "address": "Singapore, Singapore"
-},{
-	"name": "Tokyo"
-	, "address": "Tokyo, Japan"
-},{
-	"name": "Paris"
-	, "address": "Paris, France"
-},{
-	"name": "Melbourne"
-	, "address": "Melbourne, Australia"
 }]
