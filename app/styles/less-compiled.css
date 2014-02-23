@@ -110,6 +110,11 @@ body {
   display: none !important;
 }
 
+.intro-screen {
+  background: #ffffff url(../images/anz_worldmap.png) center center no-repeat;
+  background-size: cover;
+}
+
 /* Loading screen */
 
 .loading-screen {
@@ -135,7 +140,8 @@ body {
 }
 
 .menu-top-bar.banner-bar {
-  color: #ffff5c;
+  color: #f4f5c1;
+  text-shadow: 0 0 12px #ff4800;
   background-color: #333;
 }
 
@@ -194,14 +200,14 @@ body {
   right: 0;
   width: 240px;
   height: 100%;
-  background-color: #a2b0b9;
+  background-color: #879b72;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar,
 .sidebar .panel {
   color: white;
-  background-color: #768b98;
+  background-color: #617150;
 }
 
 .sidebar.top-gap {
@@ -342,9 +348,9 @@ body {
 /* Upgrades unlocked */
 
 .upgrade-indicators {
-  top: 20px;
-  right: 200px;
-  margin: 0 10px;
+  top: 16px;
+  right: 208px;
+  margin: 0 8px;
 }
 
 .upgrade-indicators .journal-icon {
@@ -353,7 +359,7 @@ body {
 }
 
 .upgrade-indicators .upgrade-indicator {
-  margin: 0 5px;
+  margin: 0 4px;
 }
 
 .upgrade-indicators .upgrade-indicator a {
@@ -362,10 +368,22 @@ body {
 
 .upgrade-indicators .upgrade-indicator img {
   width: auto;
-  height: 32px;
-  border-radius: 2px;
-  animation: box-glow 2s ease-in-out infinite;
-  animation-fill-mode: both;
+  height: 36px;
+  padding: 0;
+  background-color: #485968;
+  border: 3px solid #485968;
+  border-radius: 7px;
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+  transition: 0.15s linear;
+}
+
+.upgrade-indicators .upgrade-indicator img:hover {
+  transform: rotate(-10deg);
+}
+
+.intro-buttons {
+  bottom: 0;
+  left: 0;
 }
 
 .btn.btn-action {
@@ -449,6 +467,28 @@ body {
 
 .evening .btn[disabled]:hover {
   border-top: 4px solid #515151;
+}
+
+.btn.btn-menu {
+  display: block;
+  width: 225px;
+  padding: 0 15px;
+  margin: 20px 0;
+  font-size: 36px;
+  font-style: italic;
+  font-weight: bold;
+  text-align: right;
+  text-transform: uppercase;
+  background-color: #777;
+  border: none;
+  border-radius: 0;
+  box-shadow: -5px 3px 5px #000000;
+  transition: 0.1s;
+}
+
+.btn.btn-menu:hover {
+  width: 280px;
+  background-color: #37BAC0;
 }
 
 .journal {
@@ -758,9 +798,9 @@ body {
   position: absolute;
   right: 20px;
   z-index: 11;
-  font-size: 18px;
+  font-size: 32px;
   font-weight: bold;
-  color: white;
+  color: gold;
 }
 
 [widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater.rise {
@@ -769,7 +809,7 @@ body {
 }
 
 [widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater.sink {
-  animation: rise 1s ease-in;
+  animation: sink 1s ease-in;
   animation-fill-mode: both;
 }
 
@@ -785,7 +825,7 @@ body {
     text-shadow: none;
   }
   100% {
-    top: -25px;
+    top: -100px;
     color: white;
     text-shadow: none;
     opacity: 0;
@@ -795,18 +835,16 @@ body {
 @keyframes sink {
   0% {
     bottom: 0;
-    color: gold;
-    text-shadow: 0 0 5px orange;
+    text-shadow: 0 0 10px black;
+    opacity: 0;
+  }
+  25% {
+    text-shadow: 0 0 10px orange;
     opacity: 1;
   }
-  50% {
-    color: white;
-    text-shadow: none;
-  }
   100% {
-    bottom: -25px;
-    color: white;
-    text-shadow: none;
+    bottom: -100px;
+    text-shadow: 0 0 10px black;
     opacity: 0;
   }
 }
@@ -1398,11 +1436,13 @@ body {
 
 [landmark-view].ng-enter {
   animation: zoomIn 0.5s ease-in-out;
+  animation-delay: 1.5s;
+  animation-fill-mode: both;
 }
 
 [landmark-view].ng-leave {
   animation: zoomOut 0.5s ease-in-out;
-  animation-delay: 0.75s;
+  animation-delay: 1.5s;
   animation-fill-mode: both;
 }
 
@@ -1465,7 +1505,7 @@ body {
   border-left: 0;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
   animation: slideInLeft 0.25s;
-  animation-delay: 0.5s;
+  animation-delay: 2s;
   animation-fill-mode: both;
 }
 

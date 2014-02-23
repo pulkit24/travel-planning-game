@@ -1,4 +1,6 @@
 .btn {
+
+	// Action buttons
 	&.btn-action {
 		.shadow-box-hud();
 		.button-color(@color-action-primary);
@@ -8,6 +10,7 @@
 
 	&[disabled] { .button-color(@color-background); }
 
+	// Themes by time of day
 	.morning & {
 		.button-color(@color-morning);
 		&[disabled] { .button-color(@color-background); }
@@ -22,12 +25,36 @@
 	}
 
 	.button-color(@color) {
-		background-color: @color;
 		border-color: @color;
+		background-color: @color;
 		color: white;
 
 		&:hover {
 			border-top: 4px solid darken(@color, 15%);
 		}
 	}
+
+	// Intro menu buttons
+	&.btn-menu {
+		display: block;
+		margin: 20px 0;
+		padding: 0px 15px;
+		width: 225px;
+		border: none;
+		border-radius: 0;
+		background-color: #777;
+		box-shadow: -5px 3px 5px black;
+		text-align: right;
+		text-transform: uppercase;
+		font-weight: bold;
+		font-style: italic;
+		font-size: 36px;
+		transition: 0.1s;
+
+		&:hover {
+			width: 280px;
+			background-color: #37BAC0;
+		}
+	}
+
 }

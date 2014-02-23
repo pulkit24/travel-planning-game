@@ -25,21 +25,20 @@
 			font-size: 18px;
 		}
 		.widget-resource-indicator-update-floater {
-			@floatDistance: 25px;
+			@floatDistance: 100px;
 			position: absolute;
 			right: 20px;
 			z-index: 11;
-			color: white;
 			font-weight: bold;
-			font-size: 18px;
+			color: gold;
+			font-size: 32px;
 
 			&.rise {
 				animation: rise 1s ease-in;
 				animation-fill-mode: both;
 			}
 			&.sink {
-				animation: rise 1s ease-in;
-				// animation: sink 1s ease-in;
+				animation: sink 1s ease-in;
 				animation-fill-mode: both;
 			}
 			@keyframes rise {
@@ -48,9 +47,9 @@
 				100% { top: -@floatDistance; opacity: 0; color: white; text-shadow: none; }
 			}
 			@keyframes sink {
-				0% { bottom: 0; opacity: 1; color: gold; text-shadow: 0 0 5px orange;}
-				50% { color: white; text-shadow: none; }
-				100% { bottom: -@floatDistance; opacity: 0; color: white; text-shadow: none; }
+				0% { bottom: 0; opacity: 0; text-shadow: 0 0 10px black; }
+				25% { opacity:1; text-shadow: 0 0 10px orange; }
+				100% { bottom: -@floatDistance; opacity: 0; text-shadow: 0 0 10px black; }
 			}
 		}
 	}

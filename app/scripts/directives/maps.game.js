@@ -37,15 +37,13 @@ angular.module('travelPlanningGame.maps')
 						// Give it an id
 						location.id = index;
 
+						$scope.locations.yetToPlot = $scope.locations.length;
 						plotLocation(location).then(function() {
 							$scope.focus();
+							$scope.locations.yetToPlot -= 1;
 
-							// Refresh the markers being displayed on the map
-							// $scope.$broadcast('gmMarkersRedraw');
-
-							// If last, mark geocoding as complete
-							if (index === $scope.locations.length - 1) {
-								// $scope.$broadcast('gmMarkersUpdate');
+							// When all complete, mark geocoding as complete
+							if ($scope.locations.yetToPlot <= 0) {
 								$scope.$broadcast('gmMarkersRedraw');
 								stateTracker.new("geocodingState").complete();
 							}

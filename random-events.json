@@ -41,7 +41,7 @@
 	"type": "NEGATIVE"
 	, "name": "Fell Sick"
 	, "description": "You caught the seasonal flu and have fallen ill."
-	, "impact": "You lose $100 in medical charges and skip a turn"
+	, "impact": "You lose $100 in medical charges"
 	, "resource": "MONEY"
 	, "amount": -100
 	, "turn-skip": 1
@@ -51,7 +51,7 @@
 	"type": "NEGATIVE"
 	, "name": "Minor Accident"
 	, "description": "You met with a road accident. It wasn't much, but you now face the greater trauma of dealing with the hospital bills."
-	, "impact": "You lose $300 in medical charges and skip a turn"
+	, "impact": "You lose $300 in medical charges"
 	, "resource": "MONEY"
 	, "amount": -300
 	, "turn-skip": 1

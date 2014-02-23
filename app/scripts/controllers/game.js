@@ -28,6 +28,10 @@ angular.module("travelPlanningGame.app")
 
 		// Current status
 		$scope.current.state = stateTracker.new([{
+			state: "intro"
+			, set: "intro"
+			, check: "isIntro"
+		}, {
 			state: "menu"
 			, set: "menu"
 			, check: "isMenu"
@@ -211,8 +215,10 @@ angular.module("travelPlanningGame.app")
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
 			// Restrict further selection to landmarks only
-			$scope.map.options.selectable = "location";
-			$scope.map.state.update();
+			// $scope.map.options.selectable = "location";
+			// $scope.map.state.update();
+
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			// Charge for visiting costs and experience
 			if ($scope.current.location.resources) {
@@ -277,7 +283,6 @@ angular.module("travelPlanningGame.app")
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), $scope.resources);
-			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			$scope.turnState.complete();
 
@@ -308,42 +313,53 @@ angular.module("travelPlanningGame.app")
 		function handleRandomEvent(randomEvent) {
 			showRandomEvent(randomEvent).then(function() {
 
-				// Charge for the impact
+				// Charge for the impact if not countered
 				if (randomEvent) {
 
-					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+					// Do we have a counter for this event?
+					if(!randomEvents.getAvailableCounterTo(randomEvent)) {
 
-					// Get the upgrade to unlock
-					var eventUpgrades = upgrades.get(randomEvent.unlocks);
-					var upgrade = null;
-					if (eventUpgrades) {
-						// Pick the first upgrade we don't have
-						if(angular.isArray(eventUpgrades)) {
-							for(var i = 0, len = eventUpgrades.length; i < len; i++)
-								if(!eventUpgrades[i].isUnlocked) {
-									upgrade = eventUpgrades[i];
-									break;
-								}
-						} else
-							upgrade = eventUpgrades;
-					}
+						// If no, charge for it
+						resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 
-					showUpgradeUnlocked(upgrade).then(function() {
-
-						// Officially unlock the upgrade!
-						if(upgrade) {
-							// Add any resource bonuses
-							resources.merge($scope.resources, upgrade.resources);
-
-							// Mark as unlocked
-							upgrade.isUnlocked = true;
+						// Get the upgrade to unlock
+						var eventUpgrades = upgrades.get(randomEvent.unlocks);
+						var upgrade = null;
+						if (eventUpgrades) {
+							// Pick the first upgrade we don't have
+							if(angular.isArray(eventUpgrades)) {
+								for(var i = 0, len = eventUpgrades.length; i < len; i++)
+									if(!eventUpgrades[i].isUnlocked) {
+										upgrade = eventUpgrades[i];
+										break;
+									}
+							} else
+								upgrade = eventUpgrades;
 						}
 
-						$scope.upgradeUnlocked = null;
+						showUpgradeUnlocked(upgrade).then(function() {
+
+							// Officially unlock the upgrade!
+							if(upgrade) {
+								// Add any resource bonuses
+								resources.merge($scope.resources, upgrade.resources);
+
+								// Mark as unlocked
+								upgrade.isUnlocked = true;
+							}
+
+							$scope.upgradeUnlocked = null;
+							$scope.randomEvent = null;
+							closingActivities();
+
+						});
+					}
+
+					// Else - no charges and no unlocks (too many unlocks!)
+					else {
 						$scope.randomEvent = null;
 						closingActivities();
-
-					});
+					}
 
 				}
 				else {

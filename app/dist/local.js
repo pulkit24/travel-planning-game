@@ -761,7 +761,7 @@ angular.module('travelPlanningGame.maps')
 	});
 
 angular.module("travelPlanningGame.app")
-	.factory("randomEvents", function($q, $http, resources) {
+	.factory("randomEvents", function($q, $http, resources, upgrades) {
 
 		// Source files
 		var source_events = "../random-events.json";
@@ -861,13 +861,32 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
+		}
+
+		function getAvailableCounterTo(randomEvent) {
+			if(!randomEvent)
+				return null;
+
+			// Get the current counters
+			var counters = randomEvent.counteredBy;
+			if(!angular.isArray(counters))
+				counters = [counters];
+			for(var i = 0, len = counters.length; i < len; i++) {
+				var counter = upgrades.get(counters[i]);
+				if(counter && counter.isUnlocked) {
+					return counter; // if any one of the counters is already unlocked
+				}
+			}
+
+			return null;
 		}
 
 		return {
 			load: loadEvents
 			, hasOccurred: randomYes
 			, getEvent: getRandomEvent
+			, getAvailableCounterTo: getAvailableCounterTo
 		};
 	});
 
@@ -1404,15 +1423,13 @@ angular.module('travelPlanningGame.maps')
 						// Give it an id
 						location.id = index;
 
+						$scope.locations.yetToPlot = $scope.locations.length;
 						plotLocation(location).then(function() {
 							$scope.focus();
+							$scope.locations.yetToPlot -= 1;
 
-							// Refresh the markers being displayed on the map
-							// $scope.$broadcast('gmMarkersRedraw');
-
-							// If last, mark geocoding as complete
-							if (index === $scope.locations.length - 1) {
-								// $scope.$broadcast('gmMarkersUpdate');
+							// When all complete, mark geocoding as complete
+							if ($scope.locations.yetToPlot <= 0) {
 								$scope.$broadcast('gmMarkersRedraw');
 								stateTracker.new("geocodingState").complete();
 							}
@@ -1730,7 +1747,7 @@ angular.module('travelPlanningGame.app')
 				randomEvent: '='
 			}
 			, templateUrl: 'templates/random-event-card.tpl.html'
-			, controller: function($scope, upgrades) {
+			, controller: function($scope, randomEvents) {
 
 				$scope.close = function() {
 					$scope.$emit("tpg:event:eventCard:close");
@@ -1738,25 +1755,8 @@ angular.module('travelPlanningGame.app')
 
 				$scope.currentCounter = null;
 				$scope.getCurrentCounter = function() {
-					if(!$scope.randomEvent) {
-						$scope.currentCounter = null;
-						return null;
-					}
-
-					// Get the current counters
-					var counters = $scope.randomEvent.counteredBy;
-					if(!angular.isArray(counters))
-						counters = [counters];
-					for(var i = 0, len = counters.length; i < len; i++) {
-						var counter = upgrades.get(counters[i]);
-						if(counter && counter.isUnlocked) {
-							$scope.currentCounter = counter;
-							return counter; // if any one of the counters is already unlocked
-						}
-					}
-
-					$scope.currentCounter = null;
-					return null;
+					$scope.currentCounter = randomEvents.getAvailableCounterTo($scope.randomEvent);
+					return $scope.currentCounter;
 				};
 			}
 		};
@@ -1796,23 +1796,45 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
 					'shopping-cart');
 			}
-			, controller: function($scope, $filter, resources) {
+			, controller: function($scope, $filter, $timeout, resources) {
 
-				$scope.currentValue = 0;
-
-				$scope.getValue = function() {
-					return $filter("number")($scope.getRawValue());
-				};
 				$scope.getRawValue = function() {
 					return $scope.resources.get(resources.categories[$scope.category],
 						resources.types[$scope.type]);
 				};
+
+				var countdownStepTime = 35; // ms
+				var countdownJumps = 10; // max no. of steps to take
+
+				function countdown(target, step) {
+					if($scope.currentValue - target >= step)
+						$scope.currentValue -= step;
+					else if(target - $scope.currentValue >= step)
+						$scope.currentValue += step;
+					else {
+						$scope.currentValue = target;
+						return;
+					}
+
+					$timeout(function() {
+						countdown(target, step);
+					}, countdownStepTime);
+				}
+
+				function computeCountdownStep(current, target) {
+					var gap = Math.abs(current - target);
+					return gap > countdownJumps ? parseInt(gap / countdownJumps, 10) : 1;
+				}
+
+				$scope.currentValue = $scope.getRawValue();
 
 				// Floating notices of updated values
 				$scope.updates = [];
 
 				$scope.$watch('getRawValue()', function(newValue, oldValue) {
 					if(angular.isDefined(newValue) && angular.isDefined(oldValue) && newValue !== oldValue) {
+						var step = computeCountdownStep($scope.currentValue, newValue);
+						countdown(newValue, step);
 						$scope.updates.push(parseInt(newValue, 10) - parseInt(oldValue, 10));
 					}
 				});
@@ -1937,6 +1959,10 @@ angular.module("travelPlanningGame.app")
 
 		// Current status
 		$scope.current.state = stateTracker.new([{
+			state: "intro"
+			, set: "intro"
+			, check: "isIntro"
+		}, {
 			state: "menu"
 			, set: "menu"
 			, check: "isMenu"
@@ -2120,8 +2146,10 @@ angular.module("travelPlanningGame.app")
 			// Set the selected landmark as the current location
 			$scope.current.location = $scope.locations.selected;
 			// Restrict further selection to landmarks only
-			$scope.map.options.selectable = "location";
-			$scope.map.state.update();
+			// $scope.map.options.selectable = "location";
+			// $scope.map.state.update();
+
+			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			// Charge for visiting costs and experience
 			if ($scope.current.location.resources) {
@@ -2186,7 +2214,6 @@ angular.module("travelPlanningGame.app")
 
 			// Record today's state in history
 			history.getInstance("resources").record(timer.toTimestamp(), $scope.resources);
-			history.getInstance("landmarks").record(timer.toTimestamp(), $scope.current.location.id);
 
 			$scope.turnState.complete();
 
@@ -2217,42 +2244,53 @@ angular.module("travelPlanningGame.app")
 		function handleRandomEvent(randomEvent) {
 			showRandomEvent(randomEvent).then(function() {
 
-				// Charge for the impact
+				// Charge for the impact if not countered
 				if (randomEvent) {
 
-					resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
+					// Do we have a counter for this event?
+					if(!randomEvents.getAvailableCounterTo(randomEvent)) {
 
-					// Get the upgrade to unlock
-					var eventUpgrades = upgrades.get(randomEvent.unlocks);
-					var upgrade = null;
-					if (eventUpgrades) {
-						// Pick the first upgrade we don't have
-						if(angular.isArray(eventUpgrades)) {
-							for(var i = 0, len = eventUpgrades.length; i < len; i++)
-								if(!eventUpgrades[i].isUnlocked) {
-									upgrade = eventUpgrades[i];
-									break;
-								}
-						} else
-							upgrade = eventUpgrades;
-					}
+						// If no, charge for it
+						resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
 
-					showUpgradeUnlocked(upgrade).then(function() {
-
-						// Officially unlock the upgrade!
-						if(upgrade) {
-							// Add any resource bonuses
-							resources.merge($scope.resources, upgrade.resources);
-
-							// Mark as unlocked
-							upgrade.isUnlocked = true;
+						// Get the upgrade to unlock
+						var eventUpgrades = upgrades.get(randomEvent.unlocks);
+						var upgrade = null;
+						if (eventUpgrades) {
+							// Pick the first upgrade we don't have
+							if(angular.isArray(eventUpgrades)) {
+								for(var i = 0, len = eventUpgrades.length; i < len; i++)
+									if(!eventUpgrades[i].isUnlocked) {
+										upgrade = eventUpgrades[i];
+										break;
+									}
+							} else
+								upgrade = eventUpgrades;
 						}
 
-						$scope.upgradeUnlocked = null;
+						showUpgradeUnlocked(upgrade).then(function() {
+
+							// Officially unlock the upgrade!
+							if(upgrade) {
+								// Add any resource bonuses
+								resources.merge($scope.resources, upgrade.resources);
+
+								// Mark as unlocked
+								upgrade.isUnlocked = true;
+							}
+
+							$scope.upgradeUnlocked = null;
+							$scope.randomEvent = null;
+							closingActivities();
+
+						});
+					}
+
+					// Else - no charges and no unlocks (too many unlocks!)
+					else {
 						$scope.randomEvent = null;
 						closingActivities();
-
-					});
+					}
 
 				}
 				else {
@@ -2627,6 +2665,10 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				<small>PER DAY</small>\n' +
+    '\n' +
+    '				<a tooltip-html-unsafe="<strong>Lodging Cost will apply.</strong><p>This is your last trip for the day. You will be lodging here tonight.</p>" tooltip-placement="right">\n' +
+    '				</a>\n' +
+    '\n' +
     '			</div>\n' +
     '			<div class="thumbnail resource resource-xp text-center">\n' +
     '				<small>VISITING</small>\n' +
@@ -2852,8 +2894,8 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '		<img ng-switch-when="XP" src="images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="SOUVENIR" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
-    '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
-    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'sink\'">\n' +
+    '	<span class="widget-resource-indicator-value" ng-bind="currentValue"></span>\n' +
+    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'sink\' : \'sink\'">\n' +
     '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
     '	</span>\n' +
     '</div>\n' +

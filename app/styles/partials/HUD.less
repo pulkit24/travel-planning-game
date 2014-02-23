@@ -8,15 +8,16 @@
 }
 
 .menu-top-bar {
+	.shadow-box-hud();
 	width: 100%;
 	height: @size-height-HUD;
 	background-color: @color-title;
 	color: white;
-	.shadow-box-hud();
 
 	&.banner-bar {
 		background-color: #333;
-		color: #ffff5c;
+		color: #f4f5c1;
+		text-shadow: 0 0 12px #ff4800;
 	}
 
 	h1 {
@@ -27,12 +28,12 @@
 
 		&.banner {
 			@movementSpeed: 9s;
+			position: absolute;
+			text-transform: uppercase;
+			font-size: 72px;
 
 			font-family: 'dsdigital', sans-serif;
-			font-size: 72px;
-			text-transform: uppercase;
 			animation: flight-schedule-marquee @movementSpeed linear infinite;
-			position: absolute;
 
 			&.delayed {
 				opacity: 0;
@@ -214,7 +215,7 @@
 
 /* Upgrades unlocked */
 .upgrade-indicators {
-	@gutter: 10px;
+	@gutter: 8px;
 
 	top: 2 * @gutter;
 	right: @size-width-sidebar - (4 * @gutter);
@@ -233,11 +234,26 @@
 		}
 
 		img {
-			.shadow-box-glow();
+			.shadow-box-hud();
+
+			padding: 0;
 			width: auto;
-			height: 32px;
-			border-radius: 2px;
+			height: 36px;
+			border: 3px solid #485968;
+			border-radius: 7px;
+			background-color: #485968;
+			transition: 0.15s linear;
+
+			&:hover {
+				transform: rotate(-10deg);
+			}
 		}
 	}
 
+}
+
+// Menu on the intro screen
+.intro-buttons {
+	bottom: 0;
+	left: 0;
 }

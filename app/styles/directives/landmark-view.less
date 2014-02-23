@@ -1,17 +1,22 @@
 [landmark-view] {
 
+	@animationDelay: 1.5s;
+	@animationDuration: 0.5s;
+
 	&.ng-enter {
 		// animation: fadeIn 1s;
-		animation: zoomIn 0.5s ease-in-out;
+		animation: zoomIn @animationDuration ease-in-out;
+		animation-fill-mode: both;
+		animation-delay: @animationDelay;
 	}
 	&.ng-leave {
 		// animation: fadeOut 1s;
-		animation: zoomOut 0.5s ease-in-out;
+		animation: zoomOut @animationDuration ease-in-out;
 		animation-fill-mode: both;
-		animation-delay: 0.75s;
+		animation-delay: @animationDelay;
 
 		.landmark-view-description {
-			animation: slideOutLeft 0.5s !important;
+			animation: slideOutLeft @animationDuration !important;
 			animation-delay: 0 !important;
 		}
 	}
@@ -42,9 +47,9 @@
 			width: @width;
 			border-left: 0;
 
-			animation: slideInLeft 0.25s;
+			animation: slideInLeft (@animationDuration / 2);
 			animation-fill-mode: both;
-			animation-delay: 0.5s;
+			animation-delay: @animationDelay + @animationDuration;
 		}
 	}
 }

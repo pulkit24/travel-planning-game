@@ -25,9 +25,9 @@
 		, "icon": "fa-money"
 	}, {
 		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "implication": "gamble for $50, $100 or $200 and you could win double or nothing!"
 		, "icon": "fa-trophy"
-		, "type": "optional"
+		, "type": "activity"
 	}]
 }, {
 	"name": "Ubin Island"
@@ -101,8 +101,8 @@
 	, "visitingCost": 20
 	, "visitingExp": 5
 	, "shopping": {
-		"name": "Merlion Plushie"
-		, "description": "What's half-fish half-lion? You might be tempted to say \"lionfish\", but the national symbol of Singapore begs to differ. With It's adorable googly eyes and tiny little flippers, this doll is a must have for any serious plushie enthusiast."
+		"name": "Merlion Plushy"
+		, "description": "What's half-fish half-lion? You might be tempted to say \"lionfish\", but the national symbol of Singapore begs to differ. With It's adorable googly eyes and tiny little flippers, this doll is a must have for any serious plushy enthusiast."
 		, "image": "images/items/anz_icon_merlion_plush.png"
 		, "souvenirs": 7
 		, "cost": 50
@@ -194,7 +194,7 @@
 	, "visitingCost": 35
 	, "visitingExp": 10
 	, "shopping": {
-		"name": "Crimson Sunbird Plushie"
+		"name": "Crimson Sunbird Plushy"
 		, "description": "The national bird of Singapore, Crimson Sunbirds sound like this: \"chee-cheewee\". This particular representation is a tad plumper than the real thing - a good thing, considering that adult birds average at a miniscule 11cm in length."
 		, "image": "images/items/anz_icon_crimson_sunbird_plush.png"
 		, "souvenirs": 7
@@ -218,7 +218,7 @@
 }, {
 	"name": "Labrador Nature Reserve"
 	, "address": "Labrador Villa Rd, Singapore"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "description": "Labrador Nature Reserve contains many historical relics from World War II and earlier, left behind by the British. That is because it has a long history, dating back to the 19th century. It also played a significant role in the history of Singapore. There was an old British fort, the Fort Pasir Panjang, located on the hill and cliff next to the sea. The cliff’s high vantage point led the British to identify it as a defence site to protect the entrance to the harbours of Singapore. It became one of nine sites in which the British had set up their batteries, and is part of the British overall defense system for Singapore."
 	, "image": "images/landmarks/labrador.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_monument.png"
 	, "lodgingCost": 100
@@ -226,7 +226,7 @@
 	, "visitingExp": 5
 	, "shopping": {
 		"name": "Laksa"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		, "description": "There are two basic types of laksa: curry laksa and asam laksa. Curry laksa is a coconut curry soup with noodles, while asam laksa is a sour fish soup with noodles. Thick rice noodles also known as laksa noodles are most commonly used, although thin rice vermicelli are also common and some variants use other types."
 		, "image": "images/items/anz_icon_laksa.png"
 		, "souvenirs": 2
 		, "cost": 20
@@ -280,15 +280,15 @@
 }, {
 	"name": "Singapore Science Centre"
 	, "address": "15 Science Centre Rd, Singapore 609081"
-	, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+	, "description": "The Science Centre was born in from the then National Museum of Singapore into a separate institution so that the latter could specialise in its artistic and historical collections. This idea was first mooted in 1969 by the Science Council of Singapore, and was subsequently approved by the government, who was keen to promote scientific education in the rapidly modernising country keen to tap into the technological sector."
 	, "image": "images/landmarks/science_centre.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_museum.png"
 	, "lodgingCost": 150
 	, "visitingCost": 35
 	, "visitingExp": 10
 	, "shopping": {
-		"name": "Humorous T-Shirt"
-		, "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+		"name": "Humorous T-Shirt No. 5"
+		, "description": "The 5 implies that there are at least 4 other more. There aren't. That's the joke. Hahaha."
 		, "image": "images/items/anz_icon_card_unknown.png"
 		, "souvenirs": 5
 		, "cost": 30
@@ -325,6 +325,37 @@
 		, "cost": 20
 	}
 	, "exp": 25
+	, "bonuses": [{
+		"flavour": "Entertainment complex"
+		, "implication": "high experience points"
+		, "icon": "fa-star"
+	}, {
+		"flavour": "Luxury restaurants and shopping centre"
+		, "implication": "costly visiting and shopping"
+		, "icon": "fa-money"
+	}, {
+		"flavour": "Gambling hub"
+		, "implication": "spend $700 and roll two dice: win $100 times the result"
+		, "icon": "fa-trophy"
+		, "type": "optional"
+	}]
+}, {
+	"name": "Singapore Zoo"
+	, "address": "80 Mandai Lake Rd, Singapore 729826"
+	, "description": "There are about 315 species of animal in the Singapore Zoo, of which some 16% are considered threatened species. From the beginning, Singapore Zoo followed the modern trend of displaying animals in naturalistic, 'open' exhibits with hidden barriers, moats, and glass between the animals and visitors. It houses the largest captive colony of orangutans in the world."
+	, "image": "images/landmarks/zoo.jpg"
+	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
+	, "lodgingCost": 150
+	, "visitingCost": 35
+	, "visitingExp": 10
+	, "shopping": {
+		"name": "White Lion Plushy"
+		, "description": "Look at those big, sharp claws. Those long, serated teeth. Those gleaming, predatory eyes. Terrifying."
+		, "image": "images/items/anz_icon_white_lion_plushy.png"
+		, "souvenirs": 7
+		, "cost": 50
+	}
+	, "exp": 15
 	, "bonuses": [{
 		"flavour": "Entertainment complex"
 		, "implication": "high experience points"

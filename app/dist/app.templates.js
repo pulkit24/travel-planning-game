@@ -59,6 +59,10 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				<small>PER DAY</small>\n' +
+    '\n' +
+    '				<a tooltip-html-unsafe="<strong>Lodging Cost will apply.</strong><p>This is your last trip for the day. You will be lodging here tonight.</p>" tooltip-placement="right">\n' +
+    '				</a>\n' +
+    '\n' +
     '			</div>\n' +
     '			<div class="thumbnail resource resource-xp text-center">\n' +
     '				<small>VISITING</small>\n' +
@@ -284,8 +288,8 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '		<img ng-switch-when="XP" src="images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="SOUVENIR" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
-    '	<span class="widget-resource-indicator-value" ng-bind="getValue()"></span>\n' +
-    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'rise\' : \'sink\'">\n' +
+    '	<span class="widget-resource-indicator-value" ng-bind="currentValue"></span>\n' +
+    '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'sink\' : \'sink\'">\n' +
     '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
     '	</span>\n' +
     '</div>\n' +

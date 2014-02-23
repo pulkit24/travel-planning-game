@@ -1,5 +1,5 @@
 angular.module("travelPlanningGame.app")
-	.factory("randomEvents", function($q, $http, resources) {
+	.factory("randomEvents", function($q, $http, resources, upgrades) {
 
 		// Source files
 		var source_events = "../random-events.json";
@@ -99,12 +99,31 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return Math.random() <= 0.3;
+			return true; //Math.random() <= 0.3;
+		}
+
+		function getAvailableCounterTo(randomEvent) {
+			if(!randomEvent)
+				return null;
+
+			// Get the current counters
+			var counters = randomEvent.counteredBy;
+			if(!angular.isArray(counters))
+				counters = [counters];
+			for(var i = 0, len = counters.length; i < len; i++) {
+				var counter = upgrades.get(counters[i]);
+				if(counter && counter.isUnlocked) {
+					return counter; // if any one of the counters is already unlocked
+				}
+			}
+
+			return null;
 		}
 
 		return {
 			load: loadEvents
 			, hasOccurred: randomYes
 			, getEvent: getRandomEvent
+			, getAvailableCounterTo: getAvailableCounterTo
 		};
 	});

@@ -9,6 +9,30 @@
 </div>
 <!-- end game board -->
 
+<!-- Intro page stuff -->
+<div ng-if="current.state.isIntro()">
+
+	<!-- ANZ World map -->
+	<div class="layer overlay intro-screen"></div>
+
+	<!-- Game buttons -->
+	<div class="layer intro-buttons">
+
+		<!-- Play button -->
+		<button type="button" class="btn btn-lg btn-primary btn-menu" ng-click="game.menu()">Play</button>
+
+		<!-- Options button -->
+		<button type="button" class="btn btn-lg btn-primary btn-menu">Options</button>
+
+		<!-- Journal button -->
+		<button type="button" class="btn btn-lg btn-primary btn-menu" ng-click="journal.isOpen = true">Journal</button>
+
+	</div>
+	<!-- end game buttons -->
+
+</div>
+<!-- end intro page -->
+
 <!-- Menu page stuff -->
 <div ng-if="current.state.isMenu()">
 
@@ -116,14 +140,14 @@
 
 	<!-- Ungrades unlocked -->
 	<div class="layer upgrade-indicators">
-		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="upgrade.isUnlocked">
-			<a tooltip="You have the {{ upgrade.name }} unlocked" tooltip-placement="bottom">
+		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="!upgrade.isUnlocked">
+			<a tooltip="Unlocked: {{ upgrade.name }}" tooltip-placement="bottom">
 				<img ng-src="{{ upgrade.icon }}" />
 			</a>
 		</span>
 		<span class="journal-icon" ng-click="journal.isOpen = true">
 			<a tooltip="View your Journal" tooltip-placement="bottom">
-				<img ng-src="images/upgrades/books-icon.png" height="54" />
+				<img ng-src="images/upgrades/books-icon.png" height="48" />
 			</a>
 		</span>
 	</div>
@@ -328,7 +352,7 @@
 		<h2>{{ getVisitedLandmarks() }} / {{ getTotalLandmarks() }}</h2>
 	</div>
 	<div class="journal-option journal-items-option">
-		<img src="images/items/anz_icon_item.png" height="128" width="128" ng-click="journal.showItems = true" />
+		<img src="../images/items/anz_icon_card_item.png" height="642" width="420" ng-click="journal.showItems = true" />
 		<h2>{{ getBoughtItems() }} / {{ getTotalItems() }}</h2>
 	</div>
 

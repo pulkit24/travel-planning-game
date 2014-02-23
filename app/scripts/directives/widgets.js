@@ -14,23 +14,45 @@ angular.module('travelPlanningGame.widgets')
 				scope.icon = scope.type === 'MONEY' ? 'dollar' : (scope.type === 'XP' ? 'star' :
 					'shopping-cart');
 			}
-			, controller: function($scope, $filter, resources) {
+			, controller: function($scope, $filter, $timeout, resources) {
 
-				$scope.currentValue = 0;
-
-				$scope.getValue = function() {
-					return $filter("number")($scope.getRawValue());
-				};
 				$scope.getRawValue = function() {
 					return $scope.resources.get(resources.categories[$scope.category],
 						resources.types[$scope.type]);
 				};
+
+				var countdownStepTime = 35; // ms
+				var countdownJumps = 10; // max no. of steps to take
+
+				function countdown(target, step) {
+					if($scope.currentValue - target >= step)
+						$scope.currentValue -= step;
+					else if(target - $scope.currentValue >= step)
+						$scope.currentValue += step;
+					else {
+						$scope.currentValue = target;
+						return;
+					}
+
+					$timeout(function() {
+						countdown(target, step);
+					}, countdownStepTime);
+				}
+
+				function computeCountdownStep(current, target) {
+					var gap = Math.abs(current - target);
+					return gap > countdownJumps ? parseInt(gap / countdownJumps, 10) : 1;
+				}
+
+				$scope.currentValue = $scope.getRawValue();
 
 				// Floating notices of updated values
 				$scope.updates = [];
 
 				$scope.$watch('getRawValue()', function(newValue, oldValue) {
 					if(angular.isDefined(newValue) && angular.isDefined(oldValue) && newValue !== oldValue) {
+						var step = computeCountdownStep($scope.currentValue, newValue);
+						countdown(newValue, step);
 						$scope.updates.push(parseInt(newValue, 10) - parseInt(oldValue, 10));
 					}
 				});
