@@ -205,9 +205,17 @@
 
 			<!-- Optional features -->
 			<div accordion-group heading="Activites">
-	 			<div ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'optional'">
-					{{ bonus.flavour }}
-					<button type="button" class="btn btn-default">Play</button>
+	 			<div ng-repeat="bonus in current.location.bonuses track by $index" ng-if="bonus.type === 'activity'">
+	 				<div ng-switch on="bonus.activityType">
+	 					<div ng-switch-when="gambling">
+							<h4>{{ bonus.flavour }}</h4>
+							<p>Bet for double or nothing:</p>
+							<button type="button" class="btn btn-default" ng-click="activities.gamble(50)" ng-disabled="activities.outcome">$50</button>
+							<button type="button" class="btn btn-default" ng-click="activities.gamble(100)" ng-disabled="activities.outcome">$100</button>
+							<button type="button" class="btn btn-default" ng-click="activities.gamble(200)" ng-disabled="activities.outcome">$200</button>
+							<h4 class="alert alert-warning">{{ activities.outcome }}</h4>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- end optional features -->
@@ -346,11 +354,11 @@
 	</div>
 
 	<div class="journal-option journal-landmark-option">
-		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true; angular.element(document.getElementById('tst')).mouseenter()" />
+		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true" />
 		<h2>{{ getVisitedLandmarks() }} / {{ getTotalLandmarks() }}</h2>
 	</div>
 	<div class="journal-option journal-items-option">
-		<img src="../images/items/anz_icon_card_item.png" height="642" width="420" ng-click="journal.showItems = true" />
+		<img src="images/items/anz_icon_card_item.png" height="642" width="420" ng-click="journal.showItems = true" />
 		<h2>{{ getBoughtItems() }} / {{ getTotalItems() }}</h2>
 	</div>
 
@@ -388,7 +396,7 @@
 			<div landmark-card
 				ng-repeat="landmark in locations.landmarks"
 				landmark="landmark"
-				ng-click="journal.selectedLandmark = (landmark.isVisited() ? landmark : landmark)"
+				ng-click="journal.selectedLandmark = (landmark.isVisited() ? landmark : null)"
 				class="journal-landmark-card-thumbnail"
 				ng-class="{ unavailable: !landmark.isVisited() }">
 			</div>

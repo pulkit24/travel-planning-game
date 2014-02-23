@@ -2278,6 +2278,8 @@ angular.module("travelPlanningGame.app")
 
 			$scope.turnState.complete();
 
+			$scope.activities.outcome = null;
+
 			// Days left?
 			if (timer.isLast())
 				$scope.game.end(); // end game
@@ -2619,6 +2621,22 @@ angular.module("travelPlanningGame.app")
 
 		// Currently active map configuration
 		$scope.map.options = $scope.map.initConfig; // use initial configuration
+
+		///////////////////////////////////
+		// Activities at each landmark //
+		///////////////////////////////////
+		$scope.activities = {};
+		$scope.activities.gamble = function(amount) {
+			$scope.resources.subtract(resources.categories.ALL, resources.types.MONEY, amount);
+
+			$timeout(function() {
+				var won = (Math.random() <= 0.5); // 50% chance of winning
+				if(won)
+					$scope.resources.add(resources.categories.ALL, resources.types.MONEY, amount * 2);
+
+				$scope.activities.outcome = won ? "You won double!" : "Bad luck, try again next time!";
+			}, 1000);
+		};
 	});
 
 angular.module("travelPlanningGame.app")

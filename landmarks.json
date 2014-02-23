@@ -29,6 +29,7 @@
 		, "implication": "gamble for $50, $100 or $200 and you could win double or nothing!"
 		, "icon": "fa-trophy"
 		, "type": "activity"
+		, "activityType": "gambling"
 	}]
 }, {
 	"name": "Ubin Island"
@@ -49,18 +50,17 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
-		, "icon": "fa-star"
+		"flavour": "Natural Reserve"
+		, "implication": "high experience, low shopping"
+		, "icon": "fa-leaf"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
+		"flavour": "Distant locale"
+		, "implication": "high transport costs"
 		, "icon": "fa-money"
 	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Island"
+		, "implication": "requires extra turn to arrive"
+		, "icon": "fa-clock-o"
 	}]
 }, {
 	"name": "Marina Bay"
@@ -81,18 +81,17 @@
 	}
 	, "exp": 5
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
-		, "icon": "fa-star"
+		"flavour": "Markets"
+		, "implication": "high shopping points"
+		, "icon": "fa-shopping-cart"
+	}, {
+		"flavour": "Very Crowded"
+		, "implication": "usually bustling with people"
+		, "icon": "fa-group"
 	}, {
 		"flavour": "Luxury restaurants and shopping centre"
 		, "implication": "costly visiting and shopping"
 		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
 	}]
 }, {
 	"name": "Bukit Batok Nature Park"
@@ -113,18 +112,17 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
+		"flavour": "Historical Monument"
+		, "implication": "high one-time experience"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
-		, "icon": "fa-money"
+		"flavour": "Natural Reserve"
+		, "implication": "high experience, low shopping"
+		, "icon": "fa-leaf"
 	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Distant locale"
+		, "implication": "high transport costs"
+		, "icon": "fa-money"
 	}]
 }, {
 	"name": "Telok Ayer Market"
@@ -145,18 +143,17 @@
 	}
 	, "exp": 10
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
-		, "icon": "fa-star"
+		"flavour": "Markets"
+		, "implication": "high shopping points"
+		, "icon": "fa-shopping-cart"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
+		"flavour": "Very Crowded"
+		, "implication": "usually bustling with people"
+		, "icon": "fa-group"
+	}, {
+		"flavour": "Inexpensive restaurants and shopping centre"
+		, "implication": "affordable visiting and shopping"
 		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
 	}]
 }, {
 	"name": "Chinatown"
@@ -177,18 +174,17 @@
 	}
 	, "exp": 5
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
-		, "icon": "fa-star"
+		"flavour": "Markets"
+		, "implication": "high shopping points"
+		, "icon": "fa-shopping-cart"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
+		"flavour": "Very Crowded"
+		, "implication": "market is usually bustling with people"
+		, "icon": "fa-group"
+	}, {
+		"flavour": "Inexpensive restaurants and shopping centre"
+		, "implication": "affordable visiting and shopping"
 		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
 	}]
 }, {
 	"name": "Jurong Bird Park"
@@ -209,18 +205,17 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
+		"flavour": "Bird Park"
+		, "implication": "largest park in the world!"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
-		, "icon": "fa-money"
+		"flavour": "Natural Reserve"
+		, "implication": "high experience, low shopping"
+		, "icon": "fa-leaf"
 	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Distant locale"
+		, "implication": "high transport costs"
+		, "icon": "fa-money"
 	}]
 }, {
 	"name": "Labrador Nature Reserve"
@@ -241,18 +236,13 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
+		"flavour": "Historical Monument"
+		, "implication": "high one-time experience"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
-		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Natural Reserve"
+		, "implication": "high experience, low shopping"
+		, "icon": "fa-leaf"
 	}]
 }, {
 	"name": "Sentosa Island"
@@ -273,18 +263,17 @@
 	}
 	, "exp": 12
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
-		, "icon": "fa-star"
+		"flavour": "Tourist Hotspot"
+		, "implication": "high shopping, high experience"
+		, "icon": "fa-shopping-cart"
+	}, {
+		"flavour": "Very Crowded"
+		, "implication": "usually bustling with people"
+		, "icon": "fa-group"
 	}, {
 		"flavour": "Luxury restaurants and shopping centre"
 		, "implication": "costly visiting and shopping"
 		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
 	}]
 }, {
 	"name": "Singapore Science Centre"
@@ -305,18 +294,13 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
+		"flavour": "Science Centre"
 		, "implication": "high experience points"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
+		"flavour": "Distant locale"
+		, "implication": "high transport costs"
 		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
 	}]
 }, {
 	"name": "Sri Mariamman Temple"
@@ -337,18 +321,13 @@
 	}
 	, "exp": 25
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
+		"flavour": "Historical Monument"
+		, "implication": "high one-time experience"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
-		, "icon": "fa-money"
-	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Cultural Hub"
+		, "implication": "high chances of random events"
+		, "icon": "fa-warning"
 	}]
 }, {
 	"name": "Singapore Zoo"
@@ -368,17 +347,16 @@
 	}
 	, "exp": 15
 	, "bonuses": [{
-		"flavour": "Entertainment complex"
-		, "implication": "high experience points"
+		"flavour": "Natural Reserve"
+		, "implication": "high experience, low shopping"
 		, "icon": "fa-star"
 	}, {
-		"flavour": "Luxury restaurants and shopping centre"
-		, "implication": "costly visiting and shopping"
+		"flavour": "Distant locale"
+		, "implication": "high transport costs"
 		, "icon": "fa-money"
 	}, {
-		"flavour": "Gambling hub"
-		, "implication": "spend $700 and roll two dice: win $100 times the result"
-		, "icon": "fa-trophy"
-		, "type": "optional"
+		"flavour": "Zoo"
+		, "implication": "cuddly animals abound!"
+		, "icon": "fa-smile-o"
 	}]
 }]
