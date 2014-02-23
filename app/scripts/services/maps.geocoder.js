@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('travelPlanningGame.maps')
-	.factory('mapGeocoder', function($q, angulargmUtils) {
+	.factory('mapGeocoder', function($q, $timeout, angulargmUtils) {
 		if(typeof google === "undefined") return;
 
 		// Geocoder
@@ -16,9 +16,11 @@ angular.module('travelPlanningGame.maps')
 		mapGeocoder.toCoords = function(address) {
 			var deferred = $q.defer();
 
+			// Enqueue to avoid request throttles
 			geocoder.geocode({
 				address: address
 			}, function(results) {
+
 				if(results && results[0] && results[0].geometry && results[0].geometry.location)
 					deferred.resolve(angulargmUtils.latLngToObj(
 						results[0].geometry.location

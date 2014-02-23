@@ -67,11 +67,11 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function isEOD() {
-			return current.time === limits.times;
+			return current && (current.time === limits.times);
 		}
 
 		function _isLastDay() {
-			return current.day === limits.days;
+			return current && (current.day === limits.days);
 		}
 
 		function isLast() {

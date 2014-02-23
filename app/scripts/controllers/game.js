@@ -91,8 +91,11 @@ angular.module("travelPlanningGame.app")
 			// Compute the stats
 			$scope.calculateChartConfig();
 		};
-		$scope.game.menu = function() {
+		$scope.game.menu = function(noReload) {
 			stateTracker.new("loadingState").reset();
+
+			if(!noReload)
+				window.location.reload();
 
 			stateTracker.new("loadingState").$on("complete", function() {
 				// Back to the menu
@@ -151,6 +154,7 @@ angular.module("travelPlanningGame.app")
 			$scope.current.location = $scope.locations.selected;
 			$scope.locations.selected = null;
 			$scope.map.options.selectable = "location";
+			$scope.map.options.locationUnchanged = true;
 
 			// Notify the map of the update
 			$scope.map.state.update();

@@ -115,6 +115,12 @@ body {
   background-size: cover;
 }
 
+.tooltip {
+  width: 100%;
+  min-width: 200px;
+  font-size: 18px;
+}
+
 /* Loading screen */
 
 .loading-screen {
@@ -189,7 +195,7 @@ body {
 .button-prev {
   bottom: 0;
   left: 0;
-  width: 240px;
+  width: auto;
 }
 
 .button-prev .btn {
@@ -355,10 +361,12 @@ body {
 
 .upgrade-indicators .journal-icon {
   position: absolute;
+  top: 0;
   right: -64px;
 }
 
 .upgrade-indicators .upgrade-indicator {
+  display: inline-block;
   margin: 0 4px;
 }
 
@@ -368,7 +376,7 @@ body {
 
 .upgrade-indicators .upgrade-indicator img {
   width: auto;
-  height: 36px;
+  height: 38px;
   padding: 0;
   background-color: #485968;
   border: 3px solid #485968;
@@ -384,6 +392,13 @@ body {
 .intro-buttons {
   bottom: 0;
   left: 0;
+}
+
+.btn,
+.btn:focus,
+.btn:active {
+  outline: none;
+  user-select: none;
 }
 
 .btn.btn-action {
@@ -507,10 +522,11 @@ body {
 }
 
 .journal .menu-top-bar {
-  color: #fff;
+  width: 100%;
+  height: 75px;
+  color: white;
   text-align: center;
-  background-color: #0d0d0d;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: #428bca;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -560,6 +576,10 @@ body {
   border-radius: 5px;
 }
 
+.journal .journal-items-option h2 {
+  margin-top: -50px;
+}
+
 .journal .journal-page {
   overflow: hidden;
   background: transparent url(../images/journal-book2.jpg) center center no-repeat;
@@ -602,7 +622,7 @@ body {
 
 .journal .journal-page .journal-list .journal-landmark-card-thumbnail {
   float: left;
-  width: 125px;
+  width: 120px;
   height: 161px;
   margin: 5px;
   overflow: hidden;
@@ -809,7 +829,7 @@ body {
 }
 
 [widget-resource-indicator] .widget-resource-indicator .widget-resource-indicator-update-floater.sink {
-  animation: sink 1s ease-in;
+  animation: sink 2s ease-in;
   animation-fill-mode: both;
 }
 
@@ -1354,12 +1374,12 @@ body {
 }
 
 [random-event-card] .random-event-card .countered {
-  bottom: 60px;
+  bottom: 75px;
   width: 120%;
   padding: 15px 10px;
   margin-left: -10%;
   color: white;
-  background-color: rgba(80, 179, 55, 0.75);
+  background-color: rgba(80, 179, 55, 0.95);
   transform: rotate(-5deg);
 }
 
@@ -1515,6 +1535,7 @@ body {
   left: 120%;
   z-index: 10;
   width: 400px;
+  background-color: white;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
 }
 

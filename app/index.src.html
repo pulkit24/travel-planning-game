@@ -57,6 +57,10 @@
 					<p>
 						<button type="button" class="btn btn-default" ng-click="journal.isOpen = true">Journal</button>
 					</p>
+					<p class="hide">
+						<button type="button" class="btn btn-default" ng-click="experiments.toggleDemo()">Toggle Demo</button>
+						{{ isDemo() ? 'Demo mode ON' : '' }}
+					</p>
 				</div>
 		    </div>
 		</div>

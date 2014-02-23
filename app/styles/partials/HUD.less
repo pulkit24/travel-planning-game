@@ -65,7 +65,7 @@
 .button-prev {
 	bottom: 0;
 	left: 0;
-	width: @size-width-sidebar;
+	width: auto;
 	.btn {
 		width: 100%;
 	}
@@ -224,10 +224,12 @@
 	.journal-icon {
 		position: absolute;
 		right: -64px;
+		top: 0;
 	}
 
 	.upgrade-indicator {
 		margin: 0 (@gutter / 2);
+		display: inline-block;
 
 		a {
 			display: inline-block;
@@ -238,7 +240,7 @@
 
 			padding: 0;
 			width: auto;
-			height: 36px;
+			height: 38px;
 			border: 3px solid #485968;
 			border-radius: 7px;
 			background-color: #485968;

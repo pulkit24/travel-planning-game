@@ -47,11 +47,24 @@ angular.module("travelPlanningGame.app")
 			return deferred.promise;
 		}
 
+		var demoEvents = [6, 2, 17];
+		var demoOccurrence = [false, true, true, true];
+		function randomize(task) {
+			var result;
+
+			if(task === "pickEvent")
+				result = (window.isDemo && demoEvents.length) ? demoEvents.shift() : Math.floor(Math.random() * availableEventIDs.length);
+			else if(task === "eventOccurred")
+				result = (window.isDemo && demoOccurrence.length) ? demoOccurrence.shift() : (Math.random() <= 0.67);
+
+			return result;
+		}
+
 		function getRandomEvent() {
 			_fillAvailableEvents();
 
 			// Pick one randomly
-			var index = Math.floor(Math.random() * availableEventIDs.length);
+			var index = randomize("pickEvent");
 
 			// The index may not correspond one-to-one with the indices of the available event IDs
 			// because we may have moved them to occurred event IDs
@@ -99,7 +112,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return true; //Math.random() <= 0.3;
+			return randomize("eventOccurred");
 		}
 
 		function getAvailableCounterTo(randomEvent) {

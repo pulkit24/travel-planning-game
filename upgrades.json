@@ -51,14 +51,14 @@
 	}
 }
 , {
-	"name": "Travel Insurance"
+	"name": "ANZ Travel Insurance"
 	, "id": "ti"
 	, "description": "Protects you against various travel mishaps: theft, getting sick etc."
 	, "image": "images/upgrades/ti.jpg"
 	, "icon": "images/upgrades/ti_icon.png"
 	, "link": "//www.wealth.anz.com/insurance/travel-insurance"
 	, "impacts": [{
-		"flavour": "Travel insurance"
+		"flavour": "ANZ Travel insurance"
 		, "implication": "no more worries about property theft/misplacement"
 		, "icon": "fa-money"
 	}, {

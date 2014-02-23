@@ -15,28 +15,27 @@
 	<!-- end name and controls -->
 
 	<!-- Image and quick stats -->
-	<div class="panel-body" ng-style="{
+	<div class="panel-body" ng-class="isVisited() ? 'animated fadeIn' : ''" ng-style="{
 		'background-image': 'url(' + getLandmarkImage() + ')'
 		, 'background-size': isVisited() ? 'cover' : 'initial'
-		, 'background-position-x': !isVisited() ? '85px' : 'center'
+		, 'background-position-x': !isVisited() ? '17px' : 'center'
 	}">
 		<div class="col-xs-offset-9">
-			<div class="thumbnail resource resource-money text-center">
+
+			<div id="tst" class="thumbnail resource resource-money text-center" tooltip-html-unsafe="{x{ lodgingMessage() }}" tooltip-placement="right">
 				<small>LODGING</small>
 				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				<small>PER DAY</small>
-
-				<a tooltip-html-unsafe="<strong>Lodging Cost will apply.</strong><p>This is your last trip for the day. You will be lodging here tonight.</p>" tooltip-placement="right">
-				</a>
-
 			</div>
+
 			<div class="thumbnail resource resource-xp text-center">
 				<small>VISITING</small>
 				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>
 			</div>
+
 			<div class="thumbnail resource resource-souvenirs text-center">
 				<img ng-src="{{ getSouvenirImage() }}" />
 

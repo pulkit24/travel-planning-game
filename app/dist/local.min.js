@@ -264,7 +264,7 @@ angular.module("travelPlanningGame.app")
 'use strict';
 
 angular.module('travelPlanningGame.maps')
-	.factory('mapGeocoder', function($q, angulargmUtils) {
+	.factory('mapGeocoder', function($q, $timeout, angulargmUtils) {
 		if(typeof google === "undefined") return;
 
 		// Geocoder
@@ -279,9 +279,11 @@ angular.module('travelPlanningGame.maps')
 		mapGeocoder.toCoords = function(address) {
 			var deferred = $q.defer();
 
+			// Enqueue to avoid request throttles
 			geocoder.geocode({
 				address: address
 			}, function(results) {
+
 				if(results && results[0] && results[0].geometry && results[0].geometry.location)
 					deferred.resolve(angulargmUtils.latLngToObj(
 						results[0].geometry.location
@@ -809,11 +811,24 @@ angular.module("travelPlanningGame.app")
 			return deferred.promise;
 		}
 
+		var demoEvents = [6, 2, 17];
+		var demoOccurrence = [false, true, true, true];
+		function randomize(task) {
+			var result;
+
+			if(task === "pickEvent")
+				result = (window.isDemo && demoEvents.length) ? demoEvents.shift() : Math.floor(Math.random() * availableEventIDs.length);
+			else if(task === "eventOccurred")
+				result = (window.isDemo && demoOccurrence.length) ? demoOccurrence.shift() : (Math.random() <= 0.67);
+
+			return result;
+		}
+
 		function getRandomEvent() {
 			_fillAvailableEvents();
 
 			// Pick one randomly
-			var index = Math.floor(Math.random() * availableEventIDs.length);
+			var index = randomize("pickEvent");
 
 			// The index may not correspond one-to-one with the indices of the available event IDs
 			// because we may have moved them to occurred event IDs
@@ -861,7 +876,7 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function randomYes() {
-			return true; //Math.random() <= 0.3;
+			return randomize("eventOccurred");
 		}
 
 		function getAvailableCounterTo(randomEvent) {
@@ -1182,11 +1197,11 @@ angular.module("travelPlanningGame.app")
 		}
 
 		function isEOD() {
-			return current.time === limits.times;
+			return current && (current.time === limits.times);
 		}
 
 		function _isLastDay() {
-			return current.day === limits.days;
+			return current && (current.day === limits.days);
 		}
 
 		function isLast() {
@@ -1327,7 +1342,7 @@ angular.module('travelPlanningGame.app')
 'use strict';
 
 angular.module('travelPlanningGame.app')
-	.directive('landmarkCard', function() {
+	.directive('landmarkCard', function(timer) {
 		return {
 			restrict: 'EA'
 			, transclude: true
@@ -1354,6 +1369,18 @@ angular.module('travelPlanningGame.app')
 					else
 						return 'images/items/anz_icon_card_bg_shopping.png';
 				};
+
+				$scope.lodgingMessage = function() {
+					if(timer.isEOD()) {
+						return "<strong>Lodging Cost will apply.</strong><p>This is your last trip for the day. You will be lodging here tonight.</p>";
+					}
+					else return null;
+				};
+			}
+			, link: function(scope, elem, attrs) {
+				// if(timer.isEOD()) {
+				// 	angular.element(document.getElementById("landmark-card-thumbnail-lodging")).mouseenter();
+				// }
 			}
 		};
 	});
@@ -1403,7 +1430,14 @@ angular.module('travelPlanningGame.maps')
 				$scope.mapState = stateTracker.get("mapState");
 				$scope.mapState.$on("updated", function() {
 					$scope.mapState.load();
-					loadMap();
+
+					// Request Google map to kindly use our preset parameters
+					setMapParameters();
+
+					if(!$scope.locationUnchanged)
+						loadMap();
+					$scope.locationUnchanged = false;
+
 					$scope.mapState.ready();
 				});
 
@@ -1415,32 +1449,36 @@ angular.module('travelPlanningGame.maps')
 				function loadMap() {
 					// $scope.clearLabels();
 
-					// Request Google map to kindly use our preset parameters
-					setMapParameters();
-
 					// Get geo coords for all available locations
 					angular.forEach($scope.locations, function(location, index) {
 						// Give it an id
 						location.id = index;
 
-						$scope.locations.yetToPlot = $scope.locations.length;
+						// When all complete, mark geocoding as complete
 						plotLocation(location).then(function() {
 							$scope.focus();
-							$scope.locations.yetToPlot -= 1;
 
-							// When all complete, mark geocoding as complete
-							if ($scope.locations.yetToPlot <= 0) {
-								$scope.$broadcast('gmMarkersRedraw');
-								stateTracker.new("geocodingState").complete();
-							}
+							if(location.coords)
+								$scope.bounds.extend(angulargmUtils.objToLatLng(location.coords));
+
+							$timeout(function() {
+								if(!allHaveBeenPlotted && areAllPlotted()) {
+									// allHaveBeenPlotted = true;
+									$scope.$broadcast('gmMarkersRedraw');
+									mapRouter.prefetch($scope.locations);
+								}
+							}, 0);
 						});
 					});
+				}
 
-					// When geocoding is complete, prefetch all routes
-					stateTracker.new("geocodingState").$on("complete", function() {
-						stateTracker.new("geocodingState").reset();
-						mapRouter.prefetch($scope.locations);
-					});
+				var allHaveBeenPlotted = false;
+				function areAllPlotted() {
+					for(var i = 0, len = $scope.locations.length; i < len; i++) {
+						if(!angular.isDefined($scope.locations[i].coords))
+							return false;
+					}
+					return true;
 				}
 
 				// When the map is ready, apply the params and updates
@@ -1496,22 +1534,23 @@ angular.module('travelPlanningGame.maps')
 				function plotLocation(location) {
 					var deferred = $q.defer();
 
-					mapGeocoder.toCoords(location.address)
-						.then(
-							function success(coords) {
-								// Add the coords into the location
-								location.coords = angular.copy(coords);
-								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
+					// If coords already set, nothing to do!
+					if(angular.isDefined(location.coords))
+						deferred.resolve();
 
-								// Show landmark label
-								// $scope.showLabel(location, null, $scope.map);
-
-								deferred.resolve();
-							}
-							, function error() {
-								deferred.resolve();
-							}
-						);
+					// Else, use geocoder service to fetch geo coords from the address
+					else
+						mapGeocoder.toCoords(location.address)
+							.then(
+								function success(coords) {
+									// Add the coords into the location
+									location.coords = angular.copy(coords);
+									deferred.resolve();
+								}
+								, function error() {
+									deferred.resolve();
+								}
+							);
 
 					return deferred.promise;
 				}
@@ -1871,7 +1910,7 @@ angular.module('travelPlanningGame.widgets')
 	});
 
 angular.module("travelPlanningGame.app")
-	.controller("BootCtrl", function($scope, mapStyles) {
+	.controller("BootCtrl", function($scope, $window, mapStyles) {
 
 		$scope.isReady = function() {
 			return typeof google !== "undefined";
@@ -1926,6 +1965,24 @@ angular.module("travelPlanningGame.app")
 		$scope.experiments.showScreen = function(screen) {
 			$scope.$broadcast("event:screen:switch", { screen: screen });
 		};
+
+		$scope.experiments.toggleDemo = function() {
+			window.isDemo = !window.isDemo;
+		};
+		$scope.isDemo = function() { return window.isDemo; };
+
+		angular.element(document.getElementsByTagName("body")[0]).bind("keypress", function(event) {
+			// E 101
+			// R 114
+			// D 100
+			switch(event.which) {
+				case 114: // R - reload page
+					window.location.reload();
+					break;
+				case 100: // D - toggle demo
+					$scope.experiments.toggleDemo();
+			}
+		});
 
 	});
 
@@ -2022,8 +2079,11 @@ angular.module("travelPlanningGame.app")
 			// Compute the stats
 			$scope.calculateChartConfig();
 		};
-		$scope.game.menu = function() {
+		$scope.game.menu = function(noReload) {
 			stateTracker.new("loadingState").reset();
+
+			if(!noReload)
+				window.location.reload();
 
 			stateTracker.new("loadingState").$on("complete", function() {
 				// Back to the menu
@@ -2082,6 +2142,7 @@ angular.module("travelPlanningGame.app")
 			$scope.current.location = $scope.locations.selected;
 			$scope.locations.selected = null;
 			$scope.map.options.selectable = "location";
+			$scope.map.options.locationUnchanged = true;
 
 			// Notify the map of the update
 			$scope.map.state.update();
@@ -2654,28 +2715,27 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	<!-- end name and controls -->\n' +
     '\n' +
     '	<!-- Image and quick stats -->\n' +
-    '	<div class="panel-body" ng-style="{\n' +
+    '	<div class="panel-body" ng-class="isVisited() ? \'animated fadeIn\' : \'\'" ng-style="{\n' +
     '		\'background-image\': \'url(\' + getLandmarkImage() + \')\'\n' +
     '		, \'background-size\': isVisited() ? \'cover\' : \'initial\'\n' +
-    '		, \'background-position-x\': !isVisited() ? \'85px\' : \'center\'\n' +
+    '		, \'background-position-x\': !isVisited() ? \'17px\' : \'center\'\n' +
     '	}">\n' +
     '		<div class="col-xs-offset-9">\n' +
-    '			<div class="thumbnail resource resource-money text-center">\n' +
+    '\n' +
+    '			<div id="tst" class="thumbnail resource resource-money text-center" tooltip-html-unsafe="{x{ lodgingMessage() }}" tooltip-placement="right">\n' +
     '				<small>LODGING</small>\n' +
     '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				<small>PER DAY</small>\n' +
-    '\n' +
-    '				<a tooltip-html-unsafe="<strong>Lodging Cost will apply.</strong><p>This is your last trip for the day. You will be lodging here tonight.</p>" tooltip-placement="right">\n' +
-    '				</a>\n' +
-    '\n' +
     '			</div>\n' +
+    '\n' +
     '			<div class="thumbnail resource resource-xp text-center">\n' +
     '				<small>VISITING</small>\n' +
     '				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
     '			</div>\n' +
+    '\n' +
     '			<div class="thumbnail resource resource-souvenirs text-center">\n' +
     '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '\n' +
@@ -2894,7 +2954,7 @@ angular.module('templates/widgets.resource-indicator.tpl.html', []).run(['$templ
     '		<img ng-switch-when="XP" src="images/icons/anz_icon_ui_star_small.png" height="64" width="64" />\n' +
     '		<img ng-switch-when="SOUVENIR" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />\n' +
     '	</i>\n' +
-    '	<span class="widget-resource-indicator-value" ng-bind="currentValue"></span>\n' +
+    '	<span class="widget-resource-indicator-value" ng-bind="currentValue | number"></span>\n' +
     '	<span class="widget-resource-indicator-update-floater" ng-repeat="update in updates track by $index" ng-class="update > 0 ? \'sink\' : \'sink\'">\n' +
     '		{{ update > 0 ? "+" : "" }}{{ update }}\n' +
     '	</span>\n' +

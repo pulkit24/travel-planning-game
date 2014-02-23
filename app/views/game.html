@@ -19,7 +19,7 @@
 	<div class="layer intro-buttons">
 
 		<!-- Play button -->
-		<button type="button" class="btn btn-lg btn-primary btn-menu" ng-click="game.menu()">Play</button>
+		<button type="button" class="btn btn-lg btn-primary btn-menu" ng-click="game.menu(true)">Play</button>
 
 		<!-- Options button -->
 		<button type="button" class="btn btn-lg btn-primary btn-menu">Options</button>
@@ -140,15 +140,13 @@
 
 	<!-- Ungrades unlocked -->
 	<div class="layer upgrade-indicators">
-		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="!upgrade.isUnlocked">
-			<a tooltip="Unlocked: {{ upgrade.name }}" tooltip-placement="bottom">
-				<img ng-src="{{ upgrade.icon }}" />
-			</a>
+		<span class="upgrade-indicator" ng-repeat="upgrade in upgrades" ng-show="upgrade.isUnlocked"
+			tooltip="Unlocked: {{ upgrade.name }}" tooltip-placement="bottom">
+			<img ng-src="{{ upgrade.icon }}" />
 		</span>
-		<span class="journal-icon" ng-click="journal.isOpen = true">
-			<a tooltip="View your Journal" tooltip-placement="bottom">
-				<img ng-src="images/upgrades/books-icon.png" height="48" />
-			</a>
+		<span class="journal-icon" ng-click="journal.isOpen = true"
+			tooltip="View your Journal" tooltip-placement="bottom">
+			<img ng-src="images/upgrades/books-icon.png" height="48" />
 		</span>
 	</div>
 	<!-- end upgrades -->
@@ -256,12 +254,12 @@
 	<!-- end end-turn button -->
 
 	<!-- Menu button -->
-<!-- 	<div class="layer button-prev" ng-class="getTimeOfDay()">
+<!--  	<div class="layer button-prev" ng-class="getTimeOfDay()">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
-			Quit
+			<i class="fa fa-long-arrow-left"></i>
 		</button>
-	</div>
- -->	<!-- end menu button -->
+	</div> -->
+	<!-- end menu button -->
 
 	<!-- Random event card -->
 	<div ng-show="randomEvent">
@@ -348,7 +346,7 @@
 	</div>
 
 	<div class="journal-option journal-landmark-option">
-		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true" />
+		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true; angular.element(document.getElementById('tst')).mouseenter()" />
 		<h2>{{ getVisitedLandmarks() }} / {{ getTotalLandmarks() }}</h2>
 	</div>
 	<div class="journal-option journal-items-option">
@@ -359,7 +357,7 @@
 	<!-- Back button -->
 	<div class="layer button-prev">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.isOpen = false">
-			Back
+			<i class="fa fa-long-arrow-left"></i>
 		</button>
 	</div>
 	<!-- end back button -->
@@ -390,7 +388,7 @@
 			<div landmark-card
 				ng-repeat="landmark in locations.landmarks"
 				landmark="landmark"
-				ng-click="journal.selectedLandmark = (landmark.isVisited() ? landmark : null)"
+				ng-click="journal.selectedLandmark = (landmark.isVisited() ? landmark : landmark)"
 				class="journal-landmark-card-thumbnail"
 				ng-class="{ unavailable: !landmark.isVisited() }">
 			</div>
@@ -401,7 +399,7 @@
 	<!-- Back button -->
 	<div class="layer button-prev" ng-if="journal.showLandmarks">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showLandmarks = false">
-			Back
+			<i class="fa fa-long-arrow-left"></i>
 		</button>
 	</div>
 	<!-- end back button -->
@@ -442,7 +440,7 @@
 	<!-- Back button -->
 	<div class="layer button-prev" ng-if="journal.showItems">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showItems = false">
-			Back
+			<i class="fa fa-long-arrow-left"></i>
 		</button>
 	</div>
 	<!-- end back button -->

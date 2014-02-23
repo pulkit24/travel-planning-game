@@ -17,7 +17,14 @@ angular.module('travelPlanningGame.maps')
 				$scope.mapState = stateTracker.get("mapState");
 				$scope.mapState.$on("updated", function() {
 					$scope.mapState.load();
-					loadMap();
+
+					// Request Google map to kindly use our preset parameters
+					setMapParameters();
+
+					if(!$scope.locationUnchanged)
+						loadMap();
+					$scope.locationUnchanged = false;
+
 					$scope.mapState.ready();
 				});
 
@@ -29,32 +36,36 @@ angular.module('travelPlanningGame.maps')
 				function loadMap() {
 					// $scope.clearLabels();
 
-					// Request Google map to kindly use our preset parameters
-					setMapParameters();
-
 					// Get geo coords for all available locations
 					angular.forEach($scope.locations, function(location, index) {
 						// Give it an id
 						location.id = index;
 
-						$scope.locations.yetToPlot = $scope.locations.length;
+						// When all complete, mark geocoding as complete
 						plotLocation(location).then(function() {
 							$scope.focus();
-							$scope.locations.yetToPlot -= 1;
 
-							// When all complete, mark geocoding as complete
-							if ($scope.locations.yetToPlot <= 0) {
-								$scope.$broadcast('gmMarkersRedraw');
-								stateTracker.new("geocodingState").complete();
-							}
+							if(location.coords)
+								$scope.bounds.extend(angulargmUtils.objToLatLng(location.coords));
+
+							$timeout(function() {
+								if(!allHaveBeenPlotted && areAllPlotted()) {
+									// allHaveBeenPlotted = true;
+									$scope.$broadcast('gmMarkersRedraw');
+									mapRouter.prefetch($scope.locations);
+								}
+							}, 0);
 						});
 					});
+				}
 
-					// When geocoding is complete, prefetch all routes
-					stateTracker.new("geocodingState").$on("complete", function() {
-						stateTracker.new("geocodingState").reset();
-						mapRouter.prefetch($scope.locations);
-					});
+				var allHaveBeenPlotted = false;
+				function areAllPlotted() {
+					for(var i = 0, len = $scope.locations.length; i < len; i++) {
+						if(!angular.isDefined($scope.locations[i].coords))
+							return false;
+					}
+					return true;
 				}
 
 				// When the map is ready, apply the params and updates
@@ -110,22 +121,23 @@ angular.module('travelPlanningGame.maps')
 				function plotLocation(location) {
 					var deferred = $q.defer();
 
-					mapGeocoder.toCoords(location.address)
-						.then(
-							function success(coords) {
-								// Add the coords into the location
-								location.coords = angular.copy(coords);
-								$scope.bounds.extend(angulargmUtils.objToLatLng(coords));
+					// If coords already set, nothing to do!
+					if(angular.isDefined(location.coords))
+						deferred.resolve();
 
-								// Show landmark label
-								// $scope.showLabel(location, null, $scope.map);
-
-								deferred.resolve();
-							}
-							, function error() {
-								deferred.resolve();
-							}
-						);
+					// Else, use geocoder service to fetch geo coords from the address
+					else
+						mapGeocoder.toCoords(location.address)
+							.then(
+								function success(coords) {
+									// Add the coords into the location
+									location.coords = angular.copy(coords);
+									deferred.resolve();
+								}
+								, function error() {
+									deferred.resolve();
+								}
+							);
 
 					return deferred.promise;
 				}

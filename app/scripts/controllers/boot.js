@@ -1,5 +1,5 @@
 angular.module("travelPlanningGame.app")
-	.controller("BootCtrl", function($scope, mapStyles) {
+	.controller("BootCtrl", function($scope, $window, mapStyles) {
 
 		$scope.isReady = function() {
 			return typeof google !== "undefined";
@@ -54,5 +54,23 @@ angular.module("travelPlanningGame.app")
 		$scope.experiments.showScreen = function(screen) {
 			$scope.$broadcast("event:screen:switch", { screen: screen });
 		};
+
+		$scope.experiments.toggleDemo = function() {
+			window.isDemo = !window.isDemo;
+		};
+		$scope.isDemo = function() { return window.isDemo; };
+
+		angular.element(document.getElementsByTagName("body")[0]).bind("keypress", function(event) {
+			// E 101
+			// R 114
+			// D 100
+			switch(event.which) {
+				case 114: // R - reload page
+					window.location.reload();
+					break;
+				case 100: // D - toggle demo
+					$scope.experiments.toggleDemo();
+			}
+		});
 
 	});

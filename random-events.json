@@ -4,7 +4,7 @@
 	, "description": "Oh no! An opportunistic thief has gotten away with your wallet."
 	, "impact": "You lost $250"
 	, "resource": "MONEY"
-	, "amount": -100
+	, "amount": -250
 	, "unlocks": "tc"
 	, "counteredBy": ["tc", "ti", "cc"]
 }, {
@@ -29,7 +29,7 @@
 	, "description": "Staying up for the local night-life has it's disadvantages - and exorbitant transport costs are one of them."
 	, "impact": "You were charged $50"
 	, "resource": "MONEY"
-	, "amount": -200
+	, "amount": -50
 }, {
 	"type": "NEGATIVE"
 	, "name": "Taxi Troubles"

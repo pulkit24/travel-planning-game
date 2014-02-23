@@ -1,6 +1,7 @@
 [{
 	"name": "Casino Sentosa"
 	, "address": "8 Sentosa Gateway, Singapore 098269"
+	, "coords": { "lat": 1.256752, "lng": 103.82033100000001 }
 	, "description": "Government regulations also require Singapore citizens and permanent residents to purchase a S$100 day pass or S$2000 yearly membership for access into the casino. Singaporean patrons can enter/leave the casino freely as long as their levy has not expired. Both types of entry levy allow the patron to visit to only one casino. Overseas citizens can also enter and leave free of charge with their passports or employment passes. The Casino Levy money is collected by the Singapore Totalisator Board controlled by the Government, and is used for public and charity causes. The Casino does not keep any part of the levy money."
 	, "image": "images/landmarks/casino_sentosa.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
@@ -32,6 +33,7 @@
 }, {
 	"name": "Ubin Island"
 	, "address": "Pulau Ubin, Singapore"
+	, "coords": { "lat": 1.4125924, "lng": 103.95790799999997 }
 	, "description": "The name Pulau Ubin literally means \"Granite Island\" in Malay, which explains the many abandoned granite quarries there. Pulau means \"island\", and Ubin is said to be a Javanese term for \"squared stone\". To the Malays, the island is also known as Pulau Batu Ubin, or \"Granite Stone Island\". The rocks on the island were used to make floor tiles in the past and were called Jubin, which was then shortened to Ubin."
 	, "image": "images/landmarks/ubin_island.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
@@ -63,6 +65,7 @@
 }, {
 	"name": "Marina Bay"
 	, "address": "18 Marina Gardens Dr, Singapore 018953"
+	, "coords": { "lat": 1.2787282, "lng": 103.86491879999994 }
 	, "description": "In 1970s, land reclamation was carried out at Marina Bay, forming what is today the Marina Centre and Marina South areas. In the reclamation process, Telok Ayer Basin and Inner Roads was removed from the map by reclaiming land, while the Singapore River's mouth now flows into the bay instead of directly into the sea. In 2008, Marina Barrage was built, asin into a new downtown freshwater Marina Reservoir, providing water supply, flood control and a new lifestyle attraction."
 	, "image": "images/landmarks/marina_bay.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
@@ -94,6 +97,7 @@
 }, {
 	"name": "Bukit Batok Nature Park"
 	, "address": "Bukit Batok Nature Park, Singapore"
+	, "coords": { "lat": 1.3471072, "lng": 103.76137349999999 }
 	, "description": "During World War II, the Lorong Sesuai site, which is located within the park, was selected by the Japanese as a memorial for the soldiers who died. The two pillars and 120 concrete steps leading to a transmission tower are the only remains. The significance and meaning of the location is conveyed to visitors via a memorial plaque that lies at the foot of the stairs. The park was later developed on an abandoned quarry site in 1988."
 	, "image": "images/landmarks/bukit_batok.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
@@ -125,6 +129,7 @@
 }, {
 	"name": "Telok Ayer Market"
 	, "address": "Tanjong Pagar Terminal Road B, Singapore"
+	, "coords": { "lat": 1.2689111, "lng": 103.84742879999999 }
 	, "description": "In the early nineteenth century, Telok Ayer Market was a simple wooden building, located on piles just over the waters of Telok Ayer Bay and hence the market's name. The Malay name Telok Ayer means \"water bay\" as the coastal road Telok Ayer Street lies alongside the bay. Because of its Victorian iron structure, the market is referred to in Malay as pasar besi (market of iron)."
 	, "image": "images/landmarks/telok_ayer.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
@@ -156,6 +161,7 @@
 }, {
 	"name": "Chinatown"
 	, "address": "81 Clemenceau Ave, Singapore 239917"
+	, "coords": { "lat": 1.292157, "lng": 103.84268399999996 }
 	, "description": "As the largest ethnic group in Singapore is Chinese, Chinatown is considerably less of an enclave than it once was. However, the district does retain significant historical and cultural significance. Large sections of it have been declared national heritage sites officially designated for conservation by the Urban Redevelopment Authority."
 	, "image": "images/landmarks/chinatown.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_entertainment_center.png"
@@ -187,6 +193,7 @@
 }, {
 	"name": "Jurong Bird Park"
 	, "address": "2 Jurong Hill, Singapore 628925"
+	, "coords": { "lat": 1.32108, "lng": 103.70520899999997 }
 	, "description": "The idea of a permanent bird exhibit was first conceived by late Dr Goh Keng Swee, then Minister for Finance, in 1968. During a World Bank Meeting in Rio de Janeiro, Dr Goh visited its zoological garden and was impressed with its free-flight aviary. Jurong Bird Park is now currently the world's largest bird park in terms of number of birds, and second largest both in number of bird species and land area (after Germany's Weltvogelpark Walsrode). There are 5,000 birds of 380 species in Jurong Bird Park."
 	, "image": "images/landmarks/jurong_bird_park.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
@@ -218,6 +225,7 @@
 }, {
 	"name": "Labrador Nature Reserve"
 	, "address": "Labrador Villa Rd, Singapore"
+	, "coords": { "lat": 1.2681729, "lng": 103.80114819999994 }
 	, "description": "Labrador Nature Reserve contains many historical relics from World War II and earlier, left behind by the British. That is because it has a long history, dating back to the 19th century. It also played a significant role in the history of Singapore. There was an old British fort, the Fort Pasir Panjang, located on the hill and cliff next to the sea. The cliff’s high vantage point led the British to identify it as a defence site to protect the entrance to the harbours of Singapore. It became one of nine sites in which the British had set up their batteries, and is part of the British overall defense system for Singapore."
 	, "image": "images/landmarks/labrador.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_monument.png"
@@ -249,6 +257,7 @@
 }, {
 	"name": "Sentosa Island"
 	, "address": "Sentosa Island, Singapore"
+	, "coords": { "lat": 1.2494041, "lng": 103.83032090000006 }
 	, "description": "Plans by the Singapore government for Sentosa aims to establish it as one of the world's most luxurious holiday locations, with a SGD$10 billion masterplan for the future involving the construction of private housing at the Sentosa Cove, the aforementioned partial redevelopment of Siloso Beach, and Asia's first tourism academy."
 	, "image": "images/landmarks/sentosa_island.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_park.png"
@@ -280,6 +289,7 @@
 }, {
 	"name": "Singapore Science Centre"
 	, "address": "15 Science Centre Rd, Singapore 609081"
+	, "coords": { "lat": 1.333194, "lng": 103.736132 }
 	, "description": "The Science Centre was born in from the then National Museum of Singapore into a separate institution so that the latter could specialise in its artistic and historical collections. This idea was first mooted in 1969 by the Science Council of Singapore, and was subsequently approved by the government, who was keen to promote scientific education in the rapidly modernising country keen to tap into the technological sector."
 	, "image": "images/landmarks/science_centre.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_bg_museum.png"
@@ -289,7 +299,7 @@
 	, "shopping": {
 		"name": "Humorous T-Shirt No. 5"
 		, "description": "The 5 implies that there are at least 4 other more. There aren't. That's the joke. Hahaha."
-		, "image": "images/items/anz_icon_card_unknown.png"
+		, "image": "images/items/anz_icon_tshirt.png"
 		, "souvenirs": 5
 		, "cost": 30
 	}
@@ -311,6 +321,7 @@
 }, {
 	"name": "Sri Mariamman Temple"
 	, "address": "11 Hospital Dr, Singapore 169610"
+	, "coords": { "lat": 1.2792053, "lng": 103.83637109999995 }
 	, "description": "The Sri Mariamman Temple was founded in 1827 by Naraina Pillai, eight years after the East India Company established a trading settlement in Singapore. Pillai was a government clerk from Penang who arrived in Singapore with Sir Stamford Raffles on his second visit to the island in May 1819. Pillai went on to set up the island's first construction company, and also entered the textile trade. He rapidly established himself in business and was identified as a leader of the Indian community."
 	, "image": "images/landmarks/sri_mariamman.jpg"
 	, "imageDefault": "images/landmarks/anz_icon_card_monument.png"
