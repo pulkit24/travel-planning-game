@@ -213,7 +213,7 @@
 							<button type="button" class="btn btn-default" ng-click="activities.gamble(50)" ng-disabled="activities.outcome">$50</button>
 							<button type="button" class="btn btn-default" ng-click="activities.gamble(100)" ng-disabled="activities.outcome">$100</button>
 							<button type="button" class="btn btn-default" ng-click="activities.gamble(200)" ng-disabled="activities.outcome">$200</button>
-							<h4 class="alert alert-warning">{{ activities.outcome }}</h4>
+							<h4 class="alert alert-warning animated lightSpeedIn" ng-show="activities.outcome">{{ activities.outcome }}</h4>
 						</div>
 					</div>
 				</div>
