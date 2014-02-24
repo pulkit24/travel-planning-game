@@ -64,12 +64,17 @@ angular.module("travelPlanningGame.app")
 			// E 101
 			// R 114
 			// D 100
+			// P 112
 			switch(event.which) {
 				case 114: // R - reload page
 					window.location.reload();
 					break;
 				case 100: // D - toggle demo
 					$scope.experiments.toggleDemo();
+					break;
+				case 112: // P - full probability of random events
+					window.eventProbability = 1;
+					break;
 			}
 		});
 

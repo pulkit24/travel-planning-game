@@ -5,35 +5,34 @@ angular.module("travelPlanningGame.app")
 		var source_events = "../random-events.json";
 
 		// List of random events
-		var randomEvents = null;
-
-		var occurredEventIDs = [];
-		var availableEventIDs = [];
-
-		// Total count of events occurred
-		var occurrenceCountTotal = 0;
+		var randomEvents = {};
+		var randomEventsCount = 0;
 
 		// Fetch events
 		function loadEvents() {
 			var deferred = $q.defer();
 
-			if (!randomEvents) {
+			if (!randomEventsCount) {
 				$http.get(source_events)
 					.success(function(data) {
 						// Fulfill promise on success
-						randomEvents = data;
+						randomEventsCount = data.length;
+
 						// Process each event
-						angular.forEach(randomEvents, function(randomEvent, index) {
+						angular.forEach(data, function(randomEvent, index) {
 							// Prepare a resource tracker
 							randomEvent.resources = _fillEventResources(randomEvent);
 
 							// Assign an id
 							randomEvent.id = "randomEvent" + index;
-							availableEventIDs.push(index);
 
 							// Track the number of times we've shown it
 							randomEvent.occurrenceCount = 0;
+
+							randomEvents[index] = randomEvent;
 						});
+
+						console.log(randomEvents);
 						deferred.resolve(randomEvents);
 					})
 					.error(function(data) {
@@ -47,57 +46,39 @@ angular.module("travelPlanningGame.app")
 			return deferred.promise;
 		}
 
-		var demoEvents = [6, 2, 17];
-		var demoOccurrence = [false, true, true, true];
+		var demoEvents = [5, 1, 8, 12];
+		var demoOccurrence = [false, true, true, true, true];
+
+		if(!window.eventProbability) window.eventProbability = 0.67;
+
 		function randomize(task) {
 			var result;
 
 			if(task === "pickEvent")
-				result = (window.isDemo && demoEvents.length) ? demoEvents.shift() : Math.floor(Math.random() * availableEventIDs.length);
+				result = (window.isDemo && demoEvents.length > 0) ? demoEvents.shift() : Math.floor(Math.random() * randomEventsCount);
 			else if(task === "eventOccurred")
-				result = (window.isDemo && demoOccurrence.length) ? demoOccurrence.shift() : (Math.random() <= 0.67);
+				result = (window.isDemo && demoOccurrence.length > 0) ? demoOccurrence.shift() : (Math.random() <= window.eventProbability);
 
 			return result;
 		}
 
 		function getRandomEvent() {
-			_fillAvailableEvents();
-
 			// Pick one randomly
 			var index = randomize("pickEvent");
 
-			// The index may not correspond one-to-one with the indices of the available event IDs
-			// because we may have moved them to occurred event IDs
-			// Hence, iterate n = index times to fetch the n-th available ID
-			var randomEventID;
-			var cumulativeIndex = 0, matchingAvailableEventsIndex;
-			angular.forEach(availableEventIDs, function(eventID, availableEventsIndex) {
-				cumulativeIndex++;
-				if(cumulativeIndex === index) {
-					randomEventID = eventID;
-					matchingAvailableEventsIndex = availableEventsIndex;
-				}
-			});
-
-			if(angular.isDefined(randomEventID)) {
-				delete availableEventIDs[matchingAvailableEventsIndex];
-				occurredEventIDs.push(randomEventID);
-
-				randomEvents[randomEventID].occurrenceCount++;
-				occurrenceCountTotal++;
-
-				return randomEvents[randomEventID];
+			if(index) {
+				randomEvents[index].occurrenceCount++;
+				return randomEvents[index];
 			}
-
 			else
 				return null;
 		}
 
 
-		function _fillAvailableEvents() {
-			if(!availableEventIDs || !availableEventIDs.length)
-				availableEventIDs = angular.copy(occurredEventIDs);
-		}
+		// function _fillAvailableEvents() {
+		// 	if(!availableEventIDs || !availableEventIDs.length)
+		// 		availableEventIDs = angular.copy(occurredEventIDs);
+		// }
 
 		// Add resource trackers to each landmark
 		function _fillEventResources(randomEvent) {

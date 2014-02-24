@@ -23,6 +23,8 @@
 	, "impact": "You were fined $200"
 	, "resource": "MONEY"
 	, "amount": -200
+	, "unlocks": "cc"
+	, "counteredBy": ["cc"]
 }, {
 	"type": "NEGATIVE"
 	, "name": "Late Night Transport Charges"
@@ -30,6 +32,8 @@
 	, "impact": "You were charged $50"
 	, "resource": "MONEY"
 	, "amount": -50
+	, "unlocks": "cc"
+	, "counteredBy": ["cc"]
 }, {
 	"type": "NEGATIVE"
 	, "name": "Taxi Troubles"
@@ -37,6 +41,8 @@
 	, "impact": "You lost $50"
 	, "resource": "MONEY"
 	, "amount": -50
+	, "unlocks": "cc"
+	, "counteredBy": ["cc"]
 }, {
 	"type": "NEGATIVE"
 	, "name": "Fell Sick"
@@ -46,7 +52,7 @@
 	, "amount": -100
 	, "turn-skip": 1
 	, "unlocks": "ti"
-	, "counteredBy": ["cc", "ti"]
+	, "counteredBy": ["ti", "cc"]
 }, {
 	"type": "NEGATIVE"
 	, "name": "Minor Accident"
@@ -55,8 +61,8 @@
 	, "resource": "MONEY"
 	, "amount": -300
 	, "turn-skip": 1
-	, "unlocks": ["ti", "cc"]
-	, "counteredBy": ["cc", "ti"]
+	, "unlocks": "ti"
+	, "counteredBy": ["ti"]
 }, {
 	"type": "NEGATIVE"
 	, "name": "Lost Baggage"
@@ -73,6 +79,8 @@
 	, "impact": "You lose $300"
 	, "resource": "MONEY"
 	, "amount": -300
+	, "unlocks": ["cc"]
+	, "counteredBy": ["cc"]
 }, {
 	"type": "POSITIVE"
 	, "name": "We have a winner!"

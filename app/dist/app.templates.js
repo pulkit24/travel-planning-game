@@ -55,7 +55,7 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '\n' +
-    '			<div id="tst" class="thumbnail resource resource-money text-center" tooltip-html-unsafe="{x{ lodgingMessage() }}" tooltip-placement="right">\n' +
+    '			<div class="thumbnail resource resource-money text-center">\n' +
     '				<small>LODGING</small>\n' +
     '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +

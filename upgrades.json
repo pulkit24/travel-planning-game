@@ -22,7 +22,7 @@
 , {
 	"name": "ANZ Platinum"
 	, "id": "cc"
-	, "description": "Medical insurance while you travel, and Platinum concierge services! Find the best food and accommodation options throughout your trip."
+	, "description": "Avoid unnecessary charges and find the best travel options throughout your trip with the Platinum concierge services!"
 	, "image": "images/upgrades/cc.jpg"
 	, "icon": "images/upgrades/cc_icon.png"
 	, "link": "//www.anz.com.au/personal/credit-cards/platinum/anz-platinum/"
@@ -35,9 +35,9 @@
 		, "implication": "25% savings on lodging costs"
 		, "icon": "fa-headphones"
 	}, {
-		"flavour": "Medical insurance"
-		, "implication": "no more medical mishaps"
-		, "icon": "fa-medkit"
+		"flavour": "Credit ability"
+		, "implication": "avoid unexpected charges"
+		, "icon": "fa-money"
 	}]
 	, "resource": {
 		"type": "MONEY"
