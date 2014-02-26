@@ -15,6 +15,13 @@
 	<!-- ANZ World map -->
 	<div class="layer overlay intro-screen"></div>
 
+	<div class="layer spin-wheel" style="left: -100px; top: -117px;">
+		<img src="images/anz_flower_animation_white_big.png" height="314" width="314" />
+	</div>
+	<div class="layer spin-wheel" style="right: -157px; bottom: -157px;">
+		<img src="images/anz_flower_animation_blue_big.png" height="314" width="314" />
+	</div>
+
 	<!-- Game buttons -->
 	<div class="layer intro-buttons">
 
@@ -40,17 +47,35 @@
 	<div class="layer sidebar top-gap">
 		<div accordion close-others="'true'">
 
+			<!-- Pre-configs -->
+			<div accordion-group heading="Play for fun (easy)" ng-click="settings.setConfig('easy')">
+				<p>Play the game at an easy difficulty.</p>
+				<h4>Budget: ${{ settings.budget | number }}</h4>
+				<h4>Days of travel: {{ settings.travelDays }}</h4>
+			</div>
+			<div accordion-group heading="I like to shop! (medium)" ng-click="settings.setConfig('medium')">
+				<p>Try to collect as many souvenirs as possible!</p>
+				<h4>Budget: ${{ settings.budget | number }}</h4>
+				<h4>Days of travel: {{ settings.travelDays }}</h4>
+			</div>
+			<div accordion-group heading="Go backpacking (hard)" ng-click="settings.setConfig('hard')">
+				<p>Test your mettle over a long trip on a shoe-string budget.</p>
+				<h4>Budget: ${{ settings.budget | number }}</h4>
+				<h4>Days of travel: {{ settings.travelDays }}</h4>
+			</div>
+			<!-- end of pre-configs -->
+
 			<!-- Initial configuration -->
-			<div accordion-group heading="Budget" is-open="true">
+			<div accordion-group heading="My Travel Plan" is-open="true" ng-click="settings.setConfig('custom')">
 				<form>
 
 					<!-- Budget -->
 					<div class="form-group">
-						<label for="menu-budget">Money</label>
+						<label for="menu-budget">My budget</label>
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							<input type="number" id="menu-budget"class="form-control"ng-model="settings.budget"min="100"step="100"
-							required/>
+							<input type="number" id="menu-budget" class="form-control" ng-model="settings.budget" min="100" step="100"
+							required />
 						</div>
 					</div>
 					<!-- end of budget -->
@@ -66,12 +91,6 @@
 				</form>
 			</div>
 			<!-- end of initial config -->
-
-			<!-- Upgrades -->
-			<div accordion-group heading="Upgrades (Locked)">
-				<em>Unlock these awesome upgrades by playing!</em>
-			</div>
-			<!-- end of upgrades -->
 
 		</div>
 	</div>
@@ -289,57 +308,93 @@
 
 	<!-- Chart -->
 	<div class="layer overlay stats-chart">
-		<highchart id="resultsChart" config="chartConfig"></highchart>
+		<highchart id="resultsChart_money" config="chartConfig_money"></highchart>
+		<highchart id="resultsChart_xp" config="chartConfig_xp"></highchart>
+		<highchart id="resultsChart_souvenirs" config="chartConfig_souvenirs"></highchart>
 	</div>
 	<!-- end chart -->
 
 	<!-- Score computation -->
-	<div class="layer sidebar top-gap text-right">
-		<h2>Base Score:</h2>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.MONEY
-				) | currency }}
-			x 200</p>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.XP
-			) | number }}
-			x 400</p>
-		<p>+ {{ resources.get(
-				resources.categories.ALL
-				, resources.types.SOUVENIR
-			) | number }}
-			x 400</p>
-		<p class="total">
-			{{ ( resources.get(
-					resources.categories.ALL
-					, resources.types.MONEY
-				) * 200
-			) + ( resources.get(
-					resources.categories.ALL
-					, resources.types.XP
-				) * 400
-			) + ( resources.get(
-					resources.categories.ALL
-					, resources.types.SOUVENIR
-				) * 400
-			) | number }}
-		</p>
+	<div class="layer sidebar top-gap text-center">
+
+		<div class="stats-score">
+			<img class="pull-left" src="images/icons/anz_icon_ui_money_small.png" height="64" width="64" />
+
+			<!-- Funds -->
+			<h2>${{ resources.get(resources.categories.ALL, resources.types.MONEY) | number }}</h2>
+			<p>funds left</p>
+
+			<small class="text-right">
+				<p>Initial budget: ${{ settings.budget | number }}</p>
+				<p>Savings: {{ getSavings() | number }}</p>
+			</small>
+		</div>
+		<div class="stats-score">
+			<img class="pull-left" src="images/icons/anz_icon_ui_star_small.png" height="64" width="64" />
+
+			<!-- Experience -->
+			<h2>{{ resources.get(resources.categories.ALL, resources.types.XP) | number }}</h2>
+			<p>experience gained</p>
+
+			<small class="text-right">
+				<p>{{ getVisitsCount() }} landmarks visited</p>
+			</small>
+		</div>
+		<div class="stats-score">
+			<img class="pull-left" src="images/icons/anz_icon_ui_shopping_small.png" height="64" width="64" />
+
+			<!-- Shopping -->
+			<h2>{{ resources.get(resources.categories.ALL, resources.types.SOUVENIR) | number }}</h2>
+			<p>souvenirs purchased</p>
+		</div>
+		<div class="stats-score stats-total">
+			<!-- Total -->
+			<h3>Your score:</h3>
+			<h1>
+				{{ ( resources.get(
+						resources.categories.ALL
+						, resources.types.MONEY
+					) * 1
+				) + ( resources.get(
+						resources.categories.ALL
+						, resources.types.XP
+					) * 100
+				) + ( resources.get(
+						resources.categories.ALL
+						, resources.types.SOUVENIR
+					) * 100
+				) | number }}
+			</h1>
+		</div>
+
 	</div>
 	<!-- end settings sidebar -->
 
 	<!-- Restart game button -->
-	<div class="layer button-prev">
+	<div class="layer button-next">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="game.menu()">
-			Play again
+			Play again!
 		</button>
 	</div>
 	<!-- end restart button -->
 
 	<!-- Selected destination -->
 	<div class="layer menu-top-bar">
-		<h1>Results</h1>
+		<h1>
+			<div class="pull-right">
+				<span class="journal-icon" ng-click="journal.isOpen = true">
+					<img src="images/upgrades/books-icon.png" height="48" />
+				</span>
+				<span class="evening">
+					<button class="btn btn-xs btn-action">Post on Facebook</button>
+				</span>
+				<span class="morning">
+					<button class="btn btn-xs btn-action">Post on Twitter</button>
+				</span>
+			</div>
+
+			Results
+		</h1>
 	</div>
 	<!-- end selected destination -->
 
@@ -353,19 +408,19 @@
 		<h1>Traveller's Journal</h1>
 	</div>
 
-	<div class="journal-option journal-landmark-option">
-		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" ng-click="journal.showLandmarks = true" />
+	<div class="journal-option journal-landmark-option" ng-click="journal.showLandmarks = true" >
+		<img src="images/landmarks/anz_icon_card_back.png" height="634" width="412" />
 		<h2>{{ getVisitedLandmarks() }} / {{ getTotalLandmarks() }}</h2>
 	</div>
-	<div class="journal-option journal-items-option">
-		<img src="images/items/anz_icon_card_item.png" height="642" width="420" ng-click="journal.showItems = true" />
+	<div class="journal-option journal-items-option" ng-click="journal.showItems = true" >
+		<img src="images/items/anz_icon_card_item.png" height="642" width="420" />
 		<h2>{{ getBoughtItems() }} / {{ getTotalItems() }}</h2>
 	</div>
 
 	<!-- Back button -->
 	<div class="layer button-prev">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.isOpen = false">
-			<i class="fa fa-long-arrow-left"></i>
+			<i class="fa fa-long-arrow-left"></i> Back
 		</button>
 	</div>
 	<!-- end back button -->
@@ -388,6 +443,17 @@
 				Select a landmark you've visited
 				<br />
 				&rarr;
+
+				<!-- Social shares -->
+				<br /><br />
+				<h4 class="text-info">Share your achievements:</h4>
+				<span class="evening">
+					<button class="btn btn-xs btn-action">Post on Facebook</button>
+				</span>
+				<span class="morning">
+					<button class="btn btn-xs btn-action">Post on Twitter</button>
+				</span>
+
 			</h1>
 
 		</div>
@@ -407,7 +473,7 @@
 	<!-- Back button -->
 	<div class="layer button-prev" ng-if="journal.showLandmarks">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showLandmarks = false">
-			<i class="fa fa-long-arrow-left"></i>
+			<i class="fa fa-long-arrow-left"></i> Back
 		</button>
 	</div>
 	<!-- end back button -->
@@ -430,6 +496,17 @@
 				Select an item you've purchased
 				<br />
 				&rarr;
+
+				<!-- Social shares -->
+				<br /><br />
+				<h4 class="text-info">Share your achievements:</h4>
+				<span class="evening">
+					<button class="btn btn-xs btn-action">Post on Facebook</button>
+				</span>
+				<span class="morning">
+					<button class="btn btn-xs btn-action">Post on Twitter</button>
+				</span>
+
 			</h1>
 
 		</div>
@@ -448,7 +525,7 @@
 	<!-- Back button -->
 	<div class="layer button-prev" ng-if="journal.showItems">
 		<button type="button" class="btn btn-lg btn-primary btn-action" ng-click="journal.showItems = false">
-			<i class="fa fa-long-arrow-left"></i>
+			<i class="fa fa-long-arrow-left"></i> Back
 		</button>
 	</div>
 	<!-- end back button -->

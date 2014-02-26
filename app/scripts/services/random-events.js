@@ -32,7 +32,6 @@ angular.module("travelPlanningGame.app")
 							randomEvents[index] = randomEvent;
 						});
 
-						console.log(randomEvents);
 						deferred.resolve(randomEvents);
 					})
 					.error(function(data) {

@@ -1,5 +1,6 @@
 angular.module("travelPlanningGame.app")
-	.controller('GameCtrl', function($scope, $timeout, $q, timer, locations, resources, history,
+	.controller('GameCtrl', function($scope, $timeout, $q, $filter, timer, locations, resources,
+		history,
 		randomEvents, upgrades, stateTracker, mapRouter, angulargmContainer) {
 
 		///////////////////////////
@@ -77,6 +78,9 @@ angular.module("travelPlanningGame.app")
 			resourceTracker.add(resources.categories.ALL, resources.types.MONEY, $scope.settings.budget);
 			$scope.resources = resourceTracker;
 
+			// Save the starting resources
+			history.getInstance("resources").record("0.0", $scope.resources);
+
 			// Initial activities before the player can play turns
 			initPlay();
 		};
@@ -94,7 +98,7 @@ angular.module("travelPlanningGame.app")
 		$scope.game.menu = function(noReload) {
 			stateTracker.new("loadingState").reset();
 
-			if(!noReload)
+			if (!noReload)
 				window.location.reload();
 
 			stateTracker.new("loadingState").$on("complete", function() {
@@ -106,11 +110,11 @@ angular.module("travelPlanningGame.app")
 		};
 
 		$scope.$on("event:screen:switch", function(event, options) {
-			if(options.screen === 'menu')
+			if (options.screen === 'menu')
 				$scope.game.menu();
-			else if(options.screen === 'game')
+			else if (options.screen === 'game')
 				$scope.game.start();
-			else if(options.screen === 'results')
+			else if (options.screen === 'results')
 				$scope.game.end();
 		});
 
@@ -260,7 +264,7 @@ angular.module("travelPlanningGame.app")
 
 			// Record in history
 			// You just shopped!
-			history.getInstance("shopping").record(timer.toTimestamp(), resources);
+			// history.getInstance("shopping").record(timer.toTimestamp(), $scope.resources);
 			// What did you buy?
 			history.getInstance("souvenirs").record(timer.toTimestamp(), $scope.current.location.shopping);
 		};
@@ -277,8 +281,13 @@ angular.module("travelPlanningGame.app")
 			}
 
 			// Make a random event, randomly
-			if (randomEvents.hasOccurred())
-				handleRandomEvent(randomEvents.getEvent());
+			if (randomEvents.hasOccurred()) {
+				var randomEvent = randomEvents.getEvent();
+				if (randomEvent) {
+					handleRandomEvent(randomEvent);
+					history.getInstance("events").record(timer.toTimestamp(), randomEvent);
+				}
+			}
 			else
 				closingActivities();
 		};
@@ -323,7 +332,7 @@ angular.module("travelPlanningGame.app")
 				if (randomEvent) {
 
 					// Do we have a counter for this event?
-					if(!randomEvents.getAvailableCounterTo(randomEvent)) {
+					if (!randomEvents.getAvailableCounterTo(randomEvent)) {
 
 						// If no, charge for it
 						resources.merge($scope.resources, randomEvent.resources, [resources.categories.ALL]);
@@ -333,20 +342,21 @@ angular.module("travelPlanningGame.app")
 						var upgrade = null;
 						if (eventUpgrades) {
 							// Pick the first upgrade we don't have
-							if(angular.isArray(eventUpgrades)) {
-								for(var i = 0, len = eventUpgrades.length; i < len; i++)
-									if(!eventUpgrades[i].isUnlocked) {
+							if (angular.isArray(eventUpgrades)) {
+								for (var i = 0, len = eventUpgrades.length; i < len; i++)
+									if (!eventUpgrades[i].isUnlocked) {
 										upgrade = eventUpgrades[i];
 										break;
 									}
-							} else
+							}
+							else
 								upgrade = eventUpgrades;
 						}
 
 						showUpgradeUnlocked(upgrade).then(function() {
 
 							// Officially unlock the upgrade!
-							if(upgrade) {
+							if (upgrade) {
 								// Add any resource bonuses
 								resources.merge($scope.resources, upgrade.resources);
 
@@ -471,29 +481,129 @@ angular.module("travelPlanningGame.app")
 		// Stats //
 		/////////////
 
-		$scope.chartConfig = null;
+		$scope.getSavings = function() {
+			return ($scope.resources.get(resources.categories.ALL, resources.types.MONEY) * 100) / $scope.settings.budget;
+		};
 
-		function getResourceHistoryByType(category, type, multiplier) {
-			var records = [];
+		$scope.getVisitsCount = function() {
+			var count = 0;
 
-			angular.forEach(history.getInstance("resources").retrieveAll(), function(resource, timestamp) {
-				var restoredResource = resources.copy(resource);
-				records.push(
-					restoredResource.get(
-						resources.categories[category]
-						, resources.types[type]
-					) * multiplier
-				);
+			angular.forEach($scope.locations.landmarks, function(landmark, index) {
+				if(landmark.isVisited())
+					count += 1;
 			});
 
-			return records;
+			return count;
+		};
+
+		//////////////
+		// Charts //
+		//////////////
+		$scope.chartConfig = null;
+
+		var timestampsTimeline = [];
+		var resourceTimeline_money = [];
+		var resourceTimeline_xp = [];
+		var resourceTimeline_souvenirs = [];
+
+		function prepareTimelines() {
+
+			angular.forEach(history.getInstance("resources").retrieveAll(), function(resource, timestamp) {
+
+				var restoredResource = resources.copy(resource);
+
+				resourceTimeline_money.push(restoredResource.get(
+					resources.categories.ALL, resources.types.MONEY
+				));
+				resourceTimeline_xp.push(restoredResource.get(
+					resources.categories.ALL, resources.types.XP
+				));
+				resourceTimeline_souvenirs.push(restoredResource.get(
+					resources.categories.ALL, resources.types.SOUVENIR
+				));
+
+				timestampsTimeline.push(timestamp);
+			});
+		}
+
+		function getLandmarkByID(id) {
+			for (var i = 0, len = $scope.locations.landmarks.length; i < len; i++)
+				if ($scope.locations.landmarks[i].id === id)
+					return $scope.locations.landmarks[i];
+			return null;
+		}
+
+		function getFundsOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var resourcesRecord = history.getInstance("resources").retrieve(requestedTimestamp);
+			return resourcesRecord[resources.categories.ALL][resources.types.MONEY] || 0;
+		}
+
+		function getFundsActivityOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var landmarkVisited = history.getInstance("landmarks").retrieve(requestedTimestamp);
+			var itemPurchased = history.getInstance("souvenirs").retrieve(requestedTimestamp);
+			var eventOccurred = history.getInstance("events").retrieve(requestedTimestamp);
+
+			var activity = "";
+			if (landmarkVisited)
+				activity += "You visited: <strong>" + getLandmarkByID(landmarkVisited).name +
+					"</strong>.<br />";
+			if (itemPurchased)
+				activity += "You purchased: <strong>" + itemPurchased.name + "</strong>.<br />";
+			if (eventOccurred)
+				activity += "An event occurred: <em>" + eventOccurred.name + "</em>.<br />";
+
+			return activity;
+		}
+
+		function getXPOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var resourcesRecord = history.getInstance("resources").retrieve(requestedTimestamp);
+			return resourcesRecord[resources.categories.ALL][resources.types.XP] || 0;
+		}
+
+		function getXPActivityOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var landmarkVisited = history.getInstance("landmarks").retrieve(requestedTimestamp);
+
+			var activity = "";
+			if (landmarkVisited)
+				activity += "You visited: <strong>" + getLandmarkByID(landmarkVisited).name +
+					"</strong>.<br />";
+
+			return activity;
+		}
+
+		function getShoppingOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var resourcesRecord = history.getInstance("resources").retrieve(requestedTimestamp);
+			return resourcesRecord[resources.categories.ALL][resources.types.SOUVENIR] || 0;
+		}
+
+		function getShoppingActivityOn(timelinePoint) {
+			var requestedTimestamp = timestampsTimeline[timelinePoint];
+			var itemPurchased = history.getInstance("souvenirs").retrieve(requestedTimestamp);
+
+			var activity = "";
+			if (itemPurchased)
+				activity += "You purchased: <strong>" + itemPurchased.name + "</strong>.<br />";
+
+			return activity;
 		}
 
 		$scope.calculateChartConfig = function() {
+
+			prepareTimelines();
+
 			$scope.chartConfig = {
 				options: {
 					chart: {
 						type: "spline"
+						, borderRadius: 0
+						, style: {
+							color: '#ffffff'
+						}
 					}
 					, plotOptions: {
 						series: {
@@ -502,31 +612,113 @@ angular.module("travelPlanningGame.app")
 							}
 						}
 					}
-				}
-				, series: [{
-					data: getResourceHistoryByType("ALL", "MONEY", 1)
-					, name: "Funds"
-					, color: "#ffb03b"
-					, lineWidth: 5
-				}, {
-					data: getResourceHistoryByType("ALL", "XP", 4)
-					, name: "Experience Points"
-					, color: "#d41200"
-					, lineWidth: 5
-				}, {
-					data: getResourceHistoryByType("ALL", "SOUVENIR", 4)
-					, name: "Souvenirs Collected"
-					, color: "#27b3e6"
-					, lineWidth: 5
-				}]
-				, title: {
-					text: "Your Trip Analysis"
+					, xAxis: {
+						labels: {
+							useHTML: true
+							, enabled: false
+							, style: {
+								color: '#ffffff'
+							}
+						}
+						, lineWidth: 0
+						, tickWidth: 0
+					}
+					, yAxis: {
+						title: {
+							text: ""
+						}
+						, labels: {
+							enabled: false
+						}
+						, lineWidth: 0
+						, tickWidth: 0
+						, gridLineWidth: 0
+					}
+					, legend: {
+						enabled: false
+					}
 				}
 				, credits: {
 					enabled: false
 				}
 				, loading: false
 			};
+
+			$scope.chartConfig_money = angular.copy($scope.chartConfig);
+			$scope.chartConfig_money.options.chart.backgroundColor = "#ffb03b";
+			$scope.chartConfig_money.options.tooltip = {
+				formatter: function() {
+					return "<small>" + this.series.name + ": $" + $filter("number")(this.y) + "</small><br />" +
+						getFundsActivityOn(this.x);
+				}
+			};
+			$scope.chartConfig_money.options.xAxis.labels.formatter = function() {
+				return (this.isFirst || this.isLast) ? "<h1>$" + getFundsOn(this.value) + "</h1>" : "";
+			};
+			angular.extend($scope.chartConfig_money, {
+				series: [{
+					data: resourceTimeline_money
+					, name: "Funds"
+					, color: "#ffffff"
+					, lineWidth: 5
+				}]
+				, title: {
+					text: "Funds over time"
+					, style: {
+						color: '#ffffff'
+					}
+				}
+			});
+			$scope.chartConfig_xp = angular.copy($scope.chartConfig);
+			$scope.chartConfig_xp.options.chart.backgroundColor = "#d41200";
+			$scope.chartConfig_xp.options.tooltip = {
+				formatter: function() {
+					return "<small>" + this.series.name + ": " + $filter("number")(this.y) + "</small><br />" +
+						getXPActivityOn(this.x);
+				}
+			};
+			$scope.chartConfig_xp.options.xAxis.labels.formatter = function() {
+				return (this.isFirst || this.isLast) ? "<h1>" + getXPOn(this.value) + "</h1>" : "";
+			};
+			angular.extend($scope.chartConfig_xp, {
+				series: [{
+					data: resourceTimeline_xp
+					, name: "Experience Points"
+					, color: "#ffffff"
+					, lineWidth: 5
+				}]
+				, title: {
+					text: "Experience Gained"
+					, style: {
+						color: '#ffffff'
+					}
+				}
+			});
+			$scope.chartConfig_souvenirs = angular.copy($scope.chartConfig);
+			$scope.chartConfig_souvenirs.options.chart.backgroundColor = "#27b3e6";
+			$scope.chartConfig_souvenirs.options.tooltip = {
+				formatter: function() {
+					return "<small>" + this.series.name + ": " + $filter("number")(this.y) + "</small><br />" +
+						getShoppingActivityOn(this.x);
+				}
+			};
+			$scope.chartConfig_souvenirs.options.xAxis.labels.formatter = function() {
+				return (this.isFirst || this.isLast) ? "<h1>" + getShoppingOn(this.value) + "</h1>" : "";
+			};
+			angular.extend($scope.chartConfig_souvenirs, {
+				series: [{
+					data: resourceTimeline_souvenirs
+					, name: "Souvenirs Collected"
+					, color: "#ffffff"
+					, lineWidth: 5
+				}]
+				, title: {
+					text: "Souvenirs Collected"
+					, style: {
+						color: '#ffffff'
+					}
+				}
+			});
 		};
 
 
@@ -586,7 +778,29 @@ angular.module("travelPlanningGame.app")
 		/////////////////////
 		$scope.settings = {};
 		$scope.settings.budget = 1000;
-		$scope.settings.travelDays = 3;
+		$scope.settings.travelDays = 2;
+
+		$scope.settings.setConfig = function(type) {
+			switch(type) {
+				case "easy":
+					$scope.settings.budget = 3000;
+					$scope.settings.travelDays = 3;
+					break;
+				case "medium":
+					$scope.settings.budget = 4000;
+					$scope.settings.travelDays = 6;
+					break;
+				case "hard":
+					$scope.settings.budget = 1500;
+					$scope.settings.travelDays = 7;
+					break;
+				case "custom":
+					$scope.settings.budget = 1000;
+					$scope.settings.travelDays = 2;
+					break;
+			}
+		};
+
 
 		///////////////////////
 		// Game board/map  //
@@ -643,7 +857,7 @@ angular.module("travelPlanningGame.app")
 
 			$timeout(function() {
 				var won = (Math.random() <= 0.5); // 50% chance of winning
-				if(won)
+				if (won)
 					$scope.resources.add(resources.categories.ALL, resources.types.MONEY, amount * 2);
 
 				$scope.activities.outcome = won ? "You won double!" : "Bad luck, try again next time!";

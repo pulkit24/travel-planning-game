@@ -83,7 +83,7 @@
 	, "counteredBy": ["cc"]
 }, {
 	"type": "POSITIVE"
-	, "name": "We have a winner!"
+	, "name": "Competition Victory"
 	, "description": "Congratulations! You managed to win yourself a prize at a local fair. Keep up the good work!"
 	, "impact": "You received 5 gift items"
 	, "resource": "SOUVENIR"

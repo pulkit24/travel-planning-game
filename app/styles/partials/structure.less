@@ -33,8 +33,33 @@ body {
 .stats-chart {
 	top: @size-height-HUD;
 	width: (@size-width-game - @size-width-sidebar);
-	height: (@size-height-game - @size-height-HUD);
+
+	#resultsChart_money, #resultsChart_xp, #resultsChart_souvenirs {
+		height: (@size-height-game - @size-height-HUD) / 3;
+	}
 }
+.stats-score {
+	border-bottom: 1px solid darken(@color-light, 20%);
+	padding: 10px 0;
+	text-transform: uppercase;
+
+	h2, p {
+		margin: 0;
+	}
+
+	small {
+		color: @color-money;
+	}
+
+	&.stats-total {
+		background-color: @color-light;
+
+		h1 {
+			font-size: 54px;
+		}
+	}
+}
+
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;

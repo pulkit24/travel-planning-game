@@ -55,21 +55,27 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	}">\n' +
     '		<div class="col-xs-offset-9">\n' +
     '\n' +
-    '			<div class="thumbnail resource resource-money text-center">\n' +
+    '			<div class="thumbnail resource resource-money text-center"\n' +
+    '				tooltip-html-unsafe="<strong>Lodging</strong><br />When visiting a landmark in the evening, you will pay the lodging cost for overnight stay. Choose wisely."\n' +
+    '				tooltip-placement="right">\n' +
     '				<small>LODGING</small>\n' +
     '				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				<small>PER DAY</small>\n' +
     '			</div>\n' +
     '\n' +
-    '			<div class="thumbnail resource resource-xp text-center">\n' +
+    '			<div class="thumbnail resource resource-xp text-center"\n' +
+    '				tooltip-html-unsafe="<strong>Visting</strong><br />General admission and food prices for visiting. Every visit will earn you some experience."\n' +
+    '				tooltip-placement="right">\n' +
     '				<small>VISITING</small>\n' +
     '				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>\n' +
     '				</h3>\n' +
     '				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>\n' +
     '			</div>\n' +
     '\n' +
-    '			<div class="thumbnail resource resource-souvenirs text-center">\n' +
+    '			<div class="thumbnail resource resource-souvenirs text-center"\n' +
+    '				tooltip-html-unsafe="{{ !isVisited() ? \'<strong>Shopping</strong><br />Visit this landmark to discover what you can shop here!\' : null }}"\n' +
+    '				tooltip-placement="right">\n' +
     '				<img ng-src="{{ getSouvenirImage() }}" />\n' +
     '\n' +
     '				<!-- Item hover pop up -->\n' +
@@ -94,7 +100,9 @@ angular.module('templates/landmark-card.tpl.html', []).run(['$templateCache', fu
     '	<!-- end features -->\n' +
     '\n' +
     '	<!-- One time bonus -->\n' +
-    '	<div class="panel-footer text-center" ng-class="isVisited() ? \'inactive\' : \'active\'">\n' +
+    '	<div class="panel-footer text-center" ng-class="isVisited() ? \'inactive\' : \'active\'"\n' +
+    '		tooltip-html-unsafe="{{ !isVisited() ? \'Get extra experience points for first-time visits!\' : \'You have already visited this landmark once.\' }}"\n' +
+    '		tooltip-placement="right">\n' +
     '		One-time visiting bonus:\n' +
     '		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>\n' +
     '		</strong>\n' +
@@ -268,6 +276,7 @@ angular.module('templates/widgets.day-counter.tpl.html', []).run(['$templateCach
   'use strict';
   $templateCache.put('templates/widgets.day-counter.tpl.html',
     '<div class="widget-day-counter">\n' +
+    '	<i class="fa fa-2x fa-caret-left" ng-class="getTimeOfDay()"></i>\n' +
     '	<div class="content">\n' +
     '		<h1>Day</h1>\n' +
     '		<h1>{{ now.day | number }}\n' +

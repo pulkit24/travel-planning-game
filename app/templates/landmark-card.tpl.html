@@ -22,21 +22,27 @@
 	}">
 		<div class="col-xs-offset-9">
 
-			<div class="thumbnail resource resource-money text-center">
+			<div class="thumbnail resource resource-money text-center"
+				tooltip-html-unsafe="<strong>Lodging</strong><br />When visiting a landmark in the evening, you will pay the lodging cost for overnight stay. Choose wisely."
+				tooltip-placement="right">
 				<small>LODGING</small>
 				<h3>{{ landmark.lodgingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				<small>PER DAY</small>
 			</div>
 
-			<div class="thumbnail resource resource-xp text-center">
+			<div class="thumbnail resource resource-xp text-center"
+				tooltip-html-unsafe="<strong>Visting</strong><br />General admission and food prices for visiting. Every visit will earn you some experience."
+				tooltip-placement="right">
 				<small>VISITING</small>
 				<h3>{{ landmark.visitingCost }} <i class="fa fa-dollar"></i>
 				</h3>
 				+{{ landmark.visitingExp }} <i class="fa fa-star"></i>
 			</div>
 
-			<div class="thumbnail resource resource-souvenirs text-center">
+			<div class="thumbnail resource resource-souvenirs text-center"
+				tooltip-html-unsafe="{{ !isVisited() ? '<strong>Shopping</strong><br />Visit this landmark to discover what you can shop here!' : null }}"
+				tooltip-placement="right">
 				<img ng-src="{{ getSouvenirImage() }}" />
 
 				<!-- Item hover pop up -->
@@ -61,7 +67,9 @@
 	<!-- end features -->
 
 	<!-- One time bonus -->
-	<div class="panel-footer text-center" ng-class="isVisited() ? 'inactive' : 'active'">
+	<div class="panel-footer text-center" ng-class="isVisited() ? 'inactive' : 'active'"
+		tooltip-html-unsafe="{{ !isVisited() ? 'Get extra experience points for first-time visits!' : 'You have already visited this landmark once.' }}"
+		tooltip-placement="right">
 		One-time visiting bonus:
 		<strong>+{{ landmark.exp }} <i class="fa fa-star"></i>
 		</strong>

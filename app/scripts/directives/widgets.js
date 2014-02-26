@@ -72,6 +72,10 @@ angular.module('travelPlanningGame.widgets')
 					$scope.now = timer.now();
 					$scope.limits = timer.getLimits();
 				});
+
+				$scope.getTimeOfDay = function() {
+					return timer.now() ? timer.toTimeOfDay(timer.now().time) : null;
+				};
 			}
 		};
 	})

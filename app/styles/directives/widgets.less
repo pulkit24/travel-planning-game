@@ -97,6 +97,29 @@
 		background: transparent url(../images/icons/anz_icon_clock.png) right top no-repeat;
 		background-size: contain;
 
+		i {
+			position: absolute;
+
+			&.morning {
+				left: 30px;
+				top: 15px;
+				transform: rotate(-15deg);
+			}
+
+			&.afternoon {
+				left: 61px;
+				top: 69px;
+				transform: rotate(-45deg);
+			}
+
+			&.evening {
+				left: 116px;
+				top: 101px;
+				transform: rotate(-75deg);
+				color: white;
+			}
+		}
+
 		.content {
 			position: absolute;
 			top: 0;

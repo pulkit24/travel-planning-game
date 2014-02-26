@@ -26,7 +26,7 @@
 
     <!-- Left gutter -->
     <div class="layer" ng-cloak>
-	    <button class="btn btn-default btn-xs" ng-click="experiments.disabled = !experiments.disabled">Experiments</button>
+	    <button class="btn btn-default btn-xs" ng-click="experiments.disabled = !experiments.disabled">E</button>
 	    <div collapse="experiments.disabled">
 		    <!-- Map style switcher -->
 		    <div class="panel panel-primary">
@@ -58,12 +58,12 @@
 						<button type="button" class="btn btn-default" ng-click="journal.isOpen = true">Journal</button>
 					</p>
 					<p class="hide">
-						<button type="button" class="btn btn-default" ng-click="experiments.toggleDemo()">Toggle Demo</button>
-						{{ isDemo() ? 'Demo mode ON' : '' }}
 					</p>
 				</div>
 		    </div>
 		</div>
+		<br />
+		<button class="btn btn-xs" ng-click="experiments.toggleDemo()" ng-class="isDemo() ? 'btn-primary' : 'btn-default'">D</button>
 	</div>
 
     <!-- Game content -->

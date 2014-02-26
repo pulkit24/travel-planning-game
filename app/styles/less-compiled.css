@@ -64,6 +64,10 @@
   color: #877849;
 }
 
+.spin-wheel {
+  animation: spin 6s infinite linear;
+}
+
 body {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -98,7 +102,35 @@ body {
 .stats-chart {
   top: 75px;
   width: 560px;
-  height: 525px;
+}
+
+.stats-chart #resultsChart_money,
+.stats-chart #resultsChart_xp,
+.stats-chart #resultsChart_souvenirs {
+  height: 175px;
+}
+
+.stats-score {
+  padding: 10px 0;
+  text-transform: uppercase;
+  border-bottom: 1px solid #546245;
+}
+
+.stats-score h2,
+.stats-score p {
+  margin: 0;
+}
+
+.stats-score small {
+  color: #ffb03b;
+}
+
+.stats-score.stats-total {
+  background-color: #879b72;
+}
+
+.stats-score.stats-total h1 {
+  font-size: 54px;
 }
 
 [ng\:cloak],
@@ -345,7 +377,15 @@ body {
   text-align: center;
 }
 
-.sidebar .accordion-toggle {
+.sidebar [accordion] .panel-heading {
+  padding: 0;
+}
+
+.sidebar [accordion] .panel-heading a {
+  padding: 10px 15px;
+}
+
+.sidebar [accordion] .accordion-toggle {
   display: block;
   text-decoration: none;
   cursor: pointer;
@@ -904,6 +944,29 @@ body {
   height: 100%;
   background: transparent url(../images/icons/anz_icon_clock.png) right top no-repeat;
   background-size: contain;
+}
+
+[widget-day-counter] .widget-day-counter i {
+  position: absolute;
+}
+
+[widget-day-counter] .widget-day-counter i.morning {
+  top: 15px;
+  left: 30px;
+  transform: rotate(-15deg);
+}
+
+[widget-day-counter] .widget-day-counter i.afternoon {
+  top: 69px;
+  left: 61px;
+  transform: rotate(-45deg);
+}
+
+[widget-day-counter] .widget-day-counter i.evening {
+  top: 101px;
+  left: 116px;
+  color: white;
+  transform: rotate(-75deg);
 }
 
 [widget-day-counter] .widget-day-counter .content {
