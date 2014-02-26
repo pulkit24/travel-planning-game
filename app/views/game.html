@@ -439,10 +439,12 @@
 			</div>
 			<!-- end landmark card -->
 
-			<h1 ng-if="!journal.selectedLandmark">
-				Select a landmark you've visited
-				<br />
-				&rarr;
+			<div ng-if="!journal.selectedLandmark">
+				<h1>
+					Select a landmark you've visited
+					<br />
+					&rarr;
+				</h1>
 
 				<!-- Social shares -->
 				<br /><br />
@@ -454,7 +456,7 @@
 					<button class="btn btn-xs btn-action">Post on Twitter</button>
 				</span>
 
-			</h1>
+			</div>
 
 		</div>
 		<div class="journal-page-half journal-list">
@@ -492,10 +494,12 @@
 			</div>
 			<!-- end item card -->
 
-			<h1 ng-if="!journal.selectedItem">
-				Select an item you've purchased
-				<br />
-				&rarr;
+			<div ng-if="!journal.selectedItem">
+				<h1>
+					Select an item you've purchased
+					<br />
+					&rarr;
+				</h1>
 
 				<!-- Social shares -->
 				<br /><br />
@@ -506,8 +510,7 @@
 				<span class="morning">
 					<button class="btn btn-xs btn-action">Post on Twitter</button>
 				</span>
-
-			</h1>
+			</div>
 
 		</div>
 		<div class="journal-page-half journal-list">
